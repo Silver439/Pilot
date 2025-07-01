@@ -68,6 +68,8 @@ def LCB(p,m,mu,std,R,Sigma,J=10000,num=10,method = 'max'):
             final_indices = nondominated_index
         if len(final_indices)==1:
             choosen_index.append(int(final_indices[0])) 
+            ids = np.where(remain_index == final_indices[0])[0]
+            remain_index = np.delete(remain_index, ids)
             Gmin = 100
         else:
             for i in final_indices:
