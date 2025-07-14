@@ -252,36 +252,28 @@ def update_subject_stats(obs_num, X_n, obs, ids, newobs):
     
     return X_n_new, obs_new
 
-def generate_cov_matrix(p, seed=None, max_corr=0.7):
+def generate_cov_matrix(n):
     """
-    生成 p×p 的协方差矩阵，满足：
-    - 对角线元素 ∈ [36, 100]
-    - 非对角元素 ≤ min(Σ_ii, Σ_jj)
-    - 所有元素 ≥ 0
-    - 对称正定
+    生成n×n的协方差矩阵:
+    - 对角线元素为100
+    - 非对角线元素为随机非负值
+    - 矩阵是对称且正定的(确保是有效的协方差矩阵)
     """
-    if seed is not None:
-        np.random.seed(seed)
+    # 生成随机非负矩阵
+    A = np.random.uniform(0, 15, size=(n, n))  # 调整0-10的范围根据需要
     
-    # 1. 生成随机相关系数矩阵 R（非负，且 R_ij ≤ max_corr）
-    A = np.random.uniform(0, max_corr, (p, p))  # 控制非对角元素范围
-    R = A.T @ A  # 使 R 正定
-    np.fill_diagonal(R, 1)  # 对角线设为 1
-    R = R / np.maximum(1, np.sqrt(np.diag(R))[:, None])  # 标准化
+    # 构造对称矩阵
+    cov = (A + A.T) / 2
     
-    # 2. 生成随机标准差 σ_i ∈ [6, 10]
-    sigmas = np.random.uniform(6, 10, p)
-    D = np.diag(sigmas)
+    # 将对角线设置为100
+    np.fill_diagonal(cov, 64)
     
-    # 3. 计算协方差矩阵 Σ = D R D
-    cov_matrix = D @ R @ D
+    # 确保矩阵是正定的(协方差矩阵必须满足)
+    # 通过添加一个足够大的单位矩阵实现
+    min_eig = np.min(np.real(np.linalg.eigvals(cov)))
+    if min_eig <= 0:
+        cov += (np.eye(n) * (-min_eig + 0.1))
     
-    # 4. 检查是否满足 Σ_ij ≤ min(Σ_ii, Σ_jj)
-    for i in range(p):
-        for j in range(p):
-            if i != j:
-                max_allowed = min(cov_matrix[i, i], cov_matrix[j, j])
-                cov_matrix[i, j] = min(cov_matrix[i, j], max_allowed)
-                cov_matrix[j, i] = cov_matrix[i, j]  # 保持对称
-    
-    return cov_matrix
+    return cov
+
+
