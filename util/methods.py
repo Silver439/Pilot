@@ -260,13 +260,13 @@ def generate_cov_matrix(n):
     - 矩阵是对称且正定的(确保是有效的协方差矩阵)
     """
     # 生成随机非负矩阵
-    A = np.random.uniform(0, 15, size=(n, n))  # 调整0-10的范围根据需要
+    A = np.random.uniform(0, 5, size=(n, n))  # 调整0-10的范围根据需要
     
     # 构造对称矩阵
     cov = (A + A.T) / 2
     
     # 将对角线设置为100
-    np.fill_diagonal(cov, 64)
+    np.fill_diagonal(cov, 25)
     
     # 确保矩阵是正定的(协方差矩阵必须满足)
     # 通过添加一个足够大的单位矩阵实现
