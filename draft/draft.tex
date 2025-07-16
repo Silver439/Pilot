@@ -19,6 +19,8 @@
 \RequirePackage{newtxmath}
 \RequirePackage{bm}
 \RequirePackage{endnotes}
+\usepackage{array} % 用于调整列格式
+\usepackage{booktabs} % 用于专业表格线
 
 \OneAndAHalfSpacedXII % Current default line spacing
 
@@ -209,7 +211,7 @@ We can see that in this case, smaller $\mu$, larger $\sigma$ and smaller $\rho$ 
 \section{Simulations with known $\theta$ and $\Lambda$}
 \subsection{SAA approach}
 
-We first show that how we get the best modules ${\bf x} = (x_{1},...,x_{m})$ if we already known $\theta$ and $\Lambda$. Suppose we now need to select 8 out of 50 modules such that the expected minimum value of their scores is minimized. In connection with what we said above about SAA, one of the most natural ideas is to take a submodule approach to utilizing SAA to select modules sequentially. The steps are as follows:
+We first demonstrate how to identify the optimal module set ${\bf x} = (x_{1},...,x_{m})$ when the parameters $\theta$ and $\Lambda$ are known. Consider selecting 8 modules from 50 candidates to minimize the expected minimum score. Building upon our earlier discussion of Sample Average Approximation (SAA), we propose a sequential selection procedure:
 \begin{enumerate}
 	\item Let $x_1 = \underset{x\in \mathcal{X}}{{\arg\min}} \theta(x)$, get the collection of selected modules $S = \{x_1\}$
 	\item Let $x_2 = \underset{x\in \mathcal{X}/\{x_1\}}{{\arg\min}}\text{E}[\min\{x_1, x\}]$, update the collection $S = \{x_1,x_2\}$
@@ -217,7 +219,7 @@ We first show that how we get the best modules ${\bf x} = (x_{1},...,x_{m})$ if 
 	\item \ldots keep doing this until we get the collection $S = \{x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8\}$
 	\item Output ${\bf x} = (x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8)$ as the result
 \end{enumerate}
-In the above steps we frequently use SAA to approximate the minimum expectation of modules. Considering that SAA consumes large arithmetic resources, this may affect the application of the method in large-scale problems. Therefore in the next subsection we will show another approximation of the computation, which has much less computational complexity compared to SAA.
+While this approach provides accurate results, the computational cost of repeated SAA evaluations becomes prohibitive for large-scale problems. This motivates our alternative approximation method presented next.
 
 \subsection{Improvement-based approach}
 We define the improvement of module $x_2$ over module $x_1$ as $\text{Ipr}(x_2, x_1)$:
@@ -229,19 +231,106 @@ Next, suppose we have a set of modules $S = \{x_1,x_3,x_4\}$, we can samely defi
 $$
 \text{Ipr}(x_2, S) = \text{E}[\min\{S, x_2\}]-\text{E}[\min\{S\}]
 $$
-Now let's consider an extreme case, assuming $x_1$ and $x_2$ are exactly the same (i.e. $\text{Ipr}(x_2, x_1)=0$), regardless of the value of $\text{Ipr}(x_2, x_3)$ and $\text{Ipr}(x_2, x_4)$, the value of $\text{Ipr}(x_2, S)$ is always $0$. This inspires us to speculate that the value of the improvement of module $x_2$ over set $S$ mainly depends on $\underset{x\in S}{{\min}}~\text{Ipr}(x_2,x)$. Based on this we can get our improvement-based approach as follows:
+Now let's consider an extreme case, assuming $x_1$ and $x_2$ are exactly the same (i.e. $\text{Ipr}(x_2, x_1)=0$), regardless of the value of $\text{Ipr}(x_2, x_3)$ and $\text{Ipr}(x_2, x_4)$, the value of $\text{Ipr}(x_2, S)$ is always $0$. This inspires us to speculate that the value of the improvement of module $x_2$ over set $S$ is dominated by pairwise minima:: $\underset{x\in S}{{\min}}~\text{Ipr}(x_2,x)$. So we can define the contribution of module $x_2$ to set $S$: 
+$$
+\text{Ctr}(x_2, S) = \underset{x\in S}{{\min}}~\text{Ipr}(x_2,x)
+$$
+Here, the contribution measure $\text{Ctr}(x_2, S)$ represents quantifies the reduction potential in the minimum score when adding module $x$ to set $S$.
+
+Based on this we can get our improvement-based approach as follows:
 \begin{enumerate}
 	\item Let $x_1 = \underset{x\in \mathcal{X}}{{\arg\min}}~\theta(x)$, get the collection of selected modules $S = \{x_1\}$
 	\item Let $x_2 = \underset{x\in \mathcal{X}/\{x_1\}}{{\arg\min}}~\text{E}[\min\{x_1, x\}]$, update the collection $S = \{x_1,x_2\}$ (Step 1.and 2. are exactly the same as SAA approach)
-	\item Let $x_3 = \underset{x\in \mathcal{X}/S}{{\arg\max}}~\left(\underset{y\in S}{{\min}}~\text{Ipr}(x,y)\right)$, update the collection $S = \{x_1,x_2,x_3\}$
-	\item Let $x_4 = \underset{x\in \mathcal{X}/S}{{\arg\max}}~\left(\underset{y\in S}{{\min}}~\text{Ipr}(x,y)\right)$, update the collection $S = \{x_1,x_2,x_3,x_4\}$
+	\item Let $x_3 = \underset{x\in \mathcal{X}/S}{{\arg\max}}~\text{Ctr}(x, S)$, update the collection $S = \{x_1,x_2,x_3\}$
+	\item Let $x_4 = \underset{x\in \mathcal{X}/S}{{\arg\max}}~\text{Ctr}(x, S)$, update the collection $S = \{x_1,x_2,x_3,x_4\}$
 	\item \ldots keep doing this until we get the collection $S = \{x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8\}$
 	\item Output ${\bf x} = (x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8)$ as the result.
 \end{enumerate}
-The $\underset{y\in S}{{\min}}~\text{Ipr}(x,y)$ in the above process can be quickly calculated using the formula in 4.1, which saves a lot of computing resources compared to SAA.
+The $\underset{y\in S}{{\min}}~\text{Ipr}(x,y)$ in the above process  can be quickly calculated using the formula in 4.1, which saves a lot of computing resources compared to SAA.
 
 \subsection{Mixed approach}
-Although Improvement-based approach has extremely high computational efficiency, there may be a certain gap in the quality of its output results compared to SAA approach. Therefore, we are considering combining the advantages of both. At each step of the submodule process, we first use Improvement-based approach to preliminarily screen all modules, eliminating a certain number of modules to reduce the number of candidate modules. Then use SAA approach to select from the remaining modules. The specific process is as follows:
+Although the improvement-based approach offers superior computational efficiency, its solution quality may be suboptimal compared to the SAA method. To leverage the strengths of both approaches, we propose a mixed selection strategy that combines their advantages. The algorithm proceeds iteratively as follows:
+\begin{enumerate}
+	\item Let $x_1 = \underset{x\in \mathcal{X}}{{\arg\min}}~\theta(x)$, get the collection of selected modules $S = \{x_1\}$
+	\item Let $x_2 = \underset{x\in \mathcal{X}/\{x_1\}}{{\arg\min}}~\text{E}[\min\{x_1, x\}]$, update the collection $S = \{x_1,x_2\}$ (Step 1.and 2. are exactly the same as SAA approach)
+	\item Find set $C \subseteq S$ s.t.  $C = \mathop{\mathrm{arg\,max}}\limits_{|C|=10} \sum_{x \in C} \text{Ctr}(x, S)$. Using SAA approach to get $x_3 = \underset{x\in C}{{\arg\min}}~\text{E}[\min\{x_1, x_2, x\}]$, update set $S = \{x_1,x_2,x_3\}$.
+	\item Find set $C \subseteq S$ s.t.  $C = \mathop{\mathrm{arg\,max}}\limits_{|C|=10} \sum_{x \in C} \text{Ctr}(x, S)$. Using SAA approach to get $x_4 = \underset{x\in C}{{\arg\min}}~\text{E}[\min\{x_1, x_2, x_3, x\}]$, update set $S = \{x_1,x_2,x_3,x_4\}$.
+	\item \ldots keep doing this until we get the collection $S = \{x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8\}$
+	\item Output ${\bf x} = (x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8)$ as the result.
+\end{enumerate}
+The proposed mixed approach achieves superior solution quality compared to the pure improvement-based approach, while maintaining significantly lower computational complexity than the full SAA implementation. Our numerical experiments in Section 5.5 demonstrate its effectiveness across various test scenarios, showing consistent performance improvements over both baseline methods. The mixed method's balanced trade-off between accuracy and efficiency makes it particularly suitable for large-scale training module selection problems.
+
+\subsection{Heristical approaches}
+Here we give three other heristical approaches:
+\begin{enumerate}
+	\item ${\bf Smallest:}$ Directly select the 8 modules with the smallest mean as the output result
+	\item ${\bf Cluster:}$ First divide the modules into 8 categories according to the correlation matrix by hierarchical clustering, and then the module with the smallest mean value in each category was selected as the output result.
+	\item ${\bf LCB\_max:}$ Similar to Improvement-based approach, multi-objective optimization and LCB are used to filter and then use SAA approach to choose from the remaining modules.
+\end{enumerate}
+
+\subsection{simulation experiment}
+In our experimental setup, we maintain the selection of 8 modules from a pool of 50 candidates. We evaluate and compare the performance and computational efficiency of each approach across three distinct scenarios:
+\begin{enumerate}
+	\item ${\bf Regular grouping:}$ The 50 modules can be divided into 5 groups of 10 modules each. the correlation between modules within a group is high, while there is no correlation between groups.
+	\item ${\bf Centralized minimum:}$ Similar to Regular grouping, the difference is that the modules with the smallest mean in this case are clustered in the same group.
+	\item ${\bf Random:}$ The correlation between individual modules is completely randomized.
+\end{enumerate}
+For each scenario, we generate 100 random instances and report average performance metrics and computation times in the following tables:
+
+\begin{table}[H]
+\centering
+\caption{Regular grouping}
+\begin{tabular}{lrrrrlrrr}
+\toprule
+Total modules & Tested modules & Algorithm Name & Avg Rank & Avg Result & Avg Time (s) \\
+\midrule	
+50 & 8 & smallest & 3.720000 & 64.067880 & 0.000032 \\
+50 & 8 & cluster & 4.800000 & 64.313566 & 0.000456 \\
+50 & 8 & LCB\_max & 6.000000 & 66.164651 & 1.511647 \\
+50 & 8 & improvement & 2.540000 & 63.899411 & 0.053409 \\
+50 & 8 & SAA & 2.060000 & 63.860563 & 7.538640 \\
+50 & 8 & mixed & 1.880000 & 63.849019 & 1.714283 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Centralized minimum}
+\begin{tabular}{lrrrrlrrr}
+\toprule
+Total modules & Tested modules & Algorithm Name & Avg Rank & Avg Result & Avg Time (s) \\
+\midrule	
+50 & 8 & smallest & 5.750000 & 68.599959 & 0.000026 \\
+50 & 8 & cluster & 4.060000 & 66.970837 & 0.000332 \\
+50 & 8 & LCB\_max & 5.130000 & 67.868257 & 1.601738 \\
+50 & 8 & improvement & 2.590000 & 66.439135 & 0.075206 \\
+50 & 8 & SAA & 1.790000 & 66.348565 & 7.688974 \\
+50 & 8 & mixed & 1.680000 & 66.343133 & 1.774847 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Random}
+\begin{tabular}{lrrrrlrrr}
+\toprule
+Total modules & Tested modules & Algorithm Name & Avg Rank & Avg Result & Avg Time (s) \\
+\midrule	
+50 & 8 & smallest & 3.780000 & 52.630880 & 0.000025 \\
+50 & 8 & cluster & 4.880000 & 53.525543 & 0.000328 \\
+50 & 8 & LCB\_max & 5.980000 & 56.080551 & 1.519013 \\
+50 & 8 & improvement & 3.030000 & 52.415651 & 0.076352 \\
+50 & 8 & SAA & 1.630000 & 52.145339 & 7.808298 \\ 
+50 & 8 & mixed & 1.700000 & 52.139484 & 1.794801 \\
+\bottomrule
+\end{tabular}
+\end{table}
+Our experimental results demonstrate that both the SAA and mixed approaches achieve nearly identical performance, with their results being substantially superior to all other methods considered. While we present detailed comparisons for the case of selecting 8 modules from 50 due to space limitations, these findings consistently hold across various selection sizes.
+
+\section{Simulations with unknown $\theta$ and known $\Lambda$}
+
 
 \bibliographystyle{informs2014} % outcomment this and next line in Case 1
 \bibliography{sample} % if more than one, comma separated
@@ -250,6 +339,3 @@ Although Improvement-based approach has extremely high computational efficiency,
 %%%%%%%%%%%%%%%%%
 \end{document}
 %%%%%%%%%%%%%%%%%
-
-
-
