@@ -72,7 +72,7 @@ def data2(p=50, seed=42, group_sizes=[10, 10, 10, 10, 10]):
     # 第一步：强组内相关
     for i in range(n_groups):
         start, end = starts[i], starts[i] + group_sizes[i]
-        block_corr = np.random.uniform(0.8, 0.95)  # 更高的组内相关
+        block_corr = np.random.uniform(0.4, 0.7)  # 更高的组内相关
         block = np.ones((group_sizes[i], group_sizes[i])) * block_corr
         np.fill_diagonal(block, 1)
         Sigma[start:end, start:end] = block
