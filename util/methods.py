@@ -276,4 +276,36 @@ def generate_cov_matrix(n):
     
     return cov
 
+def assign_variances(means, min_var=25, max_var=144, correlation_strength=0.7):
+    """
+    为给定的均值分配方差，使其与均值正相关
+    
+    参数:
+    - means: 均值数组
+    - min_var: 最小方差 (默认25)
+    - max_var: 最大方差 (默认144)
+    - correlation_strength: 均值与方差的相关强度 (0-1之间)
+    
+    返回:
+    - 方差数组
+    """
+    # 归一化均值到[0,1]范围
+    normalized_means = (means - np.min(means)) / (np.max(means) - np.min(means))
+    
+    # 创建与均值正相关的基础方差
+    base_var = min_var + (max_var - min_var) * normalized_means
+    
+    # 添加随机性，相关性强度决定随机性的程度
+    # 这里使用beta分布来确保方差保持在指定范围内
+    random_component = np.random.beta(a=1, b=1/correlation_strength, size=len(means))
+    random_component = min_var + (max_var - min_var) * random_component
+    
+    # 混合基础方差和随机成分
+    variances = correlation_strength * base_var + (1 - correlation_strength) * random_component
+    
+    # 确保方差在指定范围内
+    variances = np.clip(variances, min_var, max_var)
+    
+    return variances
+
 
