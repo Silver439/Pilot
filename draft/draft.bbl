@@ -1,0 +1,12 @@
+\begin{thebibliography}{2}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem[{Clark(1961)}]{clark1961greatest}
+Clark CE (1961) The greatest of a finite set of random variables. \emph{Operations Research} 9(2):145--162.
+
+\bibitem[{Xie et~al.(2016)Xie, Frazier, \protect\BIBand{} Chick}]{xie2016bayesian}
+Xie J, Frazier PI, Chick SE (2016) Bayesian optimization via simulation with pairwise sampling and correlated prior beliefs. \emph{Operations Research} 64(2):542--559.
+
+\end{thebibliography}

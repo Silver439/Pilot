@@ -1,0 +1,341 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%	Author Submission Template for Operations Research (OPRE)
+%%	INFORMS, <informs@informs.org>
+%%	Ver. 1.00, June 2024
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Use dblanonrev for Double Anonymous Review submission
+% Use sglanonrev for Single Anonymous Review submission
+% For example, submission to INFORMS Mathematics of Operation Research, MOOR will have
+% \documentclass[moor,dblanonrev]{informs4}
+%
+% \documentclass[opre,dblanonrev]{informs4}
+\documentclass[opre,sglanonrev]{informs4}
+\usepackage{eqndefns-left} % For checking the display equation width and equation environment definitions %
+\RequirePackage{tgtermes}
+\RequirePackage{newtxtext}
+\RequirePackage{newtxmath}
+\RequirePackage{bm}
+\RequirePackage{endnotes}
+\usepackage{array} % 用于调整列格式
+\usepackage{booktabs} % 用于专业表格线
+
+\OneAndAHalfSpacedXII % Current default line spacing
+
+% Optional LaTeX Packages
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+% Private macros here (check that there is no clash with the style)
+
+% Natbib setup for author-number style
+\usepackage{natbib}
+ \bibpunct[, ]{(}{)}{,}{a}{}{,}%
+ \def\bibfont{\small}%
+ \def\bibsep{\smallskipamount}%
+ \def\bibhang{24pt}%
+ \def\newblock{\ }%
+ \def\BIBand{and}%
+
+
+\EquationsNumberedThrough    % Default: (1), (2), ...
+\TheoremsNumberedThrough     % Preferred (Theorem 1, Lemma 1, Theorem 2)
+\ECRepeatTheorems 
+\MANUSCRIPTNO{MOOR-0001-2024.00}
+
+%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%
+\RUNTITLE{Module design for pilots training with full flight simulator}
+\TITLE{Module design for pilots training with full flight simulator}
+
+\FUNDING{This research was supported by [grant number, funding agency].}
+
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Text of your paper here
+
+\section{Background}
+Full flight simulator (FFS) is a sophisticated simulation system to simulate all aircraft systems that are accessible from the flight deck and are critical to training. For instance, it can simulate the force feedback for the pilot's flight controls, the avionics system, the communication system, the cockpit sounds, the aerodynamics, and the ground handling. It prepares pilots for realistic flight situations and is used for pilots training.
+
+FFS has extremely high fidelity and is typically expensive the run. This will limit the number of sessions each pilot can try with FFS. Apart from initial training, the pilots must carry out recurrent training at regular intervals (such as every six months) in order to retain their qualification. In addition, pilots’ reactions to different situations and flight skills are different. Therefore, it is important to design efficient personal training sessions for pilots to detect and improve their inadequacies.
+
+\section{Problem Formulation}
+We aim to design training modules with simulation-based optimization approach. Suppose there are $M$ different training modules from which $m$ are selected in one training session due to the time and cost restriction. Our purpose is to identify the weakness of the pilot with a carefully designed training session. The optimization problem can be formulated as follows:
+\begin{equation}
+	\min_{x_1,...,x_m} \mathbb{E}_\xi[\min\{Y(x_1,\xi),...,Y(x_m,\xi) \} ], 
+	\label{obj}
+\end{equation}
+where $x_1,...,x_m$ represent the $m$ modules in the training session, taken from the module set $\mathcal{X} = \{x_1,...,x_M\}$ and $Y(x_1,\xi)$ is the score the pilot obtain in module $x_i$. It is evaluated through simulation at FFS. In this model, we assume the score vector in the population $\{Y(x_1),...,Y(x_M)\}$ follows a multivariate normal distribution. For each specific person, his score is a sample from this distribution. In equation \eqref{obj}, the random vector $\xi$ is used to illustrate the randomness in this multivariate normal distribution. 
+
+The inner minimization is to find the minimum score one pilot obtain across the given $m$ training modules. We take the minimum value as we need to find the weakness of the pilots considering flight safety. The outer minimization is the find the best set of training sessions in detecting the pilot inadequacy.
+This formulation is not for `personal' module design, as we choose the modules that performs the best in expectation over the whole population. 
+
+This problem involves two stages. The first stage is to learn the multivariate normal distribution as well as to identify the optimal modules. This is the simulation optimization process. In the two stage, we deploy the recommended session to train the pilots. 
+
+\section{Methodology}
+
+We assume that the score has Gaussian noise: $Y(x) = Z(x) + \mathcal{N}(0,\sigma(x))$ and the joint distribution for $Y(x)_{x\in\{\mathcal{X}\}}$ is a multivariate normal distribution with mean vector $\theta = [Z(x_1),...,Z(x_M)]^T$ and covariance matrix $\Lambda$. We use a Bayesian approach to model $\theta$ and assume a normal prior:
+$$\theta \sim \mathcal{N}(\mu_0, \Sigma_0). $$
+As with \cite{xie2016bayesian}, we assume $\Lambda, \mu_0, \Sigma_0$ are known.
+
+The $i$th entry of a vector $v$ is denoted as $v(i)$ and the $(i,j)$th entry of a matrix $M$ is denoted as $M(i,j)$. For an ordered collection of $m$ alternatives ${\bf x}=(x_1,...,x_m)$ with element $x_i \in \{1,...,M\}$ for each $i$, we use $v(\bf x)$ to denote the subvector of $v$ with the $i$th entry equal to $v(x_i)$. We further denote by $M(\bf x, x')$ the $m$-by-$m$ submatrix of $M$ with the $(i,j)$th entry equal to $M(x_i, x_j')$.  
+
+We consider a situation where in each iteration $n$, one pilot will attend $m$ different modules ${\bf x}_n = (x_{n,1},...,x_{n,m})^T$ and we obtain his score vector ${\bf y}_n = (Y(x_{n,1}),...,Y(x_{n,m}))^T$. The conditional distribution of ${\bf y}_n$ is:
+$${\bf y}_n | \theta,{\bf x}_n \sim \mathcal{N}(\theta({\bf x}_n), \Lambda({\bf x}_n,{\bf x}_n)). $$ 
+Let $\mathbb{X}_n = ({\bf x}_1^T,...,{\bf x}_n^T )$ denote the concatenation of the design points of the previous $n$ iteration and similarly $\mathbb{Y}_n =({\bf y}_1^T,...,{\bf y}_n^T )^T$. Then, the posterior distribution for $\theta$ is:
+$$\theta_n|\mathbb{X}_n,\mathbb{Y}_n  \sim \mathcal{N}(\mu_n, \Sigma_n),$$
+where for any vector ${\bf x} = (x_1, x_2,...,x_m)$,
+$$
+	\mu_n({\bf x}) = \mu_0({\bf x}) + \Sigma_0(\bf x, \mathbb{X}_n)(\Sigma_0(\mathbb{X}_n,\mathbb{X}_n) + \Gamma_n)^{-1}(\mathbb{Y}_n-\mu_0(\mathbb{X}_n)),
+$$
+$$
+	\Sigma_n({\bf x},{\bf x}) = \Sigma_0({\bf x},{\bf x}) - \Sigma_0(\bf x, \mathbb{X}_n)(\Sigma_0(\mathbb{X}_n,\mathbb{X}_n) + \Gamma_n)^{-1}\Sigma_0(\mathbb{X}_n, \bf x),
+$$
+where $\Gamma_n$ is the block diagonal matrix with $n$ blocks: $\Lambda({\bf x}_1, {\bf x}_1),...,\Lambda({\bf x}_n, {\bf x}_n)$.
+
+We adopt the Expected Improvement (EI) acquisition function to select the $m$ courses for the next iteration $n+1$. For any candidate vector ${\bf x}=(x_1,...,x_m)$,
+$$ 
+\text{EI}({\bf x}) = \mathbb{E}_{\theta_n}[(g_c-G({\bf x}))^+ | \theta_n],
+$$
+where $(a)^+=a$ if $a\geq 0$ and $(a)^+=0$ otherwise. When $\theta_n$ takes a value $\tilde{\theta_n}$, we define $G({\bf x})$ as:
+$$
+G({\bf x}) = \mathbb{E}_\xi[\min\{Y(x_1,\xi),...,Y(x_m,\xi) \} ],
+$$
+where $\{Y(x_1),...,Y(x_m)\} \sim \mathcal{N}(\tilde{\theta_n}({\bf x}), \Lambda({\bf x},{\bf x}))$ and $\{Y(x_1,\xi),...,Y(x_m,\xi)\}$ is a random sample from this distribution. In the EI function, $g_c$ is the current best value: $g_c = \min \{G({\bf x}_1),...,G({\bf x}_n)\}$.
+
+We next explain how to compute $g_c$. For any vector ${\bf x}_i, 1\leq i \leq n$, we approximate $G({\bf x}_i)$ through sample average approximation (SAA). Specifically, we generate samples of $\{Y(x_{i,1},\xi),...,Y(x_{i,m},\xi)\}$ from distribution $\mathcal{N}(\mu_n({\bf x}_i), \Lambda({\bf x}_i,{\bf x}_i))$. Here, as we already have observations at ${\bf x}_i$, we use the posterior mean $\mu_n({\bf x}_i)$ as if it were the true value of $\theta_n({\bf x}_i)$ to compute the current best value. Similar approach has been widely used for ordinary stochastic GP based optimization algorithms. The samples can then be generated as follows. Suppose $\Lambda({\bf x}_i,{\bf x}_i) = B_iB_i^T$ and ${\bf z}_j\in \mathbb{R}^{m\times 1}$ is a random draw from $m$ iid standard normal distribution. The $j$-th random samples can be represented as: $(Y(x_{i,1},\xi_j),...,Y(x_{i,m},\xi_j))^T = \mu_n({\bf x}_i) + B_i{\bf z}_j$ and $Y(x_{i,k},\xi_j) = \mu_n({x}_{i,k}) + B_i^k{\bf z}_j$, where $B_i^k$ is the $k$th row of $B_i$. Therefore, we have
+$$ 
+G({\bf x}_i) \approx \frac{1}{J}\sum_{j=1}^{J} \min \mu_n({\bf x}_i) + B_i{\bf z}_j = \frac{1}{J}\sum_{j=1}^{J} \min \{\mu_n({x}_{i,1}) + B_i^1{\bf z}_j, ...,\mu_n({x}_{i,m}) + B_i^m{\bf z}_j  \}.
+$$
+
+To compute EI for ${\bf x}$, we should further take care of the outer expectation with respect to the posterior distribution of $\theta$. We can use similar approach as above the generate samples from the posterior distribution of $\theta_n({\bf x})$ and obtain the following SAA form:
+$$
+\text{EI}({\bf x}) \approx \frac{1}{K}\sum_{k=1}^{K} (g_c-  \frac{1}{J}\sum_{j=1}^{J} \min \theta_n({\bf x}) + A{\bf \tilde{z}}_k + B{\bf z}_j )^+,
+$$ 
+where $\Sigma_n({\bf x},{\bf x}) = AA^T$, $\Lambda({\bf x},{\bf x}) = BB^T$, and both ${\bf \tilde{z}}_k$ and ${\bf z}_j$ are iid standard normal vectors of length $m$.
+
+
+\section{Some special cases}
+\subsection{Two normal variables}
+We need to compare $\text{E}_{\xi_1, \xi_2}[\min \{\mu_1+A\xi_1, \mu_2+B_1\xi_1+B_2\xi_2 \}]$ and $\text{E}_{\xi_1, \xi_2}[\min \{\mu_1+A\xi_1, \mu_2+B\xi_2 \}]$, where $\xi_1, \xi_2$ are independent standard normal random variable. All the coefficients are positive and that $B_1^2+B_2^2=B^2$.
+
+Notice that for any two Gaussian random number $X_1\sim N(\mu_1,\sigma^2_1)$, $X_2\sim N(\mu_2,\sigma^2_2)$ with correlation $\rho$, the expectation $\text{E}[\min\{X_1, X_2\}]$ takes the following form \citep{clark1961greatest}:
+$$
+\text{E}[\min\{X_1, X_2\}] = \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta}) - \theta \phi(\frac{\mu_2-\mu_1}{\theta} ),
+$$
+where $\phi$, $\Phi$ are cdf and pdf for standard normal distribution, respectively, and $\theta = \sqrt{\sigma^2_1+\sigma^2_2-2\rho \sigma_1\sigma_2} = \sqrt{\text{var}(X_1-X_2)}$.
+
+We define $X_1=\mu_1+A\xi_1 \sim N(\mu_1, A^2)$, $X_2=\mu_2+B_1\xi_1+B_2\xi_2 \sim N(\mu_2, B_1^2+B_2^2)$, $X_3=\mu_2+B\xi_2 \sim N(\mu_2,B^2)$. Thus, 
+$$
+\text{cov}(X_1, X_2) = AB_1, \text{cov}(X_1, X_3) = 0.
+$$
+$$
+\text{var}(X_1-X_2) = A^2+B_1^2+B_2^2-2AB_1, \text{var}(X_1- X_3) =A^2+B^2.
+$$
+Therefore,
+$$
+\text{E}[\min\{X_1, X_2\}]= \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta_1}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta_1}) - \theta_1 \phi(\frac{\mu_2-\mu_1}{\theta_1} ),
+$$
+$$
+\text{E}[\min\{X_1, X_3\}]= \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta_2}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta_2}) - \theta_2 \phi(\frac{\mu_2-\mu_1}{\theta_2} ),
+$$
+where $\theta_1=\sqrt{A^2+B_1^2+B_2^2-2AB_1}$, $\theta_2=\sqrt{A^2+B^2}$.
+Denote:
+$$
+f(\theta) =  \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta}) - \theta \phi(\frac{\mu_2-\mu_1}{\theta} ) = (\mu_1-\mu_2)\Phi(\frac{\mu_2-\mu_1}{\theta}) +\mu_2- \theta \phi(\frac{\mu_2-\mu_1}{\theta} ).
+$$
+We have
+$$
+	f'(\theta) = (\mu_1-\mu_2)\phi(\frac{\mu_2-\mu_1}{\theta})\frac{\mu_2-\mu_1}{-\theta^2}-\phi(\frac{\mu_2-\mu_1}{\theta})-\theta\phi(\frac{\mu_2-\mu_1}{\theta})\frac{\mu_2-\mu_1}{-\theta} \frac{\mu_2-\mu_1}{-\theta^2}
+$$
+$$
+ =-\phi(\frac{\mu_2-\mu_1}{\theta}) <0
+$$
+
+Therefore, $f_\theta$ is a decreasing function w.r.t. $\theta$. We have the following conclusions:
+\begin{enumerate}
+	\item When $B_1^2+B_2^2=B^2$ and all coefficients are positive, we have $\theta_1=\sqrt{A^2+B^2-2AB_1}<\theta_2$. Hence, $\text{E}[\min\{X_1, X_2\}]>\text{E}[\min\{X_1, X_3\}]$.
+	\item When $B_1^2+B_2^2=B^2$ and $B_1<0$, we have $\theta_1=\sqrt{A^2+B^2-2AB_1}>\theta_2$. Hence, $\text{E}[\min\{X_1, X_2\}]<\text{E}[\min\{X_1, X_3\}]$.
+\end{enumerate}
+
+Another way of presenting these results. Suppose $X_1\sim N(\mu_1,\sigma^2_1)$, $X_2\sim N(\mu_2,\sigma^2_2)$ with correlation $\rho$ and $\theta = \sqrt{\sigma^2_1+\sigma^2_2-2\rho \sigma_1\sigma_2} = \sqrt{\text{var}(X_1-X_2)}$. Denote $f=\text{E}[\min\{X_1, X_2\}] $. We have:
+\begin{equation}
+	\frac{\partial f}{\partial \theta} = -\phi(\frac{\mu_2-\mu_1}{\theta})<0,
+\end{equation}
+\begin{equation}
+\label{rho}
+	\frac{\partial f}{\partial \rho} = \frac{\partial f}{\partial \theta} \frac{\partial \theta}{\partial \rho} =  \frac{\sigma_1\sigma_2}{\theta}\phi(\frac{\mu_2-\mu_1}{\theta})>0,
+\end{equation}
+\begin{equation}
+\label{sigma}
+	\frac{\partial f}{\partial \sigma_1} = \frac{\partial f}{\partial \theta} \frac{\partial \theta}{\partial \sigma_1} = -\frac{\sigma_1-\rho\sigma_2}{\theta} \phi(\frac{\mu_2-\mu_1}{\theta}),
+\end{equation}
+\begin{equation}
+\label{mu}
+	\frac{\partial f}{\partial \mu_1} = \Phi( \frac{\mu_2-\mu_1}{\theta})>0.
+\end{equation}
+
+We summarize the conclusions as follows:
+\begin{enumerate}
+	\item From \eqref{rho} and \eqref{mu}, we observe that variables with smaller correlations and expectations are preferred.
+	\item The relation between the objective function and the variance for each individual variable is not monotone. We can, however, derive some special cases:
+	\begin{enumerate}
+		\item When $\rho<\frac{\sigma_1}{\sigma_2}$ (specifically when $\rho<0$), a larger value of $\sigma_1$ is preferred.
+		\item When $\rho>\frac{\sigma_1}{\sigma_2}$, smaller value of $\sigma_1$ is preferred. This seems a little bit counter-intuitive. We can consider some special situation to understand this. Consider when $\rho = 1$ and $\sigma_1<\sigma_2$. In this situation, $X_1$ and $X_2$ are positively linear dependent: $ X_1 = \frac{\sigma_1}{\sigma_2} X_2$. We can find that they always have the same sign and when $X_1$ and $X_2>0$, $\min\{X_1,X_2\}=X_1>0$, which increases with $\sigma_1$. When $X_1$ and $X_2<0$,  $\min\{X_1,X_2\}=X_2<0$, which does not change with $\sigma_1$. Therefore, in this case, a larger value of $\sigma_1$ will increase the objective value. Although a larger value of $\sigma_1$ will reduce $X_1$ when it is negative, these negative values, however, are not counted in the objective function as long as $\sigma_1<\sigma_2$. This situation will slightly gets better when $\rho$ deviates from 1, but still makes less negative values of $X_1$ to be counted in the objective function until $\rho<\frac{\sigma_1}{\sigma_2}$.
+	\end{enumerate}
+\end{enumerate}
+
+\subsection{Several normal variables}
+
+We consider the following situations: $m$ normal random numbers $X_1,...,X_m$ with equal mean $\mu$ and equal variance $\sigma^2$. The correlation between each pair of variables is $\rho\geq 0$. We would like to explore the relationship between the objective function  $f = \text{E}[\min\{X_1,...,X_m\}]$ and $\rho$, $\mu$, and $\sigma$.
+
+In this case, each random variable can be represented as $X_i = \mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_i )$, where $W$ and $N_1,...,N_m$ are i.i.d. standard normal random variables. Then,
+$$f = \text{E}[\min\{X_1,...,X_m\}] =  \text{E}[\min\{\mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_1 ),...,\mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_m )\}] $$
+$$=\mu+ \sigma\text{E}[\min\{\sqrt{\rho}W + \sqrt{1-\rho} N_1 ,...,\sqrt{\rho}W + \sqrt{1-\rho} N_m \}]  $$
+$$=\mu + \sigma\text{E}[\sqrt{\rho}W+ \sqrt{1-\rho} \min\{N_1,...,N_m\} ] =\mu + \sigma\sqrt{1-\rho} \text{E}[\min\{N_1,...,N_m\} ]. $$
+This had no analytical solution. Some special cases:
+\begin{enumerate}
+	\item When $\rho =1$, $f=\mu$.
+	\item When $\rho =0$, $f = \mu+ \sigma\text{E}[\min\{N_1 ,...,N_m \}]$. 
+\end{enumerate}
+$\text{E}[\min\{N_1 ,...,N_m \}]$ is a constant for a given $m$. It is negative and can be approximated as 
+$$-\sqrt{2 \ln m} + \frac{\ln \ln m + \ln 4\pi}{ 2 \sqrt{2 \ln m}}. $$
+Hence, $f\approx \mu - \sigma\sqrt{1-\rho}\sqrt{2 \ln m}$. 
+
+We can see that in this case, smaller $\mu$, larger $\sigma$ and smaller $\rho$ are preferred. Intuitively, when $\rho$ decreases, the $m$ variables are less correlated and thus each of them has larger probability to take smaller values more independently. Therefore, the objective value increases as $\rho$. 
+
+\section{Simulations with known $\theta$ and $\Lambda$}
+\subsection{SAA approach}
+
+We first demonstrate how to identify the optimal module set ${\bf x} = (x_{1},...,x_{m})$ when the parameters $\theta$ and $\Lambda$ are known. Consider selecting 8 modules from 50 candidates to minimize the expected minimum score. Building upon our earlier discussion of Sample Average Approximation (SAA), we propose a sequential selection procedure:
+\begin{enumerate}
+	\item Let $x_1 = \underset{x\in \mathcal{X}}{{\arg\min}} \theta(x)$, get the collection of selected modules $S = \{x_1\}$
+	\item Let $x_2 = \underset{x\in \mathcal{X}/\{x_1\}}{{\arg\min}}\text{E}[\min\{x_1, x\}]$, update the collection $S = \{x_1,x_2\}$
+	\item Let $x_3 = \underset{x\in \mathcal{X}/S}{{\arg\min}}\text{E}[\min\{x_1, x_2, x\}]$, update the collection $S = \{x_1,x_2,x_3\}$
+	\item \ldots keep doing this until we get the collection $S = \{x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8\}$
+	\item Output ${\bf x} = (x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8)$ as the result
+\end{enumerate}
+While this approach provides accurate results, the computational cost of repeated SAA evaluations becomes prohibitive for large-scale problems. This motivates our alternative approximation method presented next.
+
+\subsection{Improvement-based approach}
+We define the improvement of module $x_2$ over module $x_1$ as $\text{Ipr}(x_2, x_1)$:
+$$
+\text{Ipr}(x_2, x_1) = \text{E}[\min\{x_1, x_2\}]-\text{E}[x_1] 
+$$
+Obviously, when $x_1$ and $x_2$ are exactly the same, $\text{Ipr}(x_2, x_1) = 0$.
+Next, suppose we have a set of modules $S = \{x_1,x_3,x_4\}$, we can samely define the improvement of module $x_2$ over set $S$ as $\text{Ipr}(x_2, S)$:
+$$
+\text{Ipr}(x_2, S) = \text{E}[\min\{S, x_2\}]-\text{E}[\min\{S\}]
+$$
+Now let's consider an extreme case, assuming $x_1$ and $x_2$ are exactly the same (i.e. $\text{Ipr}(x_2, x_1)=0$), regardless of the value of $\text{Ipr}(x_2, x_3)$ and $\text{Ipr}(x_2, x_4)$, the value of $\text{Ipr}(x_2, S)$ is always $0$. This inspires us to speculate that the value of the improvement of module $x_2$ over set $S$ is dominated by pairwise minima:: $\underset{x\in S}{{\min}}~\text{Ipr}(x_2,x)$. So we can define the contribution of module $x_2$ to set $S$: 
+$$
+\text{Ctr}(x_2, S) = \underset{x\in S}{{\min}}~\text{Ipr}(x_2,x)
+$$
+Here, the contribution measure $\text{Ctr}(x_2, S)$ represents quantifies the reduction potential in the minimum score when adding module $x$ to set $S$.
+
+Based on this we can get our improvement-based approach as follows:
+\begin{enumerate}
+	\item Let $x_1 = \underset{x\in \mathcal{X}}{{\arg\min}}~\theta(x)$, get the collection of selected modules $S = \{x_1\}$
+	\item Let $x_2 = \underset{x\in \mathcal{X}/\{x_1\}}{{\arg\min}}~\text{E}[\min\{x_1, x\}]$, update the collection $S = \{x_1,x_2\}$ (Step 1.and 2. are exactly the same as SAA approach)
+	\item Let $x_3 = \underset{x\in \mathcal{X}/S}{{\arg\max}}~\text{Ctr}(x, S)$, update the collection $S = \{x_1,x_2,x_3\}$
+	\item Let $x_4 = \underset{x\in \mathcal{X}/S}{{\arg\max}}~\text{Ctr}(x, S)$, update the collection $S = \{x_1,x_2,x_3,x_4\}$
+	\item \ldots keep doing this until we get the collection $S = \{x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8\}$
+	\item Output ${\bf x} = (x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8)$ as the result.
+\end{enumerate}
+The $\underset{y\in S}{{\min}}~\text{Ipr}(x,y)$ in the above process  can be quickly calculated using the formula in 4.1, which saves a lot of computing resources compared to SAA.
+
+\subsection{Mixed approach}
+Although the improvement-based approach offers superior computational efficiency, its solution quality may be suboptimal compared to the SAA method. To leverage the strengths of both approaches, we propose a mixed selection strategy that combines their advantages. The algorithm proceeds iteratively as follows:
+\begin{enumerate}
+	\item Let $x_1 = \underset{x\in \mathcal{X}}{{\arg\min}}~\theta(x)$, get the collection of selected modules $S = \{x_1\}$
+	\item Let $x_2 = \underset{x\in \mathcal{X}/\{x_1\}}{{\arg\min}}~\text{E}[\min\{x_1, x\}]$, update the collection $S = \{x_1,x_2\}$ (Step 1.and 2. are exactly the same as SAA approach)
+	\item Find set $C \subseteq S$ s.t.  $C = \mathop{\mathrm{arg\,max}}\limits_{|C|=10} \sum_{x \in C} \text{Ctr}(x, S)$. Using SAA approach to get $x_3 = \underset{x\in C}{{\arg\min}}~\text{E}[\min\{x_1, x_2, x\}]$, update set $S = \{x_1,x_2,x_3\}$.
+	\item Find set $C \subseteq S$ s.t.  $C = \mathop{\mathrm{arg\,max}}\limits_{|C|=10} \sum_{x \in C} \text{Ctr}(x, S)$. Using SAA approach to get $x_4 = \underset{x\in C}{{\arg\min}}~\text{E}[\min\{x_1, x_2, x_3, x\}]$, update set $S = \{x_1,x_2,x_3,x_4\}$.
+	\item \ldots keep doing this until we get the collection $S = \{x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8\}$
+	\item Output ${\bf x} = (x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8)$ as the result.
+\end{enumerate}
+The proposed mixed approach achieves superior solution quality compared to the pure improvement-based approach, while maintaining significantly lower computational complexity than the full SAA implementation. Our numerical experiments in Section 5.5 demonstrate its effectiveness across various test scenarios, showing consistent performance improvements over both baseline methods. The mixed method's balanced trade-off between accuracy and efficiency makes it particularly suitable for large-scale training module selection problems.
+
+\subsection{Heristical approaches}
+Here we give three other heristical approaches:
+\begin{enumerate}
+	\item ${\bf Smallest:}$ Directly select the 8 modules with the smallest mean as the output result
+	\item ${\bf Cluster:}$ First divide the modules into 8 categories according to the correlation matrix by hierarchical clustering, and then the module with the smallest mean value in each category was selected as the output result.
+	\item ${\bf LCB\_max:}$ Similar to Improvement-based approach, multi-objective optimization and LCB are used to filter and then use SAA approach to choose from the remaining modules.
+\end{enumerate}
+
+\subsection{simulation experiment}
+In our experimental setup, we maintain the selection of 8 modules from a pool of 50 candidates. We evaluate and compare the performance and computational efficiency of each approach across three distinct scenarios:
+\begin{enumerate}
+	\item ${\bf Regular grouping:}$ The 50 modules can be divided into 5 groups of 10 modules each. the correlation between modules within a group is high, while there is no correlation between groups.
+	\item ${\bf Centralized minimum:}$ Similar to Regular grouping, the difference is that the modules with the smallest mean in this case are clustered in the same group.
+	\item ${\bf Random:}$ The correlation between individual modules is completely randomized.
+\end{enumerate}
+For each scenario, we generate 100 random instances and report average performance metrics and computation times in the following tables:
+
+\begin{table}[H]
+\centering
+\caption{Regular grouping}
+\begin{tabular}{lrrrrlrrr}
+\toprule
+Total modules & Tested modules & Algorithm Name & Avg Rank & Avg Result & Avg Time (s) \\
+\midrule	
+50 & 8 & smallest & 3.720000 & 64.067880 & 0.000032 \\
+50 & 8 & cluster & 4.800000 & 64.313566 & 0.000456 \\
+50 & 8 & LCB\_max & 6.000000 & 66.164651 & 1.511647 \\
+50 & 8 & improvement & 2.540000 & 63.899411 & 0.053409 \\
+50 & 8 & SAA & 2.060000 & 63.860563 & 7.538640 \\
+50 & 8 & mixed & 1.880000 & 63.849019 & 1.714283 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Centralized minimum}
+\begin{tabular}{lrrrrlrrr}
+\toprule
+Total modules & Tested modules & Algorithm Name & Avg Rank & Avg Result & Avg Time (s) \\
+\midrule	
+50 & 8 & smallest & 5.750000 & 68.599959 & 0.000026 \\
+50 & 8 & cluster & 4.060000 & 66.970837 & 0.000332 \\
+50 & 8 & LCB\_max & 5.130000 & 67.868257 & 1.601738 \\
+50 & 8 & improvement & 2.590000 & 66.439135 & 0.075206 \\
+50 & 8 & SAA & 1.790000 & 66.348565 & 7.688974 \\
+50 & 8 & mixed & 1.680000 & 66.343133 & 1.774847 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Random}
+\begin{tabular}{lrrrrlrrr}
+\toprule
+Total modules & Tested modules & Algorithm Name & Avg Rank & Avg Result & Avg Time (s) \\
+\midrule	
+50 & 8 & smallest & 3.780000 & 52.630880 & 0.000025 \\
+50 & 8 & cluster & 4.880000 & 53.525543 & 0.000328 \\
+50 & 8 & LCB\_max & 5.980000 & 56.080551 & 1.519013 \\
+50 & 8 & improvement & 3.030000 & 52.415651 & 0.076352 \\
+50 & 8 & SAA & 1.630000 & 52.145339 & 7.808298 \\ 
+50 & 8 & mixed & 1.700000 & 52.139484 & 1.794801 \\
+\bottomrule
+\end{tabular}
+\end{table}
+Our experimental results demonstrate that both the SAA and mixed approaches achieve nearly identical performance, with their results being substantially superior to all other methods considered. While we present detailed comparisons for the case of selecting 8 modules from 50 due to space limitations, these findings consistently hold across various selection sizes.
+
+\section{Simulations with unknown $\theta$ and known $\Lambda$}
+
+
+\bibliographystyle{informs2014} % outcomment this and next line in Case 1
+\bibliography{sample} % if more than one, comma separated
+
+
+%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%
