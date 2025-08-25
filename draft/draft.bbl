@@ -1,13 +1,58 @@
-\begin{thebibliography}{3}
+\begin{thebibliography}{18}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\urlprefix}{URL }
 
+\bibitem[{ICA(2015)}]{ICAO2015}
+ (2015) \emph{Manual of Criteria for the Qualification of Flight Simulation Training Devices - Volume I - Aeroplanes}. International Civil Aviation Organization, 4th edition, \urlprefix\url{https://store.icao.int/en/manual-of-criteria-for-the-qualification-of-flight-simulation-training-devices-volume-i-aeroplanes-9625-1}.
+
+\bibitem[{CAE(2023)}]{CAE7000XR}
+ (2023) Cae 7000xr series level d full-flight simulator. \urlprefix\url{https://www.cae.com/civil-aviation/aviation-simulation-equipment/training-equipment/full-flight-simulators/cae7000xr/}.
+
+\bibitem[{Pil(2023)}]{PilotWorkshops2023}
+ (2023) Engine failure on takeoff. \urlprefix\url{https://pilotworkshop.com/tips/engine-fail-takeoff/}.
+
+\bibitem[{IBA(2023)}]{IBAAero2023}
+ (2023) Meeting the growing demand for flight simulators. \urlprefix\url{https://www.iba.aero/resources/articles/meeting-the-growing-demand-for-flight-simulators/}.
+
+\bibitem[{Adv(2024)}]{Advancements2024}
+ (2024) Advancements in flight simulation visual systems: An in-depth analysis of variable collimation display development and testing. \emph{AIAA SCITECH 2024 Forum} \urlprefix\url{http://dx.doi.org/10.2514/6.2024-4205}.
+
+\bibitem[{Fli(2024)}]{Flightradar2024}
+ (2024) Keeping fresh: what is involved in pilot recurrent training \urlprefix\url{https://www.flightradar24.com/blog/aviation-explainer-series/pilot-recurrent-training/}.
+
+\bibitem[{Chen et~al.(2013)Chen, Wang, \protect\BIBand{} Yuan}]{Chen2013}
+Chen W, Wang Y, Yuan Y (2013) Combinatorial multi-armed bandit: General framework and applications. \emph{Proceedings of the 30th International Conference on Machine Learning} 28(1):151--159, \urlprefix\url{http://proceedings.mlr.press/v28/chen13.html}.
+
 \bibitem[{Clark(1961)}]{clark1961greatest}
 Clark CE (1961) The greatest of a finite set of random variables. \emph{Operations Research} 9(2):145--162.
 
-\bibitem[{Kveton et~al.(2014)Kveton, Wen, Ashkan, \protect\BIBand{} Szepesvari}]{Kveton2014TightRB}
-Kveton B, Wen Z, Ashkan A, Szepesvari C (2014) Tight regret bounds for stochastic combinatorial semi-bandits. \emph{ArXiv} abs/1410.0949, \urlprefix\url{https://api.semanticscholar.org/CorpusID:6152788}.
+\bibitem[{Damos(2003)}]{Damos2003}
+Damos DL (2003) Pilot abilities and performance \urlprefix\url{https://www.researchgate.net/publication/252442125_PILOT_ABILITIES_AND_PERFORMANCE}.
+
+\bibitem[{Duruaku et~al.(2024)Duruaku, Nguyen, Sonnenfeld, \protect\BIBand{} Jentsch}]{Duruaku2024}
+Duruaku F, Nguyen B, Sonnenfeld NA, Jentsch F (2024) Unveiling virtual reality overheads and their potential impact on flightcrew training. \emph{The International Journal of Aerospace Psychology} \urlprefix\url{https://www.tandfonline.com/doi/full/10.1080/24721840.2024.2396147}.
+
+\bibitem[{{European Union Aviation Safety Agency}(2020)}]{EASA2020}
+{European Union Aviation Safety Agency} (2020) Certification specifications for aeroplane flight simulation training devices. Technical report, EASA, Cologne, \urlprefix\url{https://www.easa.europa.eu/en/downloads/110530/en}.
+
+\bibitem[{{Federal Aviation Administration}(1995)}]{FAA1995}
+{Federal Aviation Administration} (1995) Airplane simulator qualification. Technical Report AC 120-40B, \urlprefix\url{https://www.faa.gov/documentLibrary/media/Advisory_Circular/120-40B1.pdf}.
+
+\bibitem[{Fu(2015)}]{Fu2015}
+Fu MC (2015) \emph{Handbook of Simulation Optimization} (New York, NY: Springer), \urlprefix\url{https://link.springer.com/book/10.1007/978-1-4939-1384-8}.
+
+\bibitem[{Nadarajah \protect\BIBand{} Kotz(2008)}]{nadarajah2008exact}
+Nadarajah S, Kotz S (2008) Exact distribution of the max/min of two gaussian random variables. \emph{IEEE Transactions on very large scale integration (VLSI) systems} 16(2):210--212.
+
+\bibitem[{{National Transportation Safety Board}(2012)}]{NTSB2012}
+{National Transportation Safety Board} (2012) Review of u.s. civil aviation accidents, calendar year 2010. Technical report, NTSB, Washington, D.C., \urlprefix\url{https://www.ntsb.gov/safety/safety-studies/Documents/ARA1201.pdf}.
+
+\bibitem[{Ross(2014)}]{Ross2014}
+Ross SM (2014) \emph{Introduction to Probability Models} (San Diego, CA: Academic Press), 10th edition.
+
+\bibitem[{Szczepanska et~al.(2025)}]{Szczepanska2025}
+Szczepanska A, et~al. (2025) The role of temperament and personality traits in assessing reaction efficiency in pilot candidates. \emph{Personality and Individual Differences} \urlprefix\url{https://www.sciencedirect.com/science/article/abs/pii/S0191886925000431}.
 
 \bibitem[{Xie et~al.(2016)Xie, Frazier, \protect\BIBand{} Chick}]{xie2016bayesian}
 Xie J, Frazier PI, Chick SE (2016) Bayesian optimization via simulation with pairwise sampling and correlated prior beliefs. \emph{Operations Research} 64(2):542--559.
