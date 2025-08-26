@@ -61,56 +61,10 @@
 \begin{document}
 %%%%%%%%%%%%%%%%
 
-% Outcomment only when entries are known. Otherwise leave as is and
-%   default values will be used.
-%\setcounter{page}{1}
-%\VOLUME{00}%
-%\NO{0}%
-%\MONTH{Xxxxx}% (month or a similar seasonal id)
-%\YEAR{0000}% e.g., 2005
-%\FIRSTPAGE{000}%
-%\LASTPAGE{000}%
-%\SHORTYEAR{00}% shortened year (two-digit)
-%\ISSUE{0000} %
-%\LONGFIRSTPAGE{0001} %
-%\DOI{10.1287/xxxx.0000.0000}%
-
-% Author's names for the running heads
-% Sample depending on the number of authors;
-% \RUNAUTHOR{Jones}
-% \RUNAUTHOR{Jones and Wilson}
-% \RUNAUTHOR{Jones, Miller, and Wilson}
-% \RUNAUTHOR{Jones et al.} % for four or more authors
-% Enter authors following the given pattern:
-%\RUNAUTHOR{}
-%\RUNAUTHOR{Smith and Johnson}
-
-% Title or shortened title suitable for running heads. Sample:
-% \RUNTITLE{Predictive Maintenance in Manufacturing}
-% Enter the (shortened) title:
 \RUNTITLE{Module design for pilots training with full flight simulator}
 
-% Full title. Sample:
-% \TITLE{Optimal Resource Allocation in Humanitarian Logistics: A Stochastic Programming Approach}
-% Enter the full title:
 \TITLE{Module Design for Pilots Training with Full Flight Simulator}
 
-% Block of authors and their affiliations starts here:
-% NOTE: Authors with same affiliation, if the order of authors allows,
-%   should be entered in ONE field, separated by a comma.
-%   \EMAIL field can be repeated if more than one author
-%\ARTICLEAUTHORS{%
-%\AUTHOR{John Doe,\textsuperscript{a} Jane Smith,\textsuperscript{b}}
-%\AFF{\textsuperscript{a}Department of Industrial Engineering, University of XYZ, \EMAIL{john.doe@xyz.edu; \textsuperscript{b}Department of Computer Science, University of ABC, \EMAIL{jane.smith@abc.edu}} 
-%\AUTHOR{John Smith}
-%\AFF{Department of Logistics,
-%University of XYZ, \EMAIL{john.smith@xyz.edu}}
-%
-%\AUTHOR{Emily Johnson}
-%\AFF{Department of Logistics,
-%University of ABC, \EMAIL{emily.johnson@abc.edu}}
-%% Enter all authors
-%} % end of the block
 
 
 \ABSTRACT{
@@ -123,10 +77,6 @@
 
 % Sample
 \KEYWORDS{module design, Full Flight Simulators, simulation optimization}
-
-% Fill in data. If unknown, outcomment the field
-%\KEYWORDS{Stochastic programming, Decision support,Uncertainty, Disaster response, Optimization} 
-%\HISTORY{Received: Month DD, YYYY; Accepted: Month DD, YYYY; Published Online: Month DD, YYYY}
 
 \maketitle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,28 +91,14 @@ It is capable of simulating the entire spectrum of flight operations, from takeo
 
 % Explaining the role in pilot training
 The primary application of the FFS lies in pilot training and qualification maintenance, with a particular emphasis on mandatory recurrent training to renew licenses. Pursuant to regulations set by the International Civil Aviation Organization (ICAO) and national aviation authorities, pilots are required to undergo recurrent training every six to twelve months, typically conducted in an FFS, to validate their proficiency \citep{Flightradar2024}.
-% across a range of scenarios, such as single-engine failures during takeoff or instrument-guided landings in low-visibility conditions  
-%This process not only reinforces technical proficiency but also hones decision-making skills and psychological resilience under simulated high-risk conditions. For example, pilots may practice handling emergencies such as single-engine failures during takeoff or instrument-guided landings in low-visibility conditions, fostering muscle memory and situational awareness \citep{Unexpected2018}. Beyond recurrent training, the FFS supports initial pilot training, type rating conversions (e.g., transitioning from a Boeing 737 to an Airbus A320), and annual qualification assessments. 
-%Failure to meet the standards in these evaluations may result in the suspension of a pilot’s license \citep{FAA2019}.% until additional training is successfully completed, underscoring the critical role of FFS in upholding aviation safety by allowing pilots to practice high-risk maneuvers in a controlled environment \citep{FAA2019}.
-% Discussing the cost and leasing model
-%Due to the prohibitive costs and specialized maintenance requirements, most airlines typically own only a limited number of FFS units outright or instead lease them from manufacturers such as CAE or L3Harris and dedicated flight training centers \citep{IBAAero2023}. This leasing model provides airlines with flexible access to simulators while mitigating the burden of substantial upfront investments and ongoing upkeep. For instance, major airlines may maintain a limited number of FFS units tailored to their primary aircraft types at proprietary training facilities, whereas smaller or emerging carriers predominantly rely on leasing arrangements. Such agreements ensure access to simulators that are regularly updated to align with the latest aircraft configurations and software advancements, thereby maintaining operational relevance \citep{Ecological2024}.
-% Detailing assessment subjects
+
 During qualification assessments, pilots are evaluated through a series of subjects designed to test their ability to manage diverse operational challenges. These subjects are carefully crafted based on real-world flight data and historical incident analyses%, ensuring relevance to actual flight conditions 
 \citep{NTSB2012}. Common subjects include ``Engine Failure on Takeoff,'' where pilots must stabilize the aircraft and execute a safe return to the airport following an engine malfunction immediately after liftoff; ``Low Visibility Approach,'' which tests precision navigation and landing in simulated adverse weather; and ``Emergency Descent and Decompression,'' requiring rapid altitude reduction and oxygen management in response to cabin pressure loss \citep{PilotWorkshops2023}. These assessments, which may span several hours, evaluate technical proficiency, decision-making speed, and crew coordination. Successful completion of these subjects results in license renewal, while deficiencies necessitate further training, ensuring consistent competency across the pilot workforce \citep{EASA2020}.
-
-%Due to the substantial cost of FFS and the critical need for regular pilot assessments, airlines must strategically balance budgetary constraints with the imperative for efficient and effective evaluations. 
-%One of the primary objectives of these assessments is to promptly identify deficiencies in a pilot’s performance, enabling targeted training and improvement to ensure operational safety and compliance with regulatory standards. 
-%However, the current selection of assessment subjects is often randomized or based on the experiential judgment of airlines, which may overlook specific weaknesses or redundantly test areas where pilots are already proficient, leading to inefficiencies in the evaluation process. 
-%This approach risks overlooking specific weaknesses or redundantly testing areas where pilots are already proficient, thereby underutilizing the costly FFS resources. Consequently, there is a pressing need to develop advanced algorithms to optimize the design and implementation of assessment protocols, ensuring that the high-cost simulation environment is used with maximum efficiency and precision.
-%To address these challenges, data-driven algorithms can be developed to intelligently select and prioritize assessment subjects based on individual pilot profiles, historical performance data, and operational requirements. Such algorithms could leverage machine learning techniques to analyze patterns in pilot performance across various subjects, identifying correlations between specific skills and scenario-based outcomes. For example, by examining past assessment results, an algorithm might determine that a pilot who struggles with “Low Visibility Approach” is likely to face difficulties in “Instrument Flying” due to shared skill dependencies, such as precise instrument interpretation and spatial awareness. This insight would allow the algorithm to tailor the assessment to focus on these high-risk areas, rather than employing a one-size-fits-all approach. Additionally, algorithms could incorporate real-time data from flight operations, such as recurrent issues observed in actual flights or emerging trends in incident reports, to dynamically adjust the assessment subjects to align with current safety priorities.
-%The implementation of such algorithms would not only enhance the efficiency of FFS-based assessments but also maximize the return on investment for airlines leasing or maintaining these expensive systems. By focusing assessments on areas of greatest need, airlines can reduce the time spent in simulators, thereby lowering operational costs without compromising safety. Furthermore, these algorithms could support adaptive training programs by recommending personalized follow-up training modules for pilots who exhibit specific weaknesses. For instance, a pilot struggling with “Emergency Descent and Decompression” could be assigned targeted simulator sessions to practice rapid decision-making under pressure, supplemented by classroom-based refresher courses on relevant procedures. This data-driven approach ensures that training resources are allocated effectively, addressing individual deficiencies while maintaining a high standard of pilot competency.
-%Moreover, the development of such algorithms could facilitate predictive analytics to anticipate potential performance issues before they manifest in critical situations. By integrating factors such as a pilot’s experience level, recent flight hours, and performance trends, algorithms could forecast which subjects are most likely to challenge specific pilots, allowing preemptive training interventions. For example, a less experienced pilot might be flagged for additional practice in “Crosswind Landing” based on predictive models indicating a higher likelihood of difficulty due to limited exposure to adverse weather conditions. This proactive approach not only enhances safety but also optimizes the use of FFS resources by reducing the need for repetitive assessments. Ultimately, the adoption of algorithmic solutions in FFS-based pilot assessments represents a transformative step toward precision training, enabling airlines to maintain rigorous safety standards while managing the economic realities of operating high-cost simulation systems.
-%This work focuses on selecting the assessment subjects with dedicated optimization approaches. 
 
 Given the high cost of FFS and the critical need for regular pilot assessments, airlines must carefully balance budgetary constraints with the demand for efficient and effective evaluations. However, the current practice of selecting assessment subjects is often random or reliant on airlines' experiential judgment, which can fail to identify specific deficiencies or redundantly evaluate areas of established proficiency. This work aims to develop dedicated optimization approaches to enhance the selection of assessment subjects, maximizing the effectiveness of the evaluation process.
 
 Suppose there is a pool of $M$ different training modules from which $m$ are selected in one training session due to cost restriction. Ideally, these $m$ subjects should collectively cover a diverse range of skills to efficiently identify a pilot’s weaknesses. 
-%The goal is to maximize the diagnostic value of the assessment by selecting a diverse set of subjects that collectively cover a broad range of skills while minimizing redundancy. 
+
 Unlike conventional approaches, our strategy incorporates the correlations and variability in pilot performance across these modules, driven by individual differences in skills such as hand-eye coordination, spatial awareness, and stress resilience. For instance, pilots with strong coordination skills often excel in subjects like ``Precision Approach'' and ``Instrument Flying,'' as both require similar competencies, including accurate interpretation of flight instruments, stable aircraft control, and anticipation of spatial positioning \citep{Damos2003}. As a result, high performance in one module frequently predicts success in the other due to shared skill requirements. Conversely, pilots with superior stress management capabilities may outperform in complex emergency scenarios such as ``Multi-Engine Failure'', but struggle in subjects like ``Crosswind Landing'' if their coordination is less developed \citep{Szczepanska2025}. These correlations arise from overlapping skill sets and selecting multiple highly correlated subjects may lead to redundant testing.%, as pilots who excel or struggle in one are likely to perform similarly in the others. 
  Accounting for these correlations is therefore critical in optimizing the selection of assessment modules to enhance training efficiency and safety \citep{Duruaku2024}. 
 
@@ -194,14 +130,6 @@ This paper addresses a problem of significant practical relevance, representing 
 
 The remainder of the paper is organized as follows. Section \ref{related works} reviews the related works. Section \ref{problem formulation} formulates the objective function. Section \ref{know means} offers some insights and heuristic algorithms for scenarios where expectations are known. Section \ref{unknown means} presents an algorithm that learns expectations during the optimization process, supported by theoretical guarantees. Section 6 reports numerical experiments. Finally, Section 7 concludes the paper.
 
-%Specifically, subjects with high correlation—such as “Precision Approach” and “Instrument Flying,” which both rely heavily on spatial awareness and instrument interpretation—tend to yield similar performance outcomes. Selecting multiple highly correlated subjects may result in redundant testing, as pilots who excel or struggle in one are likely to perform similarly in the others, thus reducing the likelihood of uncovering unique deficiencies. Therefore, our approach prioritizes selecting subjects with lower inter-correlation to ensure a comprehensive evaluation of a pilot’s skill set within the limited testing framework.
-
-% Addressing individual differences
-%Individual differences, such as hand-eye coordination, spatial awareness, and stress resilience, contribute to variability in pilot performance across these subjects. For instance, pilots with strong coordination skills often excel in subjects like ``Precision Approach'' and ``Instrument Flying,'' as both require similar competencies, including accurate interpretation of flight instruments, stable aircraft control, and anticipation of spatial positioning \citep{Damos2003}. Consequently, high performance in one of these subjects is often correlated with success in the other due to overlapping skill demands. Conversely, pilots with superior stress management capabilities may outperform in complex emergency scenarios such as ``Multi-Engine Failure,'' yet struggle in subjects like ``Crosswind Landing'' if their coordination is less developed \citep{Szczepanska2025}. These performance correlations stem from shared skill sets, such as spatial orientation, which influence outcomes across related tasks. Recognizing these individual variations enables training programs to be tailored to enhance each pilot’s strengths and address weaknesses, thereby optimizing overall competency and safety \citep{Duruaku2024}.
-
-%Full flight simulator (FFS) is a sophisticated simulation system to simulate all aircraft systems that are accessible from the flight deck and are critical to training. For instance, it can simulate the force feedback for the pilot's flight controls, the avionics system, the communication system, the cockpit sounds, the aerodynamics, and the ground handling. It prepares pilots for realistic flight situations and is used for pilots training.
-
-%FFS has extremely high fidelity and is typically expensive the run. This will limit the number of sessions each pilot can try with FFS. Apart from initial training, the pilots must carry out recurrent training at regular intervals (such as every six months) in order to retain their qualification. In addition, pilots’ reactions to different situations and flight skills are different. Therefore, it is important to design efficient personal training sessions for pilots to detect and improve their inadequacies.
 \section{Related works}
 \label{related works}
 We review relevant works in three aspects: existing approaches for pilot training modules design, simulation-based optimization, and combinatorial MAB.
@@ -214,17 +142,7 @@ Our goal is to efficiently identify pilots’ deficiencies through rational modu
 	\label{obj}
 \end{equation}
 where $x_1,...,x_m$ represent the $m$ modules in the training session, taken from the module set $\mathcal{X} = \{x_1,...,x_M\}$, and $Y(x_1,\xi)$ is the score the pilot obtain in module $x_i$. It is evaluated through simulation at FFS. In this model, we assume the score vector in the population $\{Y(x_1),...,Y(x_M)\}$ follows a multivariate normal distribution. For each specific person, his score is a sample from this distribution. In equation \eqref{obj}, the random vector $\xi$ is used to illustrate the randomness in this multivariate normal distribution. The inner minimization is to find the minimum score one pilot obtain across the given $m$ training modules. We take the minimum value as we need to find the weakness of the pilots considering flight safety. The outer minimization is the find the best set of training sessions in detecting the pilot inadequacy.
-%This formulation is not for `personal' module design, as we choose the modules that performs the best in expectation over the whole population. 
 
-%This problem involves two stages. The first stage is to learn the multivariate normal distribution as well as to identify the optimal modules. This is the simulation optimization process. In the two stage, we deploy the recommended session to train the pilots. 
-
-%In the first stage, we use the Bayesian approach. Denote $\mathbf{Y}=\{Y_1,...,Y_M\}$ as $\{Y(x_1),...,Y(x_M)\}$ for convenience. Our assumption is that $\mathbf{Y} \sim \mathcal{N}(\rho, \Sigma)$, where $\rho$ is the $m\times 1$ mean vector and $\Sigma$ is the $m\times m$ covariance matrix. We can apply the conjugate prior for $\rho$ and $\Sigma$. In iteration $t$, we select $l$ modules ($l$ can be different to $m$ and $M$) $x^t_1, ..., x^t_l$ and obtain a score vector observation $Y^t=\{Y(x^t_1,\xi^t),...,Y(x^t_l,\xi^t) \}$. $Y^t$ is then used to update the posterior. 
-
-%\section{Critical questions for now}
-%\begin{enumerate}
-%	\item $Y^t$ is a partial observation vector of $\mathbf{Y}$ if $l\neq M$. How to update the posterior with $Y^t$?
-%	\item We need to design a criterion to select points. 
-%\end{enumerate}
 \section{Insights and Algorithm with Known Score Means}
 \label{know means}
 We first consider an ideal scenario for solving Problem \eqref{obj}, where all parameters of the score distributions for all modules are fully known. That is, we aim to select a limited number of dimensions from a completely known multivariate normal distribution such that the expected value of the minimum score across these dimensions is minimized. It should be noted that, in general, this objective function cannot be simplified into a more computationally convenient form. Existing studies provide closed-form solutions for the expected minimum of two normal distributions \citep{nadarajah2008exact}. However, for more than two normal distributions, prior research remains limited. \cite{clark1961greatest} relied on numerical approximation, that recursively applies a three-variate formula, to compute the expected value of their minimum and has analyzed the accuracy of these approximations through numerical validation. Such computational methods are time-consuming, particularly in our optimization scenario, where we need to repeatedly select $m$ modules and compute the expected value of their minimum scores. Therefore, we aim to derive managerial insights from simple, analytically tractable examples and leverage these insights to develop efficient heuristic methods. This section is divided into two parts: in Section \ref{insights}, we use two simplified examples to obtain managerial insights; in Section \ref{submodular}, we demonstrate that the objective function is submodular, enabling the use of a greedy algorithm to achieve an efficient and theoretically guaranteed approximation; in Section \ref{heuristic}, we utilize these insights to develop an efficient heuristic method based on greedy approach.
@@ -236,48 +154,11 @@ This subsection examines two simplified examples to investigate how parameters i
 \subsubsection{Bivariate normal example}
 \label{bivariate normal}
 
-%We need to compare $\text{E}_{\xi_1, \xi_2}[\min \{\mu_1+A\xi_1, \mu_2+B_1\xi_1+B_2\xi_2 \}]$ and $\text{E}_{\xi_1, \xi_2}[\min \{\mu_1+A\xi_1, \mu_2+B\xi_2 \}]$, where $\xi_1, \xi_2$ are independent standard normal random variable. All the coefficients are positive and that $B_1^2+B_2^2=B^2$.
-
 For any two Gaussian random number $X_1\sim N(\mu_1,\sigma^2_1)$, $X_2\sim N(\mu_2,\sigma^2_2)$ with correlation $\rho$, the expectation $\text{E}[\min\{X_1, X_2\}]$ takes the following form \citep{clark1961greatest}:
 $$
 \text{E}[\min\{X_1, X_2\}] = \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta}) - \theta \phi(\frac{\mu_2-\mu_1}{\theta} ),
 $$
 where $\phi$, $\Phi$ are cdf and pdf for standard normal distribution, respectively, and $\theta = \sqrt{\sigma^2_1+\sigma^2_2-2\rho \sigma_1\sigma_2} = \sqrt{\text{var}(X_1-X_2)}$.
-
-%We define $X_1=\mu_1+A\xi_1 \sim N(\mu_1, A^2)$, $X_2=\mu_2+B_1\xi_1+B_2\xi_2 \sim N(\mu_2, B_1^2+B_2^2)$, $X_3=\mu_2+B\xi_2 \sim N(\mu_2,B^2)$. Thus, 
-%$$
-%\text{cov}(X_1, X_2) = AB_1, \text{cov}(X_1, X_3) = 0.
-%$$
-%$$
-%\text{var}(X_1-X_2) = A^2+B_1^2+B_2^2-2AB_1, \text{var}(X_1- X_3) =A^2+B^2.
-%$$
-%Therefore,
-%$$
-%\text{E}[\min\{X_1, X_2\}]= \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta_1}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta_1}) - \theta_1 \phi(\frac{\mu_2-\mu_1}{\theta_1} ),
-%$$
-%$$
-%\text{E}[\min\{X_1, X_3\}]= \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta_2}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta_2}) - \theta_2 \phi(\frac{\mu_2-\mu_1}{\theta_2} ),
-%$$
-%where $\theta_1=\sqrt{A^2+B_1^2+B_2^2-2AB_1}$, $\theta_2=\sqrt{A^2+B^2}$.
-%Denote:
-%$$
-%f(\theta) =  \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta}) - \theta \phi(\frac{\mu_2-\mu_1}{\theta} ) = (\mu_1-\mu_2)\Phi(\frac{\mu_2-\mu_1}{\theta}) +\mu_2- \theta \phi(\frac{\mu_2-\mu_1}{\theta} ).
-%$$
-%We have
-%$$
-%f'(\theta) = (\mu_1-\mu_2)\phi(\frac{\mu_2-\mu_1}{\theta})\frac{\mu_2-\mu_1}{-\theta^2}-\phi(\frac{\mu_2-\mu_1}{\theta})-\theta\phi(\frac{\mu_2-\mu_1}{\theta})\frac{\mu_2-\mu_1}{-\theta} \frac{\mu_2-\mu_1}{-\theta^2}
-%$$
-%$$
-%=-\phi(\frac{\mu_2-\mu_1}{\theta}) <0
-%$$
-%
-%Therefore, $f_\theta$ is a decreasing function w.r.t. $\theta$. We have the following conclusions:
-%\begin{enumerate}
-%	\item When $B_1^2+B_2^2=B^2$ and all coefficients are positive, we have $\theta_1=\sqrt{A^2+B^2-2AB_1}<\theta_2$. Hence, $\text{E}[\min\{X_1, X_2\}]>\text{E}[\min\{X_1, X_3\}]$.
-%	\item When $B_1^2+B_2^2=B^2$ and $B_1<0$, we have $\theta_1=\sqrt{A^2+B^2-2AB_1}>\theta_2$. Hence, $\text{E}[\min\{X_1, X_2\}]<\text{E}[\min\{X_1, X_3\}]$.
-%\end{enumerate}
-%
-%Another way of presenting these results. Suppose $X_1\sim N(\mu_1,\sigma^2_1)$, $X_2\sim N(\mu_2,\sigma^2_2)$ with correlation $\rho$ and $\theta = \sqrt{\sigma^2_1+\sigma^2_2-2\rho \sigma_1\sigma_2} = \sqrt{\text{var}(X_1-X_2)}$. 
 
 Denote $f=\text{E}[\min\{X_1, X_2\}] $. We have:
 \begin{equation}
@@ -305,8 +186,6 @@ The relation between $f$ and the variance for each individual variable is not mo
 	\begin{enumerate}
 		\item When $\rho<\frac{\sigma_1}{\sigma_2}$ (specifically when $\rho<0$), a larger value of $\sigma_1$ is preferred.
 		\item When $\rho>\frac{\sigma_1}{\sigma_2}$, smaller value of $\sigma_1$ is preferred. This result may appear counter-intuitive. To gain insight, consider a special case where $\rho = 1$ and $\sigma_1<\sigma_2$. In this scenario, $X_1$ and $X_2$ are positively linear dependent, with $ X_1 = \frac{\sigma_1}{\sigma_2} X_2$. Consequently, $X_1$ and $X_2$ always share the same sign. When $X_1, X_2 > 0$, the minimum is $\min\{X_1, X_2\} = X_1 > 0$, which increases with $\sigma_1$. When $X_1, X_2 < 0$, the minimum is $\min\{X_1, X_2\} = X_2 < 0$, which is independent of $\sigma_1$. Thus, a larger $\sigma_1$ increases the objective function value in this case. Although a larger $\sigma_1$ reduces $X_1$ when negative, these negative values do not contribute to the objective function as long as $\sigma_1 < \sigma_2$. This effect diminishes slightly as $\rho$ deviates from 1, but negative values of $X_1$ remain less likely to influence the objective function until $\rho < \frac{\sigma_1}{\sigma_2}$.
-		
-		%We can find that they always have the same sign and when $X_1$ and $X_2>0$, $\min\{X_1,X_2\}=X_1>0$, which increases with $\sigma_1$. When $X_1$ and $X_2<0$,  $\min\{X_1,X_2\}=X_2<0$, which does not change with $\sigma_1$. Therefore, in this case, a larger value of $\sigma_1$ will increase the objective value. Although a larger value of $\sigma_1$ will reduce $X_1$ when it is negative, these negative values, however, are not counted in the objective function as long as $\sigma_1<\sigma_2$. This situation will slightly gets better when $\rho$ deviates from 1, but still makes less negative values of $X_1$ to be counted in the objective function until $\rho<\frac{\sigma_1}{\sigma_2}$.
 	\end{enumerate}
 
 
@@ -319,11 +198,7 @@ In this case, each random variable can be represented as $X_i = \mu + \sigma(\sq
 $$f = \text{E}[\min\{X_1,...,X_m\}] =  \text{E}[\min\{\mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_1 ),...,\mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_m )\}] $$
 $$=\mu+ \sigma\text{E}[\min\{\sqrt{\rho}W + \sqrt{1-\rho} N_1 ,...,\sqrt{\rho}W + \sqrt{1-\rho} N_m \}]  $$
 $$=\mu + \sigma\text{E}[\sqrt{\rho}W+ \sqrt{1-\rho} \min\{N_1,...,N_m\} ] =\mu + \sigma\sqrt{1-\rho} \text{E}[\min\{N_1,...,N_m\} ]. $$
-%This had no analytical solution. Some special cases:
-%\begin{enumerate}
-%	\item When $\rho =1$, $f=\mu$.
-%	\item When $\rho =0$, $f = \mu+ \sigma\text{E}[\min\{N_1 ,...,N_m \}]$. 
-%\end{enumerate}
+
 Noted that $\text{E}[\min\{N_1 ,...,N_m \}]$ is a constant for a given $m$. It is negative and can be approximated as 
 $$-\sqrt{2 \ln m} + \frac{\ln \ln m + \ln 4\pi}{ 2 \sqrt{2 \ln m}}. $$
 Hence, $f\approx \mu - \sigma\sqrt{1-\rho}\sqrt{2 \ln m}$. 
@@ -347,13 +222,88 @@ We summarize the managerial insights derived from these examples for decision-ma
 \end{enumerate}
 According to Lemma 3, when other factors remain constant, a smaller mean vector directly reduces the expected minimum value. Furthermore, regarding the other two points, the lower the correlations and the larger the variances of the $m$ variables, the more independently each variable can take potentially smaller values, thereby reducing the minimum value.
 
-%Intuitively, when $\rho$ decreases, the $m$ variables are less correlated and thus each of them has larger probability to take smaller values more independently. Therefore, the objective value increases as $\rho$. 
-
-\subsection{Demonstration of sub-modular objective function}
+%-----------------------------------------------------------------------------------------
+\subsection{Demonstration of Submodular Objective Function and Greedy Algorithm}
 \label{submodular}
 
+The analytical insights from Section 4.1 provide intuitive guidelines for module selection. In this subsection, we unveil a deeper, more powerful mathematical property of our objective function—submodularity. This property allows us to tackle the complex combinatorial optimization problem using a greedy algorithm with a provable performance guarantee.
+
+We first recall the definition of submodularity. For a finite set $\mathcal{V}$ (the set of all training modules $\mathcal{X}$ in our context), a set function $R: 2^{\mathcal{V}} \to \mathbb{R}$ is \textbf{submodular} if it satisfies the diminishing returns property: for any subsets $S \subseteq T \subseteq \mathcal{V}$ and any element $x \in \mathcal{V} \setminus T$,
+$$
+R(S \cup \{x\}) - R(S) \geq R(T \cup \{x\}) - R(T).
+$$
+This means the marginal gain of adding a new element $x$ to a set $S$ is at least as large as the marginal gain of adding the same element to a superset $T$ of $S$.
+
+In our problem, we define the set function for a module subset $S \subseteq \mathcal{X}$ as $R(S) = \mathbb{E}[\min\{Y(x) : x \in S\}]$. Our goal is to minimize $R(S)$. To frame this for a greedy algorithm that maximizes a utility, we define a utility function $U(S) = y_{\text{max}}-R(S)$. Here $y_{\text{max}}$ is the maximum score a pilot could achieve on any module. Then we give the following theorem:
+
+\begin{theorem}
+\label{thm:submodular}
+Given that the module score vector $\mathbf{Y} = (Y(x_1,\xi),...,Y(x_m,\xi))$ follows a multivariate normal distribution $\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})$. For $S \subseteq \mathcal{X}$, the set function $U(S) = y_{\text{max}}-R(S) = y_{\text{max}}-\mathbb{E}[\min\{Y(x) : x \in S\}]$ is:
+\begin{enumerate}
+    \item \textbf{Monotone Increasing}: For any $S \subseteq T \subseteq \mathcal{X}$, $U(S) \leq U(T)$.
+    \item \textbf{Submodular}: For any $S \subseteq T \subseteq \mathcal{X}$ and any module $x \in \mathcal{X} \setminus T$, $U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T)$.
+\end{enumerate}
+\end{theorem}
+\textit{Proof.} Monotone Increasing is quite obvious. Here we show that $U(\cdot)$ is submodular. i.e., for any $S \subseteq T \subseteq \mathcal{X}$ and $x \in \mathcal{X} \setminus T$:
+$$
+U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
+$$
+which is equivalent to:
+$$
+R(S)-R(S \cup \{x\}) \geq R(T) - R(T \cup \{x\}).
+$$
+
+Let $Y_S = \min_{i \in S} Y(i,\xi)$, $Y_T = \min_{i \in T} Y(i,\xi)$, $Y_x = Y(x,\xi)$. Then $Y_T \leq Y_S$. We have:
+\[
+R(S) - R(S \cup \{x\}) = \mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right],
+\]
+\[
+R(T) - R(T \cup \{x\}) = \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right].
+\]
+
+Consider the function $g(y) = y - \min\{y, x\}$. For fixed $x$:
+\begin{itemize}
+    \item If $y \leq x$, then $g(y) = 0$;
+    \item If $y > x$, then $g(y) = y - x$.
+\end{itemize}
+Thus, $g(y)$ is non-decreasing in $y$. Since $Y_A \geq Y_B$, we have:
+\[
+Y_S - \min\{Y_S, Y_x\} \geq Y_T - \min\{Y_T, Y_x\}.
+\]
+Taking expectation:
+\[
+\mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right] \geq \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right],
+\]
+which implies:
+$$
+U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
+$$
+Therefore, $U(\cdot)$ is submodular.\hfill $\blacksquare$
+
+
+Theorem \ref{thm:submodular} establishes that $U(S)$ is a monotone increasing, submodular function. Therefore, the problem of selecting a set $S$ of size $m$ to maximize $U(S)$ is an instance of maximizing a monotone submodular function under a cardinality constraint.
+
+For this class of problems, the classical greedy algorithm provides a strong approximation guarantee. The algorithm starts with an empty set $S_0 = \emptyset$. At each step $k = 1, ..., m$, it adds the module $x$ that provides the highest marginal gain:
+\begin{equation}
+x_{k} = \argmax_{x \in \mathcal{X} \setminus S_{k-1}} \left[ U(S_{k-1} \cup \{x\}) - U(S_{k-1}) \right],
+\end{equation}
+and then updates $S_k = S_{k-1} \cup \{x_k\}$.
+
+\begin{theorem}[\cite{nemhauser1978analysis}]
+\label{thm:greedy_guarantee}
+Let $S^*$ be the optimal set of size $m$ that maximizes $U(S)$, and let $S^{\text{greedy}}_m$ be the set of size $m$ obtained by the greedy algorithm. If $U$ is a monotone, non-negative, submodular function, then the greedy algorithm achieves the following performance guarantee:
+$$
+U(S^{\text{greedy}}_m) \geq \left(1 - \frac{1}{e}\right) U(S^*) \approx 0.632 \cdot U(S^*).
+$$
+This guarantee holds regardless of the order of the modules added after the first optimal choice, making the greedy algorithm highly effective for large-scale problems where exhaustive search is infeasible.
+\end{theorem}
+
+This theoretical guarantee is significant. It ensures that even without computing the computationally expensive exact optimal solution, the greedy heuristic yields a solution that is provably within at least approximately 63\% of the optimal value in the worst case. This result justifies the development of greedy-inspired heuristic methods in the next section. Although calculating the exact marginal gain $U(S \cup \{x\}) - U(S)$ for each candidate module $x$ may require numerical integration of the expected minimum (as discussed in Section 4.1), the submodularity property allows us to use the managerial insights derived in Section 4.1—favoring modules with lower means, higher variances, and lower correlations—as effective proxies for the true marginal gain when designing efficient heuristics.
+%-----------------------------------------------------------------------------------------
 \subsection{Heuristic algorithms}
 \label{heuristic}
+
+
 
 \section{A Combinatorial MAB Algorithm for Unknown Score Means}
 \label{unknown means}
@@ -397,89 +347,355 @@ $$
 $$ 
 where $\Sigma_n({\bf x},{\bf x}) = AA^T$, $\Lambda({\bf x},{\bf x}) = BB^T$, and both ${\bf \tilde{z}}_k$ and ${\bf z}_j$ are iid standard normal vectors of length $m$.
 
+%--------------------------------------------------------------------------------------
+\section{Theoretical analysis}
+\subsection{Convergence analysis}
+\begin{lemma}
+For any $\epsilon > 0$ and any $n = T_{i,t-1} \in \mathbb{Z}_+$, we have :
+$$
+\textnormal{Pr}[|\mu_{t-1}(i)-\mu(i)|\geq \epsilon_i]\leq \exp(-\frac{n\epsilon_i^2}{2\sigma^2(i)})
+$$
+\end{lemma} 
+\textit{Proof.} Fix $t\geq 1$ and $i\in [m]$. Conditioned on $(\mathbf{y}_1,...,\mathbf{y}_{t-1}), \{S_1,...,S_{t-1}\}$ are deterministic, and $\mu(i)\thicksim N(\mu_{t-1}(i),\sigma_{t-1}^2(i))$. Now, if $r\thicksim N(0,1)$,then: 
+$$\begin{gathered}
+\mathrm{Pr}\{r>c\}
+\begin{aligned}
+=e^{-c^2/2}(2\pi)^{-1/2}\int e^{-(r-c)^2/2-c(r-c)}dr
+\end{aligned} \\
+\leq e^{-c^2/2}\Pr\{r>0\}=(1/2)e^{-c^2/2}
+\end{gathered}$$
+for $c>0$, since $e^{-c(r-c)}\leq 1$ for $r\geq c$. Therefore, $\textnormal{Pr}\{|\mu_{t-1}(i)-\mu(i)|>\lambda_i \sigma_{t-1}(i)\}\leq e^{-\lambda_i/2}$
+
+Assume that arm $i$ has been observed $n$ times, yielding $n$ observations. Further assume that these $n$ observations are our only observational data. Using GP modeling, we obtain:
+\[
+\sigma_n^2(i) = k(i,i) - \mathbf{k}_n^\top(i)(\mathbf{K}_n + \sigma^2(i)\mathbf{I}_n)^{-1}\mathbf{k}_n(i)
+\]
+where:
+\begin{itemize}
+    \item $\mathbf{k}_n(i) = [k(i,i),\dots,k(i,i)]^\top \in \mathbb{R}^n$
+    \item $\mathbf{K}_n = \sigma_0^2\mathbf{1}_n\mathbf{1}_n^\top$ ($\sigma_0^2 = k(i,i)$)
+\end{itemize} % itemize 已闭合
+
+For $\mathbf{A} = \sigma^2(i)\mathbf{I}_n$, $\mathbf{u} = \sigma_0^2\mathbf{1}_n$, $\mathbf{v} = \mathbf{1}_n$, by \textbf{Sherman-Morrison} formula:
+\begin{equation*}
+\begin{aligned}
+(\mathbf{K}_n + \sigma^2(i)\mathbf{I}_n)^{-1} &= \mathbf{A}^{-1} - \frac{\mathbf{A}^{-1}\mathbf{u}\mathbf{v}^\top\mathbf{A}^{-1}}{1 + \mathbf{v}^\top\mathbf{A}^{-1}\mathbf{u}} \\
+&= \frac{1}{\sigma^2(i)}\mathbf{I}_n - \frac{\sigma_0^2/\sigma(i)^4 \cdot \mathbf{1}_n\mathbf{1}_n^\top}{1 + n\sigma_0^2/\sigma^2(i)}
+\end{aligned}
+\end{equation*} 
+
+So we have:
+\[
+\mathbf{k}_n^\top(i)(\mathbf{K}_n + \sigma^2(i)\mathbf{I}_n)^{-1}\mathbf{k}_n(i) = \frac{\sigma_0^4n}{\sigma^2(i) + n\sigma_0^2}
+\]
+
+Substitute the results into the posterior variance formula:
+\begin{equation*}
+\begin{aligned}
+\sigma_n^2(i) &= \sigma_0^2 - \frac{\sigma_0^4n}{\sigma^2(i) + n\sigma_0^2} = \frac{\sigma_0^2\sigma^2(i)}{\sigma^2(i) + n\sigma_0^2} \\
+&= \frac{n\sigma_0^2}{\sigma^2(i)+n\sigma_0^2}\cdot \frac{\sigma^2(i)}{n} \leq \frac{\sigma^2(i)}{n}
+\end{aligned}
+\end{equation*} 
+Considering that adding other observation points will not increase the uncertainty of arm $i$, so we have $\sigma_{t-1}(i) \leq \sigma_n(i) \leq \frac{\sigma(i)}{\sqrt{n}}$. Therefore:
+
+$$\textnormal{Pr}\left\{|\mu_{t-1}(i)-\mu(i)|>\lambda_i \frac{\sigma(i)}{\sqrt{n}}\right\}\leq\textnormal{Pr}\{|\mu_{t-1}(i)-\mu(i)|>\lambda_i \sigma_{t-1}(i)\}\leq e^{-\lambda_i/2}$$
+Denote $\epsilon_i = \lambda_i \frac{\sigma(i)}{\sqrt{n}}$, then we have $\textnormal{Pr}[|\mu_{t-1}(i)-\mu(i)|\geq \epsilon_i]\leq \exp(-\frac{n\epsilon_i^2}{2\sigma^2(i)})$  \hfill $\blacksquare$
+
+\begin{lemma}
+If for any $i \in [m]$ we have $\mu_1(i) \geq \mu_2(i)$ (Abbreviated as $\boldsymbol{\mu}_1 \geq \boldsymbol{\mu}_2)$, then for any super arm $S \in \mathcal{F}$,we have:
+$$
+r_{P_1}(S) \geq r_{P_2}(S)
+$$	
+\end{lemma}
+
+\begin{lemma}
+If for any $i \in [m]$ we have $\mu_1(i) - \mu_2(i) \leq \Lambda_i (\Lambda_i>0)$ ($\boldsymbol{\mu}_1 \geq \boldsymbol{\mu}_2$). For any super arm $S \in \mathcal{F}$, let $\Lambda_S = \mathop{\max}\limits_{i\in S}\Lambda_i$, then we have:
+$$
+r_{P_1}(S) - r_{P_2}(S) \leq \Lambda_S
+$$
+\end{lemma}
+\textit{Proof.} For any super arm $S = \{i_1,...,i_n\}$, denote the corresponding mean vectors in distributions $P_1$ and $P_2$ as $\boldsymbol{\mu}_{1,S} = [\mu_1(i_1),...,\mu_1(i_n)]^T$, $\boldsymbol{\mu}_{2,S} = [\mu_1(i_2),...,\mu_2(i_n)]^T$. Note that $P_1$ and $P_2$ are both multivariate normal distributions, and have same covariance matrices $\Sigma_S$.
+
+Now, let $\mathbf{z} = [z_1,...,z_n]^T \sim N(0,\Sigma_S)$. We have:
+$$
+r_{P_1}(S) = \idotsint_\mathbf{z} \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\} \,dz_1 \dots dz_k
+$$
+$$
+r_{P_2}(S) = \idotsint_\mathbf{z} \min \{\mu_2(i_1)+z_1,\mu_2(i_2)+z_2, \dots ,\mu_2(i_n)+z_n\} \,dz_1 \dots dz_k
+$$
+
+Denote $f(\boldsymbol{\mu}_{1,S}+\mathbf{z}) = \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\}$ and $f(\boldsymbol{\mu}_{2,S}+\mathbf{z}) = \min \{\mu_2(i_1)+z_1,\mu_2(i_2)+z_2, \dots ,\mu_2(i_n)+z_n\}$. We want to show that $f(\mu_{1,S}+\mathbf{z})-f(\mu_{2,S}+\mathbf{z})\leq \Lambda_S$.
+
+If there exists $i,j\in S=\{i_1,...,i_n\}$ s.t. $\mu_1(i)+z_i = f(\mu_{1,S}+\mathbf{z})$, $\mu_2(j)+z_j = f(\mu_{2,S}+\mathbf{z})$, $f(\mu_{1,S}+\mathbf{z})-f(\mu_{2,S}+\mathbf{z})>\Lambda_S$. Since $\mu_1(i)+z_i = f(\mu_{1,S}+\mathbf{z}) = \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\}$, we have: $\mu_1(j)+z_j> \mu_1(i)+z_i$.
+
+Thus $\mu_1(j)-\mu_2(j) = \mu_1(j)+z_j-(\mu_2(j)+z_j)>\mu_1(i)+z_i-(\mu_2(j)+z_j)>\Lambda_S$, which is contradict with $\boldsymbol{\mu}_1 \geq \boldsymbol{\mu}_2$.
+
+Therefore
+
+$$
+\begin{aligned}
+r_{P_1}(S)-r_{P_2}(S) &= \idotsint_\mathbf{z} f(\boldsymbol{\mu}_{1,S}+\mathbf{z})-f(\boldsymbol{\mu}_{2,S}+\mathbf{z}) \,dz_1 \dots dz_k\\
+&\leq \idotsint_\mathbf{z} \Lambda_S \,dz_1 \dots dz_k = \Lambda_S 
+\end{aligned}
+$$
+\hfill $\blacksquare$
+
+\begin{lemma}
+Define an event in each round $t(m+1)\leq t \leq T$:
+$$
+	\mathcal{H}_t = \left\{0<\Delta_{S_t}\leq 2\mathop{\max}\limits_{i\in S_t}\sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}\right\}
+$$
+Then the $\alpha$-approximation regret in $T$ rounds is at most
+$$
+	\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}] + (\frac{\pi^2}{6}+1)\alpha M m.
+$$
+\end{lemma}
+\textit{Proof.} For each super arm $S$, we define:
+$$
+\Delta_S = \text{max}\{r_P(S) - \alpha \cdot r_P(S^*), 0 \}
+$$
+
+From $m+1\leq t \leq T$, Define an event:
+$$
+\varepsilon_t = \left\{\text{there exists } i \in [m] \text{ such that } |\hat{\mu}_{T_{i,t-1}}^i-\mu^i| \geq \sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}\right\}
+$$
+
+We bound the $\alpha$-approximation regret as:
+
+\begin{equation}
+	\begin{aligned}
+		  \text{Reg}_{P,\alpha}(T) &= \sum_{t=1}^{T}\mathbb{E}\big[\alpha r_P(S^*) - r_P(S_t)\big]\\
+		  &\leq \sum_{t=1}^{T}\mathbb{E}[\Delta_{S_t}]\\
+		  &=\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}]+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]\\
+		  &+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}]
+	\end{aligned}
+\end{equation}
+
+(a) the first term 
+
+Let $M  = 100$, The first term can be trivially bounded as:
+\begin{equation}
+	\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}] \leq \sum_{t=1}^{m}\alpha \cdot r_P(S^*) \leq m \cdot \alpha M
+\end{equation}
+
+(b) the second term 
+
+By Lemma 1 we know that for any $i \in [m],t\geq m+1$, denote $c_i = \sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}$, we have:
+$$
+	\text{Pr}[|\hat{\mu}_{t-1}(i)-\mu(i)|\geq c_i] \leq \exp(-\frac{nc_i^2}{2\sigma^2(i)}) = t^{-3}
+$$
+
+Therefore
+\begin{equation}
+	\begin{aligned}
+		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}]
+		% &\leq \sum_{t=m+1}^{T} \sum_{i=1}^{m} \sum_{l=1}^{t-1}\text{Pr}[|\hat{\mu}_{t-1}(i)-\mu(i)|\geq c_i] \\
+		&\leq \sum_{t=m+1}^{T} \sum_{i=1}^{m} \sum_{l=1}^{t-1}t^{-3} \\
+		&\leq m \sum_{t=m+1}^{T}t^{-2} \\
+		&\leq \frac{\pi^2}{6}m
+	\end{aligned}
+\end{equation}
+
+and then the second term in (6) can be bounded as
+\begin{equation}
+	\begin{aligned}
+		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]\leq \frac{\pi^2}{6}m \cdot (\alpha \cdot r_P(S^*)) \leq \frac{\pi^2}{6}\alpha M m
+	\end{aligned}
+\end{equation}
+
+(c) the third term 
+
+We fix $t>m$ and first asuume $\lnot \varepsilon_t$ happens. For each $i \in [m]$, since $\lnot \varepsilon_t$ happens, we have:
+\begin{equation}
+	|\hat{\mu}_{T_{i,t-1}}(i)-\mu(i)| < c_i ~~~ \forall i \in [m]
+\end{equation}
+
+Recall that in round $t$, the input to the oracle is $\underline{P} = \mathcal{N}(\underline{\boldsymbol{\mu}},\Sigma)$, where the mean vector of $\underline{P}$ is:
+\begin{equation}
+	\underline{\mu}(i) = \hat{\mu}(i)-c_i ~~~ \forall i \in [m]
+\end{equation}
+
+From (10) and (11) we  konw that $\mu(i)>\underline{\mu}(i)>\mu(i)-2c_i$ for all $i \in [m]$. Thus, from Lemma 2 we have:
+\begin{equation}
+	r_{\underline{P}}(S)\leq r_P(S) ~~~ \forall S \in \mathcal{F}.
+\end{equation}
+
+and from Lemma 3 we have:
+\begin{equation}
+	r_{\underline{P}}(S)\geq r_P(S)-2\Lambda_S ~~~ \forall S \in \mathcal{F}.
+\end{equation}
+where $\Lambda = \mathop{\max}\limits_{i}c_i$
+
+Also, from the fact that the algorithm chooses $S_t$ in the t-th round, we have:
+\begin{equation}
+	r_{\underline{P}}(S_t)\leq \alpha \cdot \mathop{\min}\limits_{S \in \mathcal{F}}r_{\underline{P}}(S) \leq \alpha \cdot r_{\underline{P}}(S^*).
+\end{equation}
+From (12),(13) and (14) we have:
+\begin{equation}
+	r_P(S)-2\Lambda_S \leq r_{\underline{P}}(S_t) \leq \alpha \cdot r_{\underline{P}}(S^*) \leq \alpha \cdot r_P(S^*)
+\end{equation}
+
+which implies:
+$$
+	\Delta_{S_t} \leq 2\Lambda_S
+$$
+
+Therefore, when $\lnot \varepsilon_t$ happens, we always have $\Delta_{S_t}\leq 2\mathop{\max}\limits_{i\in S_t}c_i$.
+
+This implies:
+$$
+	\{\lnot \varepsilon_t, \Delta_{S_t}>0\}\Longrightarrow \{0<\Delta_{S_t}\leq 2\mathop{\max}\limits_{i\in S_t}c_i\}=\mathcal{H}_t.
+$$
+
+Hence, the third term in (6) can be bounded as:
+\begin{equation}
+	\begin{aligned}
+		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}] &= \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t. \Delta_{S_t}>0\}\Delta_{S_t}]\\
+		&\leq \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}]
+	\end{aligned}
+\end{equation}
+
+Finally, by combining (6),(7),(9),(16) we have:
+$$
+	\text{Reg}_{P,\alpha}(T) \leq \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}] + (\frac{\pi^2}{6}+1)\alpha M m
+$$
+\hfill $\blacksquare$
+
+Now it remains to bound $\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}]$.
+
+Define two decreasing sequences of positive contants:
+$$\begin{aligned}
+1 & =\beta_0>\beta_1>\beta_2>\ldots \\
+ & \alpha_1>\alpha_2>\ldots
+\end{aligned}$$
+
+such that $\lim_{k \to \infty}\alpha_k = \lim_{k \to \infty}\beta_k=0$. We choose $\{\alpha_k\}$ and $\{\beta_k\}$ as in Theorem 4 of \citep{Kveton2014TightRB}, which satisfy:
+
+\begin{equation}\sqrt{6}\sum_{k=1}^\infty\frac{\beta_{k-1}-\beta_k}{\sqrt{\alpha_k}}\leq1\end{equation}
+
+and
+
+\begin{equation}\sum_{k=1}^\infty\frac{\alpha_k}{\beta_k}<267.\end{equation}
+
+For $t \in \{m+1,...,T\}$ and $k \in \mathbb{Z}_+$, let
+$$m_{k,t}=
+\begin{cases}
+\alpha_k\left(\frac{2\sigma K}{\Delta_{S_t}}\right)^2\cdot \ln(T) & \Delta_{S_t}>0, \\
++\infty & \Delta_{S_t}=0,
+\end{cases}$$
+
+and 
+$$ A_{k,t} = \{i \in S_t|T_{i,t-1}\leq m_{k,t}\}.$$
+
+Then we define an event:
+$$\mathcal{G}_{k,t}=\{|A_{k,t}|\geq\beta_kK\},$$
+
+which means “in the $t-th$ round, at least $\beta_{k}K$ arms in $S_{t}$ had been observed at most $m_{k,t}$ times."
+
+\begin{lemma}
+In the $t-th$ round, at least $\beta_{k}K$ arms in $S_t$ had been observed at most $m_{k,t}$ times.
+\end{lemma}
+
+\textit{Proof.} Assume that $\mathcal{H}_t$ happens and that none of $\mathcal{G}_{1,t},\mathcal{G}_{2,t},...$ happens. Then $|A_{k,t}|<\beta_{k}K$ for all $k\in \mathbb{Z}_+$.
+
+Let $A_{0,t} = S_t$ and $\bar{A}_{k,t}=S_t\setminus A_{k,t}$ for $k\in \mathbb{Z}_+\cup \{0\}$. It is easy to see $\bar{A}_{k-1,t}\subseteq\bar{A}_{k,t}$ for all $k\in \mathbb{Z}_+$. Note that $\lim_{k \to \infty}m_{k,t}=0$. Thus there exists $N\in \mathbb{Z}_+$ such that $\bar{A}_{k,t}=S_t$ for all $k\geq N$, and then we have $S_t=\bigcup_{k=1}^\infty\left(\bar{A}_{k,t}\setminus\bar{A}_{k-1,t}\right)$. Finally, note that for all $i\in \bar{A}_{k,t}$, we have $T_{i,t-1}>m_{k,t}$. Therefore
+$$\begin{aligned}
+\sum_{i\in S_t}\frac{1}{\sqrt{T_{i,t-1}}} & =\sum_{k=1}^\infty\sum_{i\in\bar{A}_{k,t}\setminus\bar{A}_{k-1,t}}\frac{1}{\sqrt{T_{i,t-1}}}\leq\sum_{k=1}^\infty\sum_{i\in\bar{A}_{k,t}\setminus\bar{A}_{k-1,t}}\frac{1}{\sqrt{m_{k,t}}} \\
+ & =\sum_{k=1}^\infty\frac{\left|\bar{A}_{k,t}\setminus\bar{A}_{k-1,t}\right|}{\sqrt{m_{k,t}}}=\sum_{k=1}^\infty\frac{\left|A_{k-1,t}\setminus A_{k,t}\right|}{\sqrt{m_{k,t}}}=\sum_{k=1}^\infty\frac{\left|A_{k-1,t}\right|-\left|A_{k,t}\right|}{\sqrt{m_{k,t}}} \\
+ & =\frac{|S_t|}{\sqrt{m_{1,t}}}+\sum_{k=1}^\infty|A_{k,t}|\left(\frac{1}{\sqrt{m_{k+1,t}}}-\frac{1}{\sqrt{m_{k,t}}}\right) \\
+ & <\frac{K}{\sqrt{m_{1,t}}}+\sum_{k=1}^\infty\beta_kK\left(\frac{1}{\sqrt{m_{k+1,t}}}-\frac{1}{\sqrt{m_{k,t}}}\right) \\
+ & =\sum_{k=1}^\infty\frac{(\beta_{k-1}-\beta_k)K}{\sqrt{m_{k,t}}}.
+\end{aligned}$$
+
+Note that we asuume $\mathcal{H}_t$ happens. Denote $\sigma = \mathop{\max}\limits_{i\in S_t}\sigma(i)$, then we have: 
+$$\begin{aligned}
+\Delta_{S_t} & \leq 2\Lambda_S=2\mathop{\max}\limits_{i\in S_t}\sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}\\
+&\leq 2\sigma \cdot \sqrt{6\ln(T)}\cdot \mathop{\max}\limits_{i\in S_t}\frac{1}{\sqrt{T_{i,t-1}}}\\
+&\leq 2\sigma \cdot \sqrt{6\ln(T)}\cdot \sum_{i\in S_t}\frac{1}{\sqrt{T_{i,t-1}}}\\
+&<2\sigma \cdot \sqrt{6\ln(T)}\cdot \sum_{k=1}^\infty\frac{(\beta_{k-1}-\beta_k)K}{\sqrt{m_{k,t}}}\\
+&=\sqrt{6}\sum_{k=1}^\infty\frac{\beta_{k-1}-\beta_k}{\sqrt{\alpha_k}}\cdot \Delta_{S_t}\leq\Delta_{S_t},
+\end{aligned}$$
+
+We reach a contradiction here. The proof of lemma 5 is completed.
+\hfill $\blacksquare$
+
+By Lemma 5 we have
+$$\sum_{t=m+1}^T\mathbb{I} \{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\Delta_{S_t}.$$
+
+For $i\in [m], k\in \mathbb{Z}_+, t\in \{m+1,...,T\}$, define an event
+$$\mathcal{G}_{i,k,t}=\mathcal{G}_{k,t}\wedge\{i\in S_t,T_{i,t-1}\leq m_{k,t}\}.$$
+
+Then by the definitions of $\mathcal{G}_{k,t}$ and $\mathcal{G}_{i,k,t}$ we have
+$$\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\leq\frac{1}{\beta_kK}\sum_{i\in E_\mathrm{B}}\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}.$$
+
+Therefore
+$$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}\frac{\Delta_{S_t}}{\beta_kK}.$$
+
+For each arm $i\in E_B$, suppose $i$ is contained in $N_i$ bad super arms $S_{i,1}^\mathrm{B},S_{i,2}^\mathrm{B},\ldots,S_{i,N_i}^\mathrm{B}$. Let $\Delta_{i,l} = \Delta_{S_{i,l}^\mathrm{B}}(l\in[N_i])$. Without loss of generality, we assume $\Delta_{i,1}\geq\Delta_{i,2}\geq\ldots\geq\Delta_{i,N_i}$. Note that $\Delta_{i,N_i}=\Delta_{i,\min}$. For convenience, we also define $\Delta_{i,0}=+\infty,\mathrm{~i.e.,~}\alpha_k\left(\frac{2\sigma K}{\Delta_{i,0}}\right)^2=0$. Then we have
+$$\begin{aligned}
+ & \sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t} \\
+ & \leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\sum_{l=1}^{N_i}\mathbb{I}\{\mathcal{G}_{i,k,t},S_t=S_{i,l}^\mathrm{B}\}\frac{\Delta_{S_t}}{\beta_kK} \\
+ & \leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\sum_{l=1}^{N_i}\mathbb{I}\{T_{i,t-1}\leq m_{k,t},S_t=S_{i,l}^\mathrm{B}\}\frac{\Delta_{i,l}}{\beta_kK} \\
+ & =\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\sum_{l=1}^{N_i}\mathbb{I}\left\{T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,l}}\right)^2\ln T,S_t=S_{i,l}^\mathrm{B}\right\}\frac{\Delta_{i,l}}{\beta_kK} \\
+ & =\sum_{i\in E_{\mathrm{B}}}\sum_{k=1}^{\infty}\sum_{t=m+1}^{T}\sum_{l=1}^{N_{i}}\sum_{j=1}^{l}\mathbb{I}\left\{\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^{2}\ln T<T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^{2}\ln T,S_{t}=S_{i,l}^{\mathrm{B}}\right\}\frac{\Delta_{i,l}}{\beta_{k}K} \\
+ &\leq\sum_{i\in E_{\mathrm{B}}}\sum_{k=1}^{\infty}\sum_{t=m+1}^{T}\sum_{l=1}^{N_{i}}\sum_{j=1}^{l}\mathbb{I}\left\{\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^{2}\ln T<T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^{2}\ln T,S_{t}=S_{i,l}^{\mathrm{B}}\right\}\frac{\Delta_{i,j}}{\beta_{k}K}\\
+ &\leq\sum_{i\in E_{\mathrm{B}}}\sum_{k=1}^{\infty}\sum_{t=m+1}^{T}\sum_{l=1}^{N_{i}}\sum_{j=1}^{N_{i}}\mathbb{I}\left\{\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^{2}\ln T<T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^{2}\ln T,S_{t}=S_{i,l}^{\mathrm{B}}\right\}\frac{\Delta_{i,j}}{\beta_{k}K}\\
+ & \leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\sum_{j=1}^{N_i}\mathbb{I}\left\{\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^2\ln T<T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^2\ln T\right\}\frac{\Delta_{i,j}}{\beta_kK}\\
+ \end{aligned}$$
+$$
+ \hspace{-11em}
+ \begin{aligned}
+ & \leq\sum_{i\in E_{\mathrm{B}}}\sum_{k=1}^{\infty}\sum_{j=1}^{N_{i}}\left(\alpha_{k}\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^{2}\ln T-\alpha_{k}\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^{2}\ln T\right)\frac{\Delta_{i,j}}{\beta_{k}K} \\
+ & =4\sigma^2K\left(\sum_{k=1}^\infty\frac{\alpha_k}{\beta_k}\right)\ln T\cdot\sum_{i\in E_{\mathrm{B}}}\sum_{j=1}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,j} \\
+ & \leq1068\sigma^2K\ln T\cdot\sum_{i\in E_{\mathrm{B}}}\sum_{j=1}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,j},
+\end{aligned}
+$$
+where the last inequality is due to (18).
+
+Finally, for each $i\in E_B$ we have 
+$$\begin{aligned}
+\sum_{j=1}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,j} & =\frac{1}{\Delta_{i,N_i}}+\sum_{j=1}^{N_i-1}\frac{1}{\Delta_{i,j}^2}(\Delta_{i,j}-\Delta_{i,j+1}) \\
+ & \leq\frac{1}{\Delta_{i,N_i}}+\int_{\Delta_{i,N_i}}^{\Delta_{i,1}}\frac{1}{x^2}\mathrm{d}x \\
+ & =\frac{2}{\Delta_{i,N_i}}-\frac{1}{\Delta_{i,1}} \\
+ & <\frac{2}{\Delta_{i,\min}}.
+\end{aligned}$$
+
+It follows that 
+\begin{equation}
+	\begin{aligned}
+	\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}&\leq1068\sigma^2K\ln T\cdot\sum_{i\in E_\mathrm{B}}\frac{2}{\Delta_{i,\min}}\\
+	&=\sigma^2K\sum_{i\in E_\mathrm{B}}\frac{2136}{\Delta_{i,\min}}\ln T.
+	\end{aligned}
+\end{equation}
+Combining (19) with Lemma 4, the distribution-dependent regret bound in Theorem 1 is proved.
+
+To prove the distribution-independent bound, we decompose $\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}$ into two parts:
+\begin{equation}\begin{aligned}
+\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}&=\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}\leq\epsilon\}\Delta_{S_t}\\
+&+\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t}\\
+&\leq\epsilon T+\sum_{t=m+1}^T1\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t},
+\end{aligned}\end{equation}
+
+where $\epsilon>0$ is a constant to be determined. The second term can be bounded in the same way as in the proof of the distribution-dependent regret bound, except that we only consider the case $\Delta_{S_t}>\epsilon$. Thus we can replace (19) by
+\begin{equation}
+	\begin{aligned}
+		&\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t}\\
+		&\leq \sigma^2K\sum_{i\in E_\mathrm{B},\Delta_{i,\min}>\epsilon}\frac{2136}{\Delta_{i,\min}}\ln T\\
+		&\leq \sigma^2Km\frac{2136}{\epsilon}\ln T.
+	\end{aligned}
+\end{equation}
+
+It follows that
+$$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\epsilon T+\sigma^2Km\frac{2136}{\epsilon}\ln T.$$
+
+Finally, letting $\epsilon=\sqrt{\frac{2136\sigma^2Km\ln T}{T}}$, we get 
+$$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq2\sqrt{2136\sigma^2KmT\ln T}<93\sigma\sqrt{mKT\ln T}.$$
+
+Combining this with Lemma 4, we conclude the proof of the distribution-independent regret bound in Theorem 1.\hfill $\blacksquare$
 
 
-%\begin{algorithm}
-%\begin{algorithmic}[1]
-%\caption{Random Forest Training II}
-%\Procedure{DecisionTree}{$X, y$}
-%    \If{\textsc{StoppingCondition}$(X, y)$}
-%        \State \textbf{return} LeafNode$(y)$
-%    \Else
-%        \State $(\text{feature}, \text{threshold}) \gets \textsc{FindBestSplit}(X, y)$
-%        \State $\textit{left\_indices} \gets X[\text{feature}] \leq \text{threshold}$
-%        \State $\textit{right\_indices} \gets X[\text{feature}] > \text{threshold}$
-%        \State $\textit{left\_subtree} \gets$ \Call{DecisionTree}{$X[left\_indices], y[left\_indices]$}
-%        \State $\textit{right\_subtree} \gets$ \Call{DecisionTree}{$X[right\_indices], y[right\_indices]$}
-%        \State \textbf{return} TreeNode$(\text{feature}, \text{threshold}, left\_subtree, right\_subtree)$
-%    \EndIf
-%\EndProcedure
-%\Statex
-%
-%\Procedure{Predict}{$\text{forest}, x$}
-%    \State predictions $\gets []$
-%    \For{$\text{tree}$ \textbf{in} $\text{forest}$}
-%        \State \textbf{append} \Call{TreePredict}{$\text{tree}, x$} to predictions
-%    \EndFor
-%    \State \textbf{return} \Call{AggregatePredictions}{predictions}
-%\EndProcedure
-%\Statex
-%
-%\Procedure{TreePredict}{$\text{tree}, x$}
-%    \If{$\text{tree}$ is a leaf node}
-%        \State \textbf{return} $\text{tree.value}$
-%    \Else
-%        \If{$x[\text{tree.feature}] \leq \text{tree.threshold}$}
-%            \State \textbf{return} \Call{TreePredict}{$\text{tree.left\_subtree}, x$}
-%        \Else
-%            \State \textbf{return} \Call{TreePredict}{$\text{tree.right\_subtree}, x$}
-%        \EndIf
-%    \EndIf
-%\EndProcedure
-%\end{algorithmic}
-%\end{algorithm}
-
-
-%\THEEndNotes
-%\begingroup \parindent 0pt \parskip 0.0ex \def\enotesize{\normalsize} \theendnotes \endgroup
-
-% Appendix here
-% Options are (1) APPENDIX (with or without general title) or
-%             (2) APPENDICES (if it has more than one unrelated sections)
-% Outcomment the appropriate case if necessary
-%
-% \begin{APPENDIX}{<Title of the Appendix>}
-% \end{APPENDIX}
-%
-%   or
-%
-% \begin{APPENDICES}
-% \section{<Title of Section A>}
-% \section{<Title of Section B>}
-% etc
-% \end{APPENDICES}
-
-% Acknowledgments here
-%\ACKNOWLEDGMENT{We would like to express our sincere gratitude to [acknowledge individuals, organizations, or institutions] for their invaluable contributions to this research. We are also grateful to [mention any additional acknowledgements, such as technical assistance, data providers, or colleagues] for their support and assistance throughout the course of this work.}
-
-
-% References here (outcomment the appropriate case)
-
-% CASE 1: BiBTeX used to constantly update the references
-%   (while the paper is being written).
-%\bibliographystyle{informs2014} % outcomment this and next line in Case 1
-%\bibliography{<your bib file(s)>} % if more than one, comma separated
-
-\bibliographystyle{informs2014} % outcomment this and next line in Case 1
-\bibliography{sample} % if more than one, comma separated
-
-% CASE 2: BiBTeX used to generate mypaper.bbl (to be further fine tuned)
-%\input{mypaper.bbl} % outcomment this line in Case 2
-
-%If you don't use BiBTex, you can manually itemize references as shown below.
-
-%\bibliographystyle{nonumber}
-
+\bibliographystyle{informs2014} 
+\bibliography{sample} 
 
 %%%%%%%%%%%%%%%%%
 \end{document}
