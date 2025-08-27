@@ -29,6 +29,10 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{tikz}
+\usepackage{algorithm}
+\usepackage{algpseudocode} % 这是关键宏包
+\usepackage{amsmath}       % 用于数学公式
+\newcommand{\var}[1]{\mathit{#1}} % 自定义命令，用于使变量名显示为斜体
 % Private macros here (check that there is no clash with the style)
 
 % Natbib setup for author-number style
@@ -244,42 +248,6 @@ Given that the module score vector $\mathbf{Y} = (Y(x_1,\xi),...,Y(x_m,\xi))$ fo
     \item \textbf{Submodular}: For any $S \subseteq T \subseteq \mathcal{X}$ and any module $x \in \mathcal{X} \setminus T$, $U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T)$.
 \end{enumerate}
 \end{theorem}
-\textit{Proof.} Monotone Increasing is quite obvious. Here we show that $U(\cdot)$ is submodular. i.e., for any $S \subseteq T \subseteq \mathcal{X}$ and $x \in \mathcal{X} \setminus T$:
-$$
-U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
-$$
-which is equivalent to:
-$$
-R(S)-R(S \cup \{x\}) \geq R(T) - R(T \cup \{x\}).
-$$
-
-Let $Y_S = \min_{i \in S} Y(i,\xi)$, $Y_T = \min_{i \in T} Y(i,\xi)$, $Y_x = Y(x,\xi)$. Then $Y_T \leq Y_S$. We have:
-\[
-R(S) - R(S \cup \{x\}) = \mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right],
-\]
-\[
-R(T) - R(T \cup \{x\}) = \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right].
-\]
-
-Consider the function $g(y) = y - \min\{y, x\}$. For fixed $x$:
-\begin{itemize}
-    \item If $y \leq x$, then $g(y) = 0$;
-    \item If $y > x$, then $g(y) = y - x$.
-\end{itemize}
-Thus, $g(y)$ is non-decreasing in $y$. Since $Y_A \geq Y_B$, we have:
-\[
-Y_S - \min\{Y_S, Y_x\} \geq Y_T - \min\{Y_T, Y_x\}.
-\]
-Taking expectation:
-\[
-\mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right] \geq \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right],
-\]
-which implies:
-$$
-U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
-$$
-Therefore, $U(\cdot)$ is submodular.\hfill $\blacksquare$
-
 
 Theorem \ref{thm:submodular} establishes that $U(S)$ is a monotone increasing, submodular function. Therefore, the problem of selecting a set $S$ of size $m$ to maximize $U(S)$ is an instance of maximizing a monotone submodular function under a cardinality constraint.
 
@@ -304,6 +272,61 @@ This theoretical guarantee is significant. It ensures that even without computin
 \label{heuristic}
 The greedy algorithm established in the preceding section provides a theoretically sound framework for module selection. A direct implementation of this algorithm, however, requires the computation of the marginal gain $x_{k} = \argmax_{x \in \mathcal{X} \setminus S_{k-1}} \left[ U(S_{k-1} \cup \{x\}) - U(S_{k-1}) \right]$ at each iteration. Calculating this expectation of the minimum of correlated normal distributions poses a significant computational challenge, as it lacks a closed-form solution for the general case. While numerical techniques, such as Sample Average Approximation (SAA), can be employed to estimate this value, they often require a substantial number of Monte Carlo simulations to achieve acceptable accuracy. Consequently, for large-scale instances of the problem where the module pool size $M$ is substantial, the computational burden of repeatedly evaluating the marginal gain for each candidate module becomes prohibitive. This computational intractability motivates the development of efficient heuristic methods.
 
+\subsubsection{Improvement-based approach}
+As established in Section 4.1.1, the expected value of the minimum of two module scores, $\mathbb{E}[\min\{Y(x_1), Y(x_2)\}]$, admits an exact closed-form solution under the bivariate normal distribution assumption. Leveraging this analytical tractability, we define a pairwise measure of deficiency enhancement for any two modules $x_1$ and $x_2$. Specifically, the \textbf{improvement} (Ipr) of incorporating module $x_2$ given a baseline module $x_1$ is defined as:
+$$
+\text{Ipr}(x_2 | x_1) = \mathbb{E}[\min\{Y(x_1), Y(x_2)\}] - \mathbb{E}[Y(x_1)].
+$$
+This quantity captures the expected reduction in the minimum score---and thus the expected enhancement in exposed deficiency---achieved by adding $x_2$ to an assessment already containing $x_1$. It follows directly from the definition that $\text{Ipr}(x_2 | x_1) = 0$ when $x_1$ and $x_2$ are identical.
+
+Next, consider an existing set of selected modules $S = \{x_2, x_3, x_4\}$. We can extend the pairwise improvement concept by defining the marginal improvement of adding a new module $x_1$ to the set $S$ as:
+$$
+\text{Ipr}(x_1 | S) = \mathbb{E}\left[\min\,\{Y(x) : x \in S \cup \{x_1\}\}\right] - \mathbb{E}\left[\min\,\{Y(x) : x \in S\}\right].
+$$
+This metric quantifies the expected reduction in the overall minimum score resulting from the inclusion of $x_1$ into the current assessment portfolio $S$.
+
+Now let's consider an extreme case, assuming $x_1$ and $x_2$ are exactly the same (i.e. $\text{Ipr}(x_1|x_2)=0$), regardless of the value of $\text{Ipr}(x_1|x_3)$ and $\text{Ipr}(x_1|x_4)$, the value of $\text{Ipr}(x_1|S)$ is always $0$. This inspires us to speculate that the value of the improvement of module $x_1$ over set $S$ is dominated by pairwise minima: $\underset{x\in S}{{\min}}~\text{Ipr}(x_1|x)$. So we can define the contribution of module $x_1$ to set $S$: 
+$$
+\text{Ctr}(x_1|S) = \underset{x\in S}{{\min}}~\text{Ipr}(x_1|x)
+$$
+Here, the contribution measure $\text{Ctr}(x_1|S)$ represents quantifies the reduction potential in the minimum score when adding module $x$ to set $S$.
+
+Based on this we can get our improvement-based approach as follows:
+
+\begin{algorithm}
+\caption{Improvement-based approach} % 算法名称
+\label{alg:improvement} % 标签
+\begin{algorithmic}[1] % [1] 表示每行都显示行号
+\State \textbf{Input:} module set $\mathcal{X}$, number of selected modules $m$.
+%\Statex % 空行
+\State Initialize $S = \{x_1,x_2\}$, where $x_1 = \min_{x\in \mathcal{X}} \mathbb{E}[Y(x)]$, $x_2 = \max_{x\in \mathcal{X}} \text{Ipr}(x_2|x_1)$.
+\For{$i = 3$ \textbf{to} $m$}
+    \State Choose $x_i = \underset{x\in \mathcal{X}/S}{{\arg\max}}~\text{Ctr}(x|S)$
+    \State Update $S = S \cup x_i$
+\EndFor
+\State \Return $S$
+\end{algorithmic}
+\end{algorithm}
+Algorithm 1 likewise employs a greedy strategy for problem resolution, yet it achieves significantly higher computational efficiency compared to the SAA-based greedy algorithm, rendering it suitable for large-scale applications. However, this gain in efficiency comes at the cost of solution quality for more complex problem instances, where the SAA-based algorithm frequently yields superior optimization results. To harness the complementary strengths of both methodologies---the computational efficiency of the heuristic and the solution quality of the SAA-based approach---we propose a novel hybrid greedy algorithm. This mixed strategy, which synergistically combines both approaches, is detailed in the following section.
+
+\subsubsection{Mixed approach}
+The workflow for Mixed approach is described below(\textbf{Algorithm 2}). In Step 4, the algorithm identifies the $q$ modules that offer the highest contribution to the current selected modules $S$. This step functions as a preliminary screening phase, designed to efficiently prune the candidate pool and mitigate the computational burden associated with evaluating all $M$ modules. The parameter $q$ is user-defined; a larger value for $q$ yields a more comprehensive search, leading to a solution that more closely approximates the one obtained by the full SAA-based greedy algorithm. Our numerical experiments presented in Section 6 shows that a value of $q=10$ can be sufficient for achieving near-optimal performance in most practical instances, effectively balancing computational efficiency with solution quality.
+
+\begin{algorithm}
+\caption{Mixed approach} % 算法名称
+\label{alg:mixed} % 标签
+\begin{algorithmic}[1] % [1] 表示每行都显示行号
+\State \textbf{Input:} module set $\mathcal{X}$, number of selected modules $m$, size of candidate set $q=10$.
+%\Statex % 空行
+\State Initialize $S = \{x_1,x_2\}$, where $x_1 = \min_{x\in \mathcal{X}} \mathbb{E}[Y(x)]$, $x_2 = \max_{x\in \mathcal{X}} \text{Ipr}(x_2|x_1)$.
+\For{$i = 3$ \textbf{to} $m$}
+    \State Choose candidate set $C\in \mathcal{X}$, $s.t~C = \mathop{\mathrm{arg\,max}}\limits_{|C|=q} \sum_{x \in C} \text{Ctr}(x|S)$
+	\State Choose $x_{i} = \argmax_{x \in C} \left[ U(S \cup \{x\}) - U(S) \right]$
+    \State Update $S = S \cup x_i$
+\EndFor
+\State \Return $S$
+\end{algorithmic}
+\end{algorithm}
 
 
 \section{A Combinatorial MAB Algorithm for Unknown Score Means}
@@ -350,6 +373,43 @@ where $\Sigma_n({\bf x},{\bf x}) = AA^T$, $\Lambda({\bf x},{\bf x}) = BB^T$, and
 
 %--------------------------------------------------------------------------------------
 \section{Theoretical analysis}
+\subsection{submodularity analysis}
+\textit{Proof.} Monotone Increasing is quite obvious. Here we show that $U(\cdot)$ is submodular. i.e., for any $S \subseteq T \subseteq \mathcal{X}$ and $x \in \mathcal{X} \setminus T$:
+$$
+U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
+$$
+which is equivalent to:
+$$
+R(S)-R(S \cup \{x\}) \geq R(T) - R(T \cup \{x\}).
+$$
+
+Let $Y_S = \min_{i \in S} Y(i,\xi)$, $Y_T = \min_{i \in T} Y(i,\xi)$, $Y_x = Y(x,\xi)$. Then $Y_T \leq Y_S$. We have:
+\[
+R(S) - R(S \cup \{x\}) = \mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right],
+\]
+\[
+R(T) - R(T \cup \{x\}) = \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right].
+\]
+
+Consider the function $g(y) = y - \min\{y, x\}$. For fixed $x$:
+\begin{itemize}
+    \item If $y \leq x$, then $g(y) = 0$;
+    \item If $y > x$, then $g(y) = y - x$.
+\end{itemize}
+Thus, $g(y)$ is non-decreasing in $y$. Since $Y_A \geq Y_B$, we have:
+\[
+Y_S - \min\{Y_S, Y_x\} \geq Y_T - \min\{Y_T, Y_x\}.
+\]
+Taking expectation:
+\[
+\mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right] \geq \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right],
+\]
+which implies:
+$$
+U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
+$$
+Therefore, $U(\cdot)$ is submodular.\hfill $\blacksquare$
+
 \subsection{Convergence analysis}
 \begin{lemma}
 For any $\epsilon > 0$ and any $n = T_{i,t-1} \in \mathbb{Z}_+$, we have :
