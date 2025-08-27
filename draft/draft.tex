@@ -302,6 +302,7 @@ This theoretical guarantee is significant. It ensures that even without computin
 %-----------------------------------------------------------------------------------------
 \subsection{Heuristic algorithms}
 \label{heuristic}
+The greedy algorithm established in the preceding section provides a theoretically sound framework for module selection. A direct implementation of this algorithm, however, requires the computation of the marginal gain $x_{k} = \argmax_{x \in \mathcal{X} \setminus S_{k-1}} \left[ U(S_{k-1} \cup \{x\}) - U(S_{k-1}) \right]$ at each iteration. Calculating this expectation of the minimum of correlated normal distributions poses a significant computational challenge, as it lacks a closed-form solution for the general case. While numerical techniques, such as Sample Average Approximation (SAA), can be employed to estimate this value, they often require a substantial number of Monte Carlo simulations to achieve acceptable accuracy. Consequently, for large-scale instances of the problem where the module pool size $M$ is substantial, the computational burden of repeatedly evaluating the marginal gain for each candidate module becomes prohibitive. This computational intractability motivates the development of efficient heuristic methods.
 
 
 
