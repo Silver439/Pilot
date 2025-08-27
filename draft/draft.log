@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  27 AUG 2025 10:47
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  27 AUG 2025 11:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1216,12 +1216,12 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/sc' will be
 [10]
 
 [11]
-Underfull \hbox (badness 2990) in paragraph at lines 338--339
+Underfull \hbox (badness 2990) in paragraph at lines 340--341
 []\TU/TeXGyreTermesX(0)/m/n/12 We next explain how to compute $\OML/ntxmi/m/it/12 g[]$\TU/TeXGyreTermesX(0)/m/n/12 . For any vector $\OT1/minntx/b/n/12 x[]\OML/ntxmi/m/it/12 ; \OT1/minntx/m/n/12 1 \LMS/ntxsy/m/n/12 ^^T \OML/ntxmi/m/it/12 i \LMS/ntxsy/m/n/12 ^^T \OML/ntxmi/m/it/12 n$\TU/TeXGyreTermesX(0)/m/n/12 , we approximate
  []
 
 
-Underfull \hbox (badness 1701) in paragraph at lines 338--339
+Underfull \hbox (badness 1701) in paragraph at lines 340--341
 \OML/ntxmi/m/it/12 G\LMS/ntxsy/m/n/12 ¹\OT1/minntx/b/n/12 x[]\LMS/ntxsy/m/n/12 º$ \TU/TeXGyreTermesX(0)/m/n/12 through sample average approximation (SAA). Specifically, we generate samples of
  []
 
@@ -1230,7 +1230,7 @@ Underfull \hbox (badness 1701) in paragraph at lines 338--339
 [12]
 
 [13]
-Underfull \hbox (badness 1242) in paragraph at lines 426--427
+Underfull \hbox (badness 1242) in paragraph at lines 428--429
 []\TU/TeXGyreTermesX(0)/m/n/12 Denote $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 = []\LMS/ntxsy/m/n/12 f\OML/ntxmi/m/it/12 ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; [] ; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]\LMS/ntxsy/m/n/12 g$ \TU/TeXGyreTermesX(0)/m/n/12 and $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 =
  []
 
@@ -1242,7 +1242,7 @@ Underfull \hbox (badness 1242) in paragraph at lines 426--427
 
 [16]
 
-Package natbib Warning: Citation `Kveton2014TightRB' on page 17 undefined on input line 571.
+Package natbib Warning: Citation `Kveton2014TightRB' on page 17 undefined on input line 573.
 
 
 
