@@ -338,26 +338,26 @@ As with \cite{xie2016bayesian}, we assume $\Lambda, \mu_0, \Sigma_0$ are known.
 
 The $i$th entry of a vector $v$ is denoted as $v(i)$ and the $(i,j)$th entry of a matrix $M$ is denoted as $M(i,j)$. For an ordered collection of $m$ alternatives ${\bf x}=(x_1,...,x_m)$ with element $x_i \in \{1,...,M\}$ for each $i$, we use $v(\bf x)$ to denote the subvector of $v$ with the $i$th entry equal to $v(x_i)$. We further denote by $M(\bf x, x')$ the $m$-by-$m$ submatrix of $M$ with the $(i,j)$th entry equal to $M(x_i, x_j')$.  
 
-We consider a situation where in each iteration $n$, one pilot will attend $m$ different modules ${\bf x}_n = (x_{n,1},...,x_{n,m})^T$ and we obtain his score vector ${\bf y}_n = (Y(x_{n,1}),...,Y(x_{n,m}))^T$. The conditional distribution of ${\bf y}_n$ is:
-$${\bf y}_n | \theta,{\bf x}_n \sim \mathcal{N}(\theta({\bf x}_n), \Lambda({\bf x}_n,{\bf x}_n)). $$ 
-Let $\mathbb{X}_n = ({\bf x}_1^T,...,{\bf x}_n^T )$ denote the concatenation of the design points of the previous $n$ iteration and similarly $\mathbb{Y}_n =({\bf y}_1^T,...,{\bf y}_n^T )^T$. Then, the posterior distribution for $\theta$ is:
-$$\theta_n|\mathbb{X}_n,\mathbb{Y}_n  \sim \mathcal{N}(\mu_n, \Sigma_n),$$
+We consider a situation where in each iteration $t$, one pilot will attend $m$ different modules ${\bf x}_t = (x_{t,1},...,x_{t,m})^T$ and we obtain his score vector ${\bf y}_t = (Y(x_{t,1}),...,Y(x_{t,m}))^T$. The conditional distribution of ${\bf y}_t$ is:
+$${\bf y}_t | \theta,{\bf x}_t \sim \mathcal{N}(\theta({\bf x}_t), \Lambda({\bf x}_t,{\bf x}_t)). $$ 
+Let $\mathbb{X}_t = ({\bf x}_1^T,...,{\bf x}_t^T )$ denote the concatenation of the design points of the previous $t$ iteration and similarly $\mathbb{Y}_t =({\bf y}_1^T,...,{\bf y}_t^T )^T$. Then, the posterior distribution for $\theta$ is:
+$$\theta_n|\mathbb{X}_t,\mathbb{Y}_t  \sim \mathcal{N}(\mu_t, \Sigma_t),$$
 where for any vector ${\bf x} = (x_1, x_2,...,x_m)$,
 $$
-	\mu_n({\bf x}) = \mu_0({\bf x}) + \Sigma_0(\bf x, \mathbb{X}_n)(\Sigma_0(\mathbb{X}_n,\mathbb{X}_n) + \Gamma_n)^{-1}(\mathbb{Y}_n-\mu_0(\mathbb{X}_n)),
+	\mu_t({\bf x}) = \mu_0({\bf x}) + \Sigma_0(\bf x, \mathbb{X}_t)(\Sigma_0(\mathbb{X}_n,\mathbb{X}_t) + \Gamma_t)^{-1}(\mathbb{Y}_t-\mu_0(\mathbb{X}_t)),
 $$
 $$
-	\Sigma_n({\bf x},{\bf x}) = \Sigma_0({\bf x},{\bf x}) - \Sigma_0(\bf x, \mathbb{X}_n)(\Sigma_0(\mathbb{X}_n,\mathbb{X}_n) + \Gamma_n)^{-1}\Sigma_0(\mathbb{X}_n, \bf x),
+	\Sigma_n({\bf x},{\bf x}) = \Sigma_0({\bf x},{\bf x}) - \Sigma_0(\bf x, \mathbb{X}_t)(\Sigma_0(\mathbb{X}_t,\mathbb{X}_t) + \Gamma_t)^{-1}\Sigma_0(\mathbb{X}_t, \bf x),
 $$
-where $\Gamma_n$ is the block diagonal matrix with $n$ blocks: $\Lambda({\bf x}_1, {\bf x}_1),...,\Lambda({\bf x}_n, {\bf x}_n)$.
+where $\Gamma_t$ can be calculated from the observed samples since we know the covariance matrix $\Lambda$.
 
 \subsection{The GP-UCB Algorithm} 
 To address the challenge of unknown score means, we propose a Bayesian optimization algorithm based on the Gaussian Process Upper Confidence Bound (GP-UCB) principle. This algorithm iteratively maintains a posterior distribution over the mean scores $\boldsymbol{\theta}$ and leverages the heuristic algorithms from Section 4.3 as a selection oracle.
 
-The algorithm's core mechanism involves using an optimistic estimate of the mean scores to guide exploration. Specifically, at each iteration $n$, we construct the lower confidence bound (LCB) vector $\boldsymbol{\mu}_n - \beta_n \boldsymbol{\sigma}_n$, where $\boldsymbol{\sigma}_n$ contains the posterior standard deviations. This LCB vector represents an optimistic estimate of the true means from the perspective of minimizing the expected minimum score. We then pass this optimistic estimate to a heuristic oracle from Section 4.3, which returns a module set $S_n$ for evaluation. The observed scores from testing $S_n$ are used to update our posterior belief about $\boldsymbol{\theta}$. The complete procedure is detailed in Algorithm \ref{alg:gp_ucb_algorithm_adaptive}.
+The algorithm's core mechanism involves using an optimistic estimate of the mean scores to guide exploration. Specifically, at each iteration $t$, we construct the lower confidence bound (LCB) vector $\boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$, where $\boldsymbol{\sigma}_{t-1}$ contains the posterior standard deviations. This LCB vector represents an optimistic estimate of the true means from the perspective of minimizing the expected minimum score. We then pass this optimistic estimate to a heuristic oracle from Section 4.3, which returns a module set $S_t$ for evaluation. The observed scores from testing $S_t$ are used to update our posterior belief about $\boldsymbol{\theta}$. The complete procedure is detailed in Algorithm \ref{alg:gp_ucb_algorithm_adaptive}. Note that in Step 14, the exact computation of $R(S_t)$ remains analytically intractable so we use SAA to estimate it.
 
 \begin{algorithm}
-\caption{GP-UCB Algorithm with Adaptive Exploration}
+\caption{GP-UCB Algorithm}
 \label{alg:gp_ucb_algorithm_adaptive}
 \begin{algorithmic}[1]
 \Require{Module set $\mathcal{X}$; Covariance matrix $\boldsymbol{\Lambda}$; Prior parameters $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$; Oracle $\mathcal{O}$; Iterations $N_0,N$}
@@ -366,25 +366,55 @@ The algorithm's core mechanism involves using an optimistic estimate of the mean
 	\State Play a super arm $S_i$ that contains module $i$
 	\State Observe $\mathbf{y}_i$,Update $(\boldsymbol{\mu}, \boldsymbol{\Sigma},\mathbf{T}_i)$,Calculate $R(S_i)$ \Comment Same as steps 11, 12, and 13
 \EndFor
-\For{$n = N_0+1$ to $N$} \Comment{Main optimization phase}
-    \State $\boldsymbol{\sigma}_{n-1} \gets \sqrt{\text{diag}(\boldsymbol{\Sigma}_{n-1})}$ \Comment{Compute posterior standard deviations}
-    \State $\boldsymbol{\beta}_n[x] \gets \sqrt{6 \ln n / \mathbf{T}_{n-1}[x]}$ for each $x \in \mathcal{X}$ \Comment $\mathbf{T}_{n-1}[x]$ represents the number of times module $x$ was observed before round $n-1$
-    \State $\boldsymbol{\tilde{\mu}}_n \gets \boldsymbol{\mu}_{n-1} - \boldsymbol{\beta}_n \circ \boldsymbol{\sigma}_{n-1}$ \Comment{Construct LCB-based mean estimate}
-    \State $S_n \gets \mathcal{O}(\boldsymbol{\tilde{\mu}}, \boldsymbol{\Lambda})$ \Comment{Query selection oracle}
-    \State Observe score vector $\mathbf{y}_n$ for modules $S_n$ on a new pilot.
-    \State Update $(\boldsymbol{\mu}_n, \boldsymbol{\Sigma}_n)$ with $(\mathbf{y}_n, S_n)$; Update $\mathbf{T}_n[x] \gets \mathbf{T}_n[x] + 1$ for each $x \in S_n$
-    \State Calculate $R(S_n) = \mathbb{E}[\min\,\{Y(x) : x \in S_n\}]$, track minimal $R(S_n)$ and corresponding $S_n$ 
+\For{$t = N_0+1$ to $N$} \Comment{Main optimization phase}
+    \State $\boldsymbol{\sigma}_{t-1} \gets \sqrt{\text{diag}(\boldsymbol{\Sigma}_{t-1})}$ \Comment{Compute posterior standard deviations}
+    \State $\boldsymbol{\beta}_t[x] \gets \sqrt{6 \ln t / \mathbf{T}_{t-1}[x]}$ for each $x \in \mathcal{X}$ \Comment $\mathbf{T}_{t-1}[x]$ represents the number of times module $x$ was observed before round $t-1$
+    \State $\boldsymbol{\tilde{\mu}}_t \gets \boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$ \Comment{Construct LCB-based mean estimate}
+    \State $S_t \gets \mathcal{O}(\boldsymbol{\tilde{\mu}}, \boldsymbol{\Lambda})$ \Comment{Query selection oracle}
+    \State Observe score vector $\mathbf{y}_t$ for modules $S_t$ on a new pilot.
+    \State Update $(\boldsymbol{\mu}_t, \boldsymbol{\Sigma}_t)$ with $(\mathbf{y}_t, S_t)$; Update $\mathbf{T}_t[x] \gets \mathbf{T}_t[x] + 1$ for each $x \in S_t$
+    \State Calculate $R(S_t) = \mathbb{E}[\min\,\{Y(x) : x \in S_t\}]$, track minimal $R(S_t)$ and corresponding $S_t$ 
 \EndFor
 \State \Return $S^*$ with minimal $R(S^*)$
 \end{algorithmic}
 \end{algorithm}
-
 \subsection{Regret bounds}
+We establish both distribution-dependent and distribution-independent regret bounds for Algorithm \ref{alg:gp_ucb_algorithm_adaptive}, proving $O(\log T)$ and $O(\sqrt{T \log T})$ rates respectively.
+
+For any approximation parameter $0 < \alpha < 1$, we define a super arm $S$ as \emph{bad} if $R(S) > \alpha R(S^*)$, where $S^*$ denotes the true optimal super arm. The suboptimality gap for each super arm $S$ is defined as:
+$$
+\Delta_S = \max\{R(S) - \alpha \cdot R(S^*), 0\}.
+$$
+
+Let $\mathcal{F}_B = \{S \in \mathcal{F} \mid \Delta_S > 0\}$ denote the set of all bad super arms, and let $E_B \subseteq \mathcal{X}$ be the set of modules contained in at least one bad super arm. For each module $i \in E_B$, we define its minimal suboptimality gap as:
+$$
+\Delta_{i,\min} = \min\{\Delta_S \mid S \in \mathcal{F}_B, i \in S\}.
+$$
+
+Let $\sigma^2$ represent the maximum variance among all modules (the largest diagonal element of covariance matrix $\boldsymbol{\Lambda}$). Recall that $m = |S|$ is the cardinality of the selected super arm, and $y_{\text{max}}$ is the maximum possible score for any module.
+
+\begin{theorem}
+\label{thm:regret_bound}
+The $\alpha$-approximation regret of Algorithm \ref{alg:gp_ucb_algorithm_adaptive} over $T$ rounds satisfies the following upper bounds:
+\begin{enumerate}
+    \item \textbf{Distribution-dependent bound:}
+    $$
+    \sigma^2 m \sum_{i \in E_B} \frac{2136}{\Delta_{i,\min}} \ln T + \left(\frac{\pi^2}{6} + 1\right) \alpha y_{\text{max}} M.
+    $$
+    
+    \item \textbf{Distribution-independent bound:}
+    $$
+    93\sigma \sqrt{M m T \ln T} + \left(\frac{\pi^2}{6} + 1\right) \alpha y_{\text{max}} M.
+    $$
+\end{enumerate}
+\end{theorem}
+
+\section{Numerical experiments}
 
 
 %--------------------------------------------------------------------------------------
 \section{Theoretical analysis}
-\subsection{submodularity analysis}
+\subsection{Proof of Theorem \ref{thm:submodular}}
 \textit{Proof.} Monotone Increasing is quite obvious. Here we show that $U(\cdot)$ is submodular. i.e., for any $S \subseteq T \subseteq \mathcal{X}$ and $x \in \mathcal{X} \setminus T$:
 $$
 U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
@@ -421,7 +451,7 @@ U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
 $$
 Therefore, $U(\cdot)$ is submodular.\hfill $\blacksquare$
 
-\subsection{Convergence analysis}
+\subsection{Proof of Theorem \ref{thm:regret_bound}}
 \begin{lemma}
 For any $\epsilon > 0$ and any $n = T_{i,t-1} \in \mathbb{Z}_+$, we have :
 $$

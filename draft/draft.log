@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  28 AUG 2025 17:05
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  28 AUG 2025 21:17
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1223,34 +1223,39 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/sc' will be
 [14]
 
 [15]
-Underfull \hbox (badness 1242) in paragraph at lines 499--500
+
+[16]
+Underfull \hbox (badness 1242) in paragraph at lines 529--530
 []\TU/TeXGyreTermesX(0)/m/n/12 Denote $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 = []\LMS/ntxsy/m/n/12 f\OML/ntxmi/m/it/12 ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; [] ; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]\LMS/ntxsy/m/n/12 g$ \TU/TeXGyreTermesX(0)/m/n/12 and $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 =
  []
 
 
 
-[16]
-
 [17]
 
 [18]
 
-Package natbib Warning: Citation `Kveton2014TightRB' on page 19 undefined on input line 644.
-
-
-
 [19]
-Underfull \vbox (badness 1107) has occurred while \output is active []
+
+Package natbib Warning: Citation `Kveton2014TightRB' on page 20 undefined on input line 674.
 
 
 
 [20]
 
 [21]
+Underfull \vbox (badness 1552) has occurred while \output is active []
+
+
 
 [22]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[23] (./draft.bbl
+
+
+[23]
+
+[24] (./draft.bbl
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/it' will be
 (Font)              scaled to size 10.0pt on input line 7.
 
@@ -1280,7 +1285,7 @@ Underfull \hbox (badness 2875) in paragraph at lines 31--32
 
 
 
-[24]
+[25]
 Underfull \hbox (badness 1953) in paragraph at lines 52--53
 []\TU/TeXGyreTermesX(0)/m/n/10 Nemhauser GL, Wolsey LA, Fisher ML (1978) An analysis of approximations for maximizing submodular
  []
@@ -1294,7 +1299,7 @@ Package natbib Warning: There were undefined citations.
 
 
 
-[25] (./draft.aux)
+[26] (./draft.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2020/03/25>
@@ -1309,12 +1314,12 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 27904 strings out of 473832
- 598064 string characters out of 5733159
- 1061347 words of memory out of 5000000
- 50421 multiletter control sequences out of 15000+600000
+ 27905 strings out of 473832
+ 598082 string characters out of 5733159
+ 1060347 words of memory out of 5000000
+ 50422 multiletter control sequences out of 15000+600000
  608136 words of font info for 189 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  113i,15n,119p,1762b,491s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on draft.pdf (25 pages).
+Output written on draft.pdf (26 pages).
