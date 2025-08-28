@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  27 AUG 2025 20:58
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  28 AUG 2025 17:05
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1217,23 +1217,13 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/sc' will be
 [11]
 
 [12]
-Underfull \hbox (badness 2990) in paragraph at lines 363--364
-[]\TU/TeXGyreTermesX(0)/m/n/12 We next explain how to compute $\OML/ntxmi/m/it/12 g[]$\TU/TeXGyreTermesX(0)/m/n/12 . For any vector $\OT1/minntx/b/n/12 x[]\OML/ntxmi/m/it/12 ; \OT1/minntx/m/n/12 1 \LMS/ntxsy/m/n/12 ^^T \OML/ntxmi/m/it/12 i \LMS/ntxsy/m/n/12 ^^T \OML/ntxmi/m/it/12 n$\TU/TeXGyreTermesX(0)/m/n/12 , we approximate
- []
-
-
-Underfull \hbox (badness 1701) in paragraph at lines 363--364
-\OML/ntxmi/m/it/12 G\LMS/ntxsy/m/n/12 ¹\OT1/minntx/b/n/12 x[]\LMS/ntxsy/m/n/12 º$ \TU/TeXGyreTermesX(0)/m/n/12 through sample average approximation (SAA). Specifically, we generate samples of
- []
-
-
 
 [13]
 
 [14]
 
 [15]
-Underfull \hbox (badness 1242) in paragraph at lines 488--489
+Underfull \hbox (badness 1242) in paragraph at lines 499--500
 []\TU/TeXGyreTermesX(0)/m/n/12 Denote $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 = []\LMS/ntxsy/m/n/12 f\OML/ntxmi/m/it/12 ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; [] ; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]\LMS/ntxsy/m/n/12 g$ \TU/TeXGyreTermesX(0)/m/n/12 and $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 =
  []
 
@@ -1245,21 +1235,18 @@ Underfull \hbox (badness 1242) in paragraph at lines 488--489
 
 [18]
 
-Package natbib Warning: Citation `Kveton2014TightRB' on page 19 undefined on input line 633.
+Package natbib Warning: Citation `Kveton2014TightRB' on page 19 undefined on input line 644.
 
 
 
 [19]
+Underfull \vbox (badness 1107) has occurred while \output is active []
+
+
 
 [20]
-Underfull \vbox (badness 1552) has occurred while \output is active []
-
-
 
 [21]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 
 [22]
 
@@ -1322,10 +1309,10 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 27903 strings out of 473832
- 598033 string characters out of 5733159
- 1060347 words of memory out of 5000000
- 50420 multiletter control sequences out of 15000+600000
+ 27904 strings out of 473832
+ 598064 string characters out of 5733159
+ 1061347 words of memory out of 5000000
+ 50421 multiletter control sequences out of 15000+600000
  608136 words of font info for 189 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  113i,15n,119p,1762b,491s stack positions out of 10000i,1000n,20000p,200000b,200000s
