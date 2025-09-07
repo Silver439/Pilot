@@ -34,6 +34,12 @@
 \usepackage{amsmath}       % 用于数学公式
 \newcommand{\var}[1]{\mathit{#1}} % 自定义命令，用于使变量名显示为斜体
 % Private macros here (check that there is no clash with the style)
+\usepackage[title]{appendix} % 导入 appendix 包
+
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs} % 用于更漂亮的表格线
 
 % Natbib setup for author-number style
 \usepackage{natbib}
@@ -106,7 +112,7 @@ Suppose there is a pool of $M$ different training modules from which $m$ are sel
 Unlike conventional approaches, our strategy incorporates the correlations and variability in pilot performance across these modules, driven by individual differences in skills such as hand-eye coordination, spatial awareness, and stress resilience. For instance, pilots with strong coordination skills often excel in subjects like ``Precision Approach'' and ``Instrument Flying,'' as both require similar competencies, including accurate interpretation of flight instruments, stable aircraft control, and anticipation of spatial positioning \citep{Damos2003}. As a result, high performance in one module frequently predicts success in the other due to shared skill requirements. Conversely, pilots with superior stress management capabilities may outperform in complex emergency scenarios such as ``Multi-Engine Failure'', but struggle in subjects like ``Crosswind Landing'' if their coordination is less developed \citep{Szczepanska2025}. These correlations arise from overlapping skill sets and selecting multiple highly correlated subjects may lead to redundant testing.%, as pilots who excel or struggle in one are likely to perform similarly in the others. 
  Accounting for these correlations is therefore critical in optimizing the selection of assessment modules to enhance training efficiency and safety \citep{Duruaku2024}. 
 
-We illustrate this with a simple example, where we need to select two subjects out of three for a pilot's assessment. From an aviation safety perspective, we aim to select the two subjects that best identify the subject with the lowest score, and thus the assessment metric is the minimum score of the two selected subjects. From an optimization perspective, the following objective function is considered   :
+We illustrate this with a simple example, where we need to select two subjects out of three for a pilot's assessment. From an aviation safety perspective, we aim to select the two subjects that best identify the subject with the lowest score, and thus the assessment metric is the minimum score of the two selected subjects. From an optimization perspective, the following objective function is considered:
 $$
 	\min_{x_1,x_2} \mathbb{E}[\min\{Y(x_1),...,Y(x_2) \} ], 
 	\label{example}
@@ -138,7 +144,13 @@ The remainder of the paper is organized as follows. Section \ref{related works} 
 \label{related works}
 We review relevant works in three aspects: existing approaches for pilot training modules design, simulation-based optimization, and combinatorial MAB.
 
-\section{Problem Formulation}
+\textbf{Combinatorial MAB} Our module selection problem naturally fits into the combinatorial multi-armed bandit (CMAB) framework with semi-bandit feedback. In this framework, an agent sequentially selects a subset of base arms (referred to as a super arm) and observes a reward determined by the outcomes of all selected arms \citep{pmlr-v28-chen13a}, generalizing the classical multi-armed bandit problem to combinatorial action spaces and complex reward structures.
+
+The CMAB literature predominantly relies on two common modeling assumptions. A substantial body of work assumes that base arms are \emph{mutually independent} \citep{10.5555/3737916.3740755, Combes2015CombinatorialBR, 10.1145/3410220.3453926}. Alternatively, another line of research—including some works that incorporate dependencies—often restricts the reward function to be \emph{linear} with respect to the base arm outcomes \citep{Degenne2016CombinatorialSW, Kveton2014MatroidBF, Kveton2014TightRB}, or models the expected reward as a function of only the \emph{marginal means}, while our problem setting requires accounting for the influence of the full joint distribution on the reward function \citep{Demirel2021CombinatorialGP, Kveton2015CombinatorialCB}.
+
+Our work is most closely related to \citep{Chen2016CombinatorialMB}, who also consider the expected minimum (or maximum) of the selected arms as the reward function. A key distinction, however, is that their model does \emph{not} incorporate correlations between base arms, whereas our work explicitly addresses the impact of the joint distribution on the reward. \citep{Wang2023CombinatorialBF} also examine a minimum-based reward, but under a more restrictive \emph{full-bandit feedback} setting where only the maximum value and its originating arm index are observed, rather than the outcomes of all base arms in the super arm. This limited feedback significantly increases the learning difficulty. Moreover, their approach still assumes independent base arms, and their algorithm is confined to problems where the base arm outcomes lie in a \emph{finite, discrete set}, while our setting considers continuous distributions where the joint structure plays a crucial role. In a somewhat orthogonal direction, \citep{Degenne2016CombinatorialSW} consider correlated base arms with a known covariance matrix under a sub-Gaussian assumption, yet their reward function depends only on the \emph{means} of the arms, while our problem requires considering the effect of the joint distribution on the reward function.
+
+\section{problem formulation}
 \label{problem formulation}
 Our goal is to efficiently identify pilots’ deficiencies through rational module design, with these deficiencies measured by their scores during the module evaluation process. Suppose there are $M$ different training modules from which $m$ are selected in one training session due to the time and cost restriction. Then, we select $m$ modules to maximally expose a pilot’s deficiencies, such that the minimum score across these $m$ modules is as low as possible. The optimization problem can be formulated as follows:
 \begin{equation}
@@ -189,7 +201,7 @@ We summarize the conclusions is the following lemma:
 The relation between $f$ and the variance for each individual variable is not monotone. We can, however, derive some special cases:
 	\begin{enumerate}
 		\item When $\rho<\frac{\sigma_1}{\sigma_2}$ (specifically when $\rho<0$), a larger value of $\sigma_1$ is preferred.
-		\item When $\rho>\frac{\sigma_1}{\sigma_2}$, smaller value of $\sigma_1$ is preferred. This result may appear counter-intuitive. To gain insight, consider a special case where $\rho = 1$ and $\sigma_1<\sigma_2$. In this scenario, $X_1$ and $X_2$ are positively linear dependent, with $ X_1 = \frac{\sigma_1}{\sigma_2} X_2$. Consequently, $X_1$ and $X_2$ always share the same sign. When $X_1, X_2 > 0$, the minimum is $\min\{X_1, X_2\} = X_1 > 0$, which increases with $\sigma_1$. When $X_1, X_2 < 0$, the minimum is $\min\{X_1, X_2\} = X_2 < 0$, which is independent of $\sigma_1$. Thus, a larger $\sigma_1$ increases the objective function value in this case. Although a larger $\sigma_1$ reduces $X_1$ when negative, these negative values do not contribute to the objective function as long as $\sigma_1 < \sigma_2$. This effect diminishes slightly as $\rho$ deviates from 1, but negative values of $X_1$ remain less likely to influence the objective function until $\rho < \frac{\sigma_1}{\sigma_2}$.
+		\item When $\rho>\frac{\sigma_1}{\sigma_2}$, smaller value of $\sigma_1$ is preferred. This result may appear counter-intuitive. To gain insight, consider a special case where $\rho = 1$ and $\sigma_1<\sigma_2$. In this scenario, $X_1$ and $X_2$ are positively linear dependent, with $ X_1 = \frac{\sigma_1}{\sigma_2} X_2$. Consequently, $X_1$ and $X_2$ always share the same sign. When $X_1, X_2 > 0$, the minimum is $\min\{X_1, X_2\} = X_1 > 0$, which increases with $\sigma_1$. When $X_1, X_2 < 0$, the minimum is $\min\{X_1, X_2\} = X_2 < 0$, which is independent of $\sigma_1$. Thus, a larger $\sigma_1$ increases the objective function value in this case. Although a larger $\sigma_1$ reduces $X_1$ when negative, these negative values do not contribute to the objective function as  long as $\sigma_1 < \sigma_2$. This effect diminishes slightly as $\rho$ deviates from 1, but negative values of $X_1$ remain less likely to influence the objective function until $\rho < \frac{\sigma_1}{\sigma_2}$.
 	\end{enumerate}
 
 
@@ -277,7 +289,7 @@ As established in Section 4.1.1, the expected value of the minimum of two module
 $$
 \text{Ipr}(x_2 | x_1) = \mathbb{E}[\min\{Y(x_1), Y(x_2)\}] - \mathbb{E}[Y(x_1)].
 $$
-This quantity captures the expected reduction in the minimum score---and thus the expected enhancement in exposed deficiency---achieved by adding $x_2$ to an assessment already containing $x_1$. It follows directly from the definition that $\text{Ipr}(x_2 | x_1) = 0$ when $x_1$ and $x_2$ are identical.
+This quantity captures the expected reduction in the minimum score by adding $x_2$ to an assessment already containing $x_1$. It follows directly from the definition that $\text{Ipr}(x_2 | x_1) = 0$ when $x_1$ and $x_2$ are identical.
 
 Next, consider an existing set of selected modules $S = \{x_2, x_3, x_4\}$. We can extend the pairwise improvement concept by defining the marginal improvement of adding a new module $x_1$ to the set $S$ as:
 $$
@@ -321,7 +333,7 @@ The workflow for Mixed approach is described below(\textbf{Algorithm 2}). In Ste
 \State Initialize $S = \{x_1,x_2\}$, where $x_1 = \min_{x\in \mathcal{X}} \mathbb{E}[Y(x)]$, $x_2 = \max_{x\in \mathcal{X}} \text{Ipr}(x_2|x_1)$.
 \For{$i = 3$ \textbf{to} $m$}
     \State Choose candidate set $C\in \mathcal{X}$, $s.t~C = \mathop{\mathrm{arg\,max}}\limits_{|C|=q} \sum_{x \in C} \text{Ctr}(x|S)$
-	\State Choose $x_{i} = \mathop{\mathrm{arg\,max}}\limits_{x\in C} \left[ U(S \cup \{x\}) - U(S) \right]$ by SAA.
+	\State Choose $x_{i} = \mathop{\mathrm{arg\,max}}\limits_{x\in C} \left[ U(S \cup \{x\}) - U(S) \right]$ by SAA
     \State Update $S = S \cup x_i$
 \EndFor
 \State \Return $S$
@@ -409,12 +421,124 @@ The $\alpha$-approximation regret of Algorithm \ref{alg:gp_ucb_algorithm_adaptiv
 \end{enumerate}
 \end{theorem}
 
-\section{Numerical experiments}
+\section{Numerical Experiments}
+\label{sec:experiments}
+
+We conduct extensive numerical experiments to evaluate the performance of the proposed heuristic algorithms under the known-means scenario and GP-UCB algorithm under the unknown-means scenario. Our experiments are designed to systematically assess the impact of problem scale and correlation structure on algorithmic performance.
+
+\subsection{Experimental Setup}
+
+\subsubsection{Problem Scales}
+We examine four distinct problem scales to represent varying levels of computational complexity:
+\begin{itemize}
+    \item \textbf{Medium Scale I:} Selecting 8 from 50 modules ($m=8, M=50$)
+    \item \textbf{Medium Scale II:} Selecting 16 from 50 modules ($m=16, M=50$)
+    \item \textbf{Large Scale I:} Selecting 10 from 200 modules ($m=10, M=200$)
+    \item \textbf{Large Scale II:} Selecting 20 from 200 modules ($m=20, M=200$)
+\end{itemize}
+
+\subsubsection{Correlation Structures}
+For each problem scale, we investigate two fundamental correlation structures:
+
+\textbf{1. Grouped Structure:} Modules are partitioned into groups with distinctive correlation patterns.
+\begin{itemize}
+    \item For $M=50$: 5 groups of 10 modules each
+    \item For $M=200$: 8 groups of 25 modules each
+    \item Within-group correlation: $\rho_{\text{in}} \approx 0.8$ (highly correlated)
+    \item Between-group correlation: $\rho_{\text{out}} \approx 0$ (weakly correlated)
+\end{itemize}
+
+This structure is further divided into two scenarios:
+\begin{itemize}
+    \item \textbf{Worst Case:} Modules with the smallest mean scores are concentrated in one group. Additionally, we introduce a positive correlation between module means and noise levels: modules with smaller means exhibit lower assessment variance, while those with larger means have higher variance.
+    \item \textbf{Best Case:} Mean scores are distributed evenly across all groups, and noise levels are independent of mean scores.
+\end{itemize}
+
+\textbf{2. Random Structure:} All pairwise correlations are randomly generated with non-negative values, representing an unstructured scenario without inherent module clustering. Noise levels are generated independently of mean scores.
+
+\subsubsection{Data Generation Procedure}
+The ground-truth mean score vector $\boldsymbol{\mu}_{\text{true}} \in \mathbb{R}^M$ is generated by sampling from a multivariate normal distribution $\mathcal{N}(\mathbf{70}, \mathbf{\Sigma}_0)$, where $\mathbf{70}$ is a vector of baseline scores. The covariance matrix $\mathbf{\Lambda}$ is then constructed based on the specified correlation structure:
+\begin{itemize}
+    \item For grouped structures, $\mathbf{\Lambda}$ is constructed such that modules within the same group exhibit high correlations ($\rho \approx 0.8$), while modules from different groups show negligible correlations ($\rho \approx 0$)
+    \item For the \textbf{Worst Case} scenario, the diagonal elements of $\mathbf{\Lambda}$ (variances) are set to be positively correlated with the mean scores: $\mathbf{\Lambda}_{ii} \propto \boldsymbol{\mu}_{\text{true},i}$, which creates a more challenging environment
+    \item For random structures, $\mathbf{\Lambda}$ is randomly generated with non-negative entries
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\caption{Summary of Experimental Configurations}
+\label{tab:exp_config}
+\begin{tabular}{p{2cm}p{3cm}p{8cm}}
+\hline
+\textbf{Scale} & \textbf{Structure} & \textbf{Configuration} \\
+\hline
+50/8 & Grouped & 5 groups; $\rho_{\text{in}}\approx0.8$; $\rho_{\text{out}}\approx0$; Worst/Best Case \\
+50/16 & Grouped & 5 groups; $\rho_{\text{in}}\approx0.8$; $\rho_{\text{out}}\approx0$; Worst/Best Case \\
+200/10 & Grouped & 8 groups; $\rho_{\text{in}}\approx0.8$; $\rho_{\text{out}}\approx0$; Worst/Best Case \\
+200/20 & Grouped & 8 groups; $\rho_{\text{in}}\approx0.8$; $\rho_{\text{out}}\approx0$; Worst/Best Case \\
+\hline
+50/8 & Random & Random non-negative correlations \\
+50/16 & Random & Random non-negative correlations \\
+200/10 & Random & Random non-negative correlations \\
+200/20 & Random & Random non-negative correlations \\
+\hline
+\end{tabular}
+\end{table}
+
+To comprehensively evaluate the performance of our proposed algorithms (Improvement, Mixed, and SAA), we compare them against two intuitive and straightforward benchmark policies:
+
+\begin{enumerate}
+    \item \textbf{Smallest Mean (SM)}: This naive baseline selects the $m$ modules with the smallest mean scores, entirely ignoring the covariance structure (variances and correlations) among them.
+    \item \textbf{Clustering-based Selection (CLS)}: This policy first clusters the $M$ modules into $m$ groups based on their correlation matrix using spectral clustering, aiming to group highly correlated modules together. It then selects the module with the smallest mean score from each cluster. This approach seeks diversity by explicitly minimizing correlation within the selected set.
+\end{enumerate}
+
+\subsection{Results and Discussion}
+\subsubsection{known-means scenario}
+
+The experimental results across all 12 scenarios (3 structures $\times$ 4 scales) are succinctly presented in Table \ref{tab:results}. The best objective value(expected minimum score $\mathbb{E}[\min\{Y(x_1), ..., Y(x_m)\}]$) achieved in each scenario is highlighted in \textbf{bold}. We also show the running time of the algorithms. 
+
+\begin{table}[htbp]
+\centering
+\caption{Experimental Results: Comparison of Objective Value and Computation Time}
+\label{tab:results}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}cc|cc|cc|cc|cc|cc@{}}
+\toprule
+\multirow{2}{*}{Scale} & \multirow{2}{*}{Case} & \multicolumn{2}{c|}{SM} & \multicolumn{2}{c|}{CLS} & \multicolumn{2}{c|}{Improvement} & \multicolumn{2}{c|}{Mixed} & \multicolumn{2}{c|}{SAA} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-12}
+ &  & Obj. & Time(s) & Obj. & Time(s) & Obj. & Time(s) & Obj. & Time(s) & Obj. & Time(s) \\ 
+\midrule
+\multirow{3}{*}{50/8} & Best & 56.77 & 0.0003 & 57.07 & 0.0008 & 56.76 & 0.10 & \textbf{56.52} & 3.01 & 56.53 & 13.47 \\
+ & Worst & 60.72 & 0.0002 & 58.59 & 0.0011 & 57.81 & 0.11 & 57.75 & 2.97 & \textbf{57.61} & 13.15 \\
+ & Random & 54.28 & 0.0001 & 54.41 & 0.0007 & 53.00 & 0.10 & 52.68 & 2.90 & \textbf{52.67} & 12.62 \\ 
+\midrule
+\multirow{3}{*}{50/16} & Best & 55.59 & 0.0002 & 55.62 & 0.0005 & 55.63 & 0.37 & 55.41 & 7.17 & \textbf{55.36} & 27.23 \\
+ & Worst & 57.90 & 0.0001 & 56.72 & 0.0027 & 56.64 & 0.38 & 56.59 & 7.03 & \textbf{56.10} & 27.44 \\
+ & Random & 52.53 & 0.0002 & 53.17 & 0.0005 & 52.48 & 0.36 & \textbf{52.21} & 7.16 & 52.22 & 27.22 \\ 
+\midrule
+\multirow{3}{*}{200/10} & Best & 48.77 & 0.0001 & 48.87 & 0.0021 & 48.77 & 0.69 & \textbf{48.76} & 4.48 & 48.80 & 72.13 \\
+ & Worst & 52.28 & 0.0001 & 53.18 & 0.0017 & 51.45 & 0.68 & 51.22 & 4.50 & \textbf{51.12} & 73.72 \\
+ & Random & 47.59 & 0.0002 & 47.09 & 0.0017 & 46.19 & 0.71 & 45.88 & 4.57 & \textbf{45.84} & 72.85 \\ 
+\midrule
+\multirow{3}{*}{200/20} & Best & \textbf{47.87} & 0.0001 & 48.33 & 0.0019 & 47.97 & 2.86 & 47.91 & 11.83 & 47.94 & 167.31 \\
+ & Worst & 51.90 & 0.0001 & 51.76 & 0.0020 & 50.38 & 2.81 & 50.12 & 12.07 & \textbf{49.97} & 172.30 \\
+ & Random & 44.31 & 0.0001 & 45.18 & 0.0029 & 44.23 & 2.83 & 44.08 & 11.69 & \textbf{43.98} & 169.09 \\ 
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+The comprehensive evaluation reveals that the SAA-based greedy algorithm achieves the best results in most cases, while the Mixed algorithm produces nearly identical results with minimal optimality gaps, demonstrating their superior performance. In contrast, both SM and CLS exhibit significant performance degradation compared to SAA in the challenging Worst Case and Random Case configurations, although the Improvement algorithm shows relatively better performance than these benchmarks while still falling short of Mixed and SAA. For the Best Case conditions, all algorithms except CLS yield comparable results. Overall, the proposed algorithms (Improvement, Mixed, and SAA) consistently outperform the benchmark approaches, confirming the value of systematic optimization; however, it is important to note that SAA's computational time increases substantially with problem scale, particularly as the total number of modules $M$ grows, while the performance differences between all algorithms diminish as the selection size $m$ increases. These results collectively indicate that while SAA provides optimal performance, Mixed offers an attractive balance between solution quality and computational efficiency for practical applications.
+
 
 
 %--------------------------------------------------------------------------------------
-\section{Theoretical analysis}
-\subsection{Proof of Theorem \ref{thm:submodular}}
+
+
+\bibliographystyle{informs2014} 
+\bibliography{sample} 
+
+\begin{appendices}
+\section{Proof of Theorem \ref{thm:submodular}}
 \textit{Proof.} Monotone Increasing is quite obvious. Here we show that $U(\cdot)$ is submodular. i.e., for any $S \subseteq T \subseteq \mathcal{X}$ and $x \in \mathcal{X} \setminus T$:
 $$
 U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
@@ -794,10 +918,7 @@ Finally, letting $\epsilon=\sqrt{\frac{2136\sigma^2Km\ln T}{T}}$, we get
 $$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq2\sqrt{2136\sigma^2KmT\ln T}<93\sigma\sqrt{mKT\ln T}.$$
 
 Combining this with Lemma 4, we conclude the proof of the distribution-independent regret bound in Theorem 1.\hfill $\blacksquare$
-
-
-\bibliographystyle{informs2014} 
-\bibliography{sample} 
+\end{appendices}
 
 %%%%%%%%%%%%%%%%%
 \end{document}
