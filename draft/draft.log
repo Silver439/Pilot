@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  7 SEP 2025 21:16
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  10 SEP 2025 20:48
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -913,7 +913,11 @@ Package fontspec Info:
 
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/n' will be
 (Font)              scaled to size 12.0pt on input line 71.
- (./draft.aux)
+ (./draft.aux
+
+LaTeX Warning: Label `alg:gp_ucb_algorithm_adaptive' multiply defined.
+
+)
 \openout1 = `draft.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/ntxmi/m/it on input line 71.
@@ -1261,9 +1265,7 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/sc' will be
 
 [16]
 
-[17]
-
-[18] (./draft.bbl
+[17] (./draft.bbl
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/it' will be
 (Font)              scaled to size 10.0pt on input line 7.
 
@@ -1288,6 +1290,8 @@ Underfull \hbox (badness 7540) in paragraph at lines 10--11
 
 
 
+[18]
+
 [19]
 Underfull \hbox (badness 2875) in paragraph at lines 43--44
 []\TU/TeXGyreTermesX(0)/m/n/10 Damos DL (2003) Pilot abilities and performance URL $[][][][][] [] [] [] [][][] [] [][][][][][][][][][][][] [] [][][] [] [][][][][][][][][][][] []
@@ -1303,40 +1307,49 @@ Underfull \hbox (badness 1953) in paragraph at lines 79--80
 )
 
 [21]
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/n' will be
+(Font)              scaled to size 15.0pt on input line 545.
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/n' will be
+(Font)              scaled to size 15.0pt on input line 545.
 
-[22]
-Underfull \hbox (badness 1242) in paragraph at lines 653--654
+
+[1
+
+]
+
+[2]
+Underfull \hbox (badness 1242) in paragraph at lines 659--660
 []\TU/TeXGyreTermesX(0)/m/n/12 Denote $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 = []\LMS/ntxsy/m/n/12 f\OML/ntxmi/m/it/12 ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; [] ; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]\LMS/ntxsy/m/n/12 g$ \TU/TeXGyreTermesX(0)/m/n/12 and $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 =
  []
 
 
 
-[23]
+[3]
 
-[24]
+[4]
 
-[25]
+[5]
 
-[26]
-
-[27]
-Underfull \vbox (badness 1552) has occurred while \output is active []
-
-
-
-[28]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+[6]
+Missing character: There is no ∧ ("2227) in font ntx-Regular-tlf-ot1!
+Missing character: There is no ∈ ("2208) in font ntx-Regular-tlf-ot1!
+Missing character: There is no − ("2212) in font ntx-Regular-tlf-ot1!
+Missing character: There is no ≤ ("2264) in font ntx-Regular-tlf-ot1!
 
 
+[7]
+Underfull \vbox (badness 4467) has occurred while \output is active []
 
-[29]
 
-[30]
+
+[8]
+
+[9]
 \openout4 = `draft.ent'.
 
 
 
-[31] (./draft.aux)
+[10] (./draft.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2020/03/25>
@@ -1350,16 +1363,16 @@ LaTeX Font Warning: Size substitutions with differences
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 28195 strings out of 473832
- 603326 string characters out of 5733159
- 1061347 words of memory out of 5000000
+ 28197 strings out of 473832
+ 603499 string characters out of 5733159
+ 1070348 words of memory out of 5000000
  50700 multiletter control sequences out of 15000+600000
- 608136 words of font info for 189 fonts, out of 8000000 for 9000
+ 608152 words of font info for 191 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 113i,15n,119p,1762b,515s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 113i,15n,119p,1762b,513s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on draft.pdf (31 pages).

@@ -244,9 +244,9 @@ According to Lemma 3, when other factors remain constant, a smaller mean vector 
 
 The analytical insights from Section 4.1 provide intuitive guidelines for module selection. In this subsection, we unveil a deeper, more powerful mathematical property of our objective function—submodularity. This property allows us to tackle the complex combinatorial optimization problem using a greedy algorithm with a provable performance guarantee.
 
-We first recall the definition of submodularity. For a finite set $\mathcal{V}$ (the set of all training modules $\mathcal{X}$ in our context), a set function $R: 2^{\mathcal{V}} \to \mathbb{R}$ is \textbf{submodular} if it satisfies the diminishing returns property: for any subsets $S \subseteq T \subseteq \mathcal{V}$ and any element $x \in \mathcal{V} \setminus T$,
+We first recall the definition of submodularity. For a finite set $\mathcal{V}$ (the set of all training modules $\mathcal{X}$ in our context), a set function $F: 2^{\mathcal{V}} \to \mathbb{R}$ is \textbf{submodular} if it satisfies the diminishing returns property: for any subsets $S \subseteq T \subseteq \mathcal{V}$ and any element $x \in \mathcal{V} \setminus T$,
 $$
-R(S \cup \{x\}) - R(S) \geq R(T \cup \{x\}) - R(T).
+F(S \cup \{x\}) - F(S) \geq F(T \cup \{x\}) - F(T).
 $$
 This means the marginal gain of adding a new element $x$ to a set $S$ is at least as large as the marginal gain of adding the same element to a superset $T$ of $S$.
 
@@ -369,21 +369,23 @@ To address the challenge of unknown score means, we propose a Bayesian optimizat
 The algorithm's core mechanism involves using an optimistic estimate of the mean scores to guide exploration. Specifically, at each iteration $t$, we construct the lower confidence bound (LCB) vector $\boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$, where $\boldsymbol{\sigma}_{t-1}$ contains the posterior standard deviations. This LCB vector represents an optimistic estimate of the true means from the perspective of minimizing the expected minimum score. We then pass this optimistic estimate to a heuristic oracle from Section 4.3, which returns a module set $S_t$ for evaluation. The observed scores from testing $S_t$ are used to update our posterior belief about $\boldsymbol{\theta}$. The complete procedure is detailed in Algorithm \ref{alg:gp_ucb_algorithm_adaptive}. Note that in Step 14, the exact computation of $R(S_t)$ remains analytically intractable so we use SAA to estimate it.
 
 \begin{algorithm}
-\caption{GP-UCB Algorithm}
+\caption{GP-UCB Algorithm with Efficient Initialization}
 \label{alg:gp_ucb_algorithm_adaptive}
 \begin{algorithmic}[1]
-\Require{Module set $\mathcal{X}$; Covariance matrix $\boldsymbol{\Lambda}$; Prior parameters $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$; Oracle $\mathcal{O}$; Iterations $N_0,N$}
+\Require{Module set $\mathcal{X}$; Covariance matrix $\boldsymbol{\Lambda}$; Prior parameters $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$; Oracle $\mathcal{O}$; Total iterations $N$}
 \State Initialize $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$ and count vector $\mathbf{T}_0 \gets \mathbf{0}$ 
-\For{$i = 1$ to $N_0$} \Comment{Initial phase: ensure each module observed at least once}
-	\State Play a super arm $S_i$ that contains module $i$
-	\State Observe $\mathbf{y}_i$,Update $(\boldsymbol{\mu}, \boldsymbol{\Sigma},\mathbf{T}_i)$,Calculate $R(S_i)$ \Comment Same as steps 11, 12, and 13
+\State $N_0 \gets \lceil M/m \rceil$ \Comment{Calculate minimum number of super arms needed}
+\For{$i = 1$ to $N_0$} \Comment{Efficient initial phase: cover all modules with minimal super arms}
+    \State $S_i \gets$ Select a super arm that maximizes the number of unobserved modules
+    \State Play super arm $S_i$, observe $\mathbf{y}_i$
+    \State Update $(\boldsymbol{\mu}, \boldsymbol{\Sigma},\mathbf{T}_i)$, Calculate $R(S_i)$ \Comment{Same as steps 12, 13, and 14}
 \EndFor
 \For{$t = N_0+1$ to $N$} \Comment{Main optimization phase}
     \State $\boldsymbol{\sigma}_{t-1} \gets \sqrt{\text{diag}(\boldsymbol{\Sigma}_{t-1})}$ \Comment{Compute posterior standard deviations}
-    \State $\boldsymbol{\beta}_t[x] \gets \sqrt{6 \ln t / \mathbf{T}_{t-1}[x]}$ for each $x \in \mathcal{X}$ \Comment $\mathbf{T}_{t-1}[x]$ represents the number of times module $x$ was observed before round $t-1$
+    \State $\boldsymbol{\beta}_t[x] \gets \sqrt{6 \ln t / \mathbf{T}_{t-1}[x]}$ for each $x \in \mathcal{X}$ \Comment{$\mathbf{T}_{t-1}[x]$: observation count of module $x$}
     \State $\boldsymbol{\tilde{\mu}}_t \gets \boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$ \Comment{Construct LCB-based mean estimate}
     \State $S_t \gets \mathcal{O}(\boldsymbol{\tilde{\mu}}, \boldsymbol{\Lambda})$ \Comment{Query selection oracle}
-    \State Observe score vector $\mathbf{y}_t$ for modules $S_t$ on a new pilot.
+    \State Observe score vector $\mathbf{y}_t$ for modules $S_t$ on a new pilot
     \State Update $(\boldsymbol{\mu}_t, \boldsymbol{\Sigma}_t)$ with $(\mathbf{y}_t, S_t)$; Update $\mathbf{T}_t[x] \gets \mathbf{T}_t[x] + 1$ for each $x \in S_t$
     \State Calculate $R(S_t) = \mathbb{E}[\min\,\{Y(x) : x \in S_t\}]$, track minimal $R(S_t)$ and corresponding $S_t$ 
 \EndFor
@@ -420,6 +422,7 @@ The $\alpha$-approximation regret of Algorithm \ref{alg:gp_ucb_algorithm_adaptiv
     $$
 \end{enumerate}
 \end{theorem}
+\textbf{Proof sketch:} To establish Theorem \ref{thm:regret_bound}, we begin by defining the high-probability concentration event $\varepsilon_t = \left\{\text{there exists } i \in [m] \text{ such that } |\hat{\mu}_{T_{i,t-1}}^i-\mu^i| < \sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}\right\}$. We then decompose the $\alpha$-regret $\text{Reg}_{\alpha}(T)$ into three components: $\text{Reg}_{\alpha}(T)=\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}]+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}]+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]$. The first term corresponds to the initialization phase and is bounded trivially. The second term is controlled using concentration inequalities. For the third term, we identify certain events that must occur under $\varepsilon_t$ and demonstrate that these events occur infrequently, thereby bounding their cumulative contribution. The overall proof idea aligns with the methodologies employed in references \citep{Kveton2014TightRB}, \citep{Degenne2016CombinatorialSW}, and \citep{Chen2016CombinatorialMB}.
 
 \section{Numerical Experiments}
 \label{sec:experiments}
@@ -537,7 +540,10 @@ The comprehensive evaluation reveals that the SAA-based greedy algorithm achieve
 \bibliographystyle{informs2014} 
 \bibliography{sample} 
 
-\begin{appendices}
+\ECSwitch
+%%% Main head for the e-companion
+\ECHead{Online Appendix}
+%\begin{appendices}
 \section{Proof of Theorem \ref{thm:submodular}}
 \textit{Proof.} Monotone Increasing is quite obvious. Here we show that $U(\cdot)$ is submodular. i.e., for any $S \subseteq T \subseteq \mathcal{X}$ and $x \in \mathcal{X} \setminus T$:
 $$
@@ -849,7 +855,7 @@ By Lemma 5 we have
 $$\sum_{t=m+1}^T\mathbb{I} \{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\Delta_{S_t}.$$
 
 For $i\in [m], k\in \mathbb{Z}_+, t\in \{m+1,...,T\}$, define an event
-$$\mathcal{G}_{i,k,t}=\mathcal{G}_{k,t}\wedge\{i\in S_t,T_{i,t-1}\leq m_{k,t}\}.$$
+$Gi,k,t=Gk,t∧{i∈St,Ti,t−1≤mk,t}.\mathcal{G}_{i,k,t}=\mathcal{G}_{k,t}\wedge\{i\in S_t,T_{i,t-1}\leq m_{k,t}\}$.
 
 Then by the definitions of $\mathcal{G}_{k,t}$ and $\mathcal{G}_{i,k,t}$ we have
 $$\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\leq\frac{1}{\beta_kK}\sum_{i\in E_\mathrm{B}}\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}.$$
@@ -918,7 +924,8 @@ Finally, letting $\epsilon=\sqrt{\frac{2136\sigma^2Km\ln T}{T}}$, we get
 $$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq2\sqrt{2136\sigma^2KmT\ln T}<93\sigma\sqrt{mKT\ln T}.$$
 
 Combining this with Lemma 4, we conclude the proof of the distribution-independent regret bound in Theorem 1.\hfill $\blacksquare$
-\end{appendices}
+%\end{appendices}
+
 
 %%%%%%%%%%%%%%%%%
 \end{document}
