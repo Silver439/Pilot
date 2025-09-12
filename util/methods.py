@@ -308,4 +308,47 @@ def assign_variances(means, min_var=25, max_var=144, correlation_strength=0.7):
     
     return variances
 
+def efficient_initialization(p, m, obs_num, mu_0, std2, R2, Sigma2, J):
+    """
+    高效初始化方法：以最少的次数覆盖所有模块
+    
+    参数:
+    p: 总模块数
+    m: 每次选择的模块数
+    obs_num: 观测次数计数器
+    mu_0, std2, R2, Sigma2, J: improvement函数所需参数
+    
+    返回:
+    ids: 选择的模块索引
+    """
+    unobserved_mask = (obs_num == 0)
+    unobserved_count = np.sum(unobserved_mask)
+    
+    if unobserved_count > 0:
+        # 优先选择包含最多未观测模块的臂
+        unobserved_arms = np.where(unobserved_mask)[0]
+        
+        if len(unobserved_arms) >= m:
+            # 如果未观测模块足够，随机选择m个
+            ids = np.random.choice(unobserved_arms, m, replace=False)
+        else:
+            # 如果未观测模块不足m个，先选所有未观测模块，再补充已观测模块
+            ids = unobserved_arms.tolist()
+            observed_arms = np.where(~unobserved_mask)[0]
+            additional_needed = m - len(ids)
+            
+            if len(observed_arms) > 0 and additional_needed > 0:
+                additional_ids = np.random.choice(observed_arms, additional_needed, replace=False)
+                ids = np.concatenate([ids, additional_ids])
+            else:
+                # 如果所有模块都已观测或没有足够模块，使用improvement函数
+                from util.methods import improvement
+                _, ids = improvement(p, m, mu_0, std2, R2, Sigma2, J=J)
+    else:
+        # 所有模块都已观测过，使用improvement函数
+        from util.methods import improvement
+        _, ids = improvement(p, m, mu_0, std2, R2, Sigma2, J=J)
+    
+    return ids
+
 
