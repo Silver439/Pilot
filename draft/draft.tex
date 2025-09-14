@@ -100,23 +100,19 @@ The Full Flight Simulator (FFS) is a highly sophisticated flight training device
 It is capable of simulating the entire spectrum of flight operations, from takeoff and cruise to landing, encompassing both routine procedures and complex scenarios such as engine failures, hydraulic system malfunctions, severe weather conditions, and even rare events like bird strikes or runway contamination \citep{Advancements2024}. The simulation integrates visual, auditory, and tactile feedback, alongside precise instrument readouts and control responses, to provide an immersive experience that closely mirrors actual flight conditions. Certified to the highest standards, such as Level D by aviation authorities like the Federal Aviation Administration (FAA) or the European Union Aviation Safety Agency (EASA), the FFS achieves unparalleled precision, enabling zero flight time training where pilots can qualify without operating an actual aircraft \citep{FAA1995,EASA2020}. However, this extraordinary accuracy comes at a significant cost, with a single FFS unit priced in the tens of millions of dollars, rendering its manufacture and maintenance a substantial financial commitment \citep{CAE7000XR}. Most airlines typically own only a limited number of FFS units outright or instead lease them from manufacturers such as CAE or L3Harris and dedicated flight training centers \citep{IBAAero2023}.
 
 % Explaining the role in pilot training
-The primary application of the FFS lies in pilot training and qualification maintenance, with a particular emphasis on mandatory recurrent training to renew licenses. Pursuant to regulations set by the International Civil Aviation Organization (ICAO) and national aviation authorities, pilots are required to undergo recurrent training every six to twelve months, typically conducted in an FFS, to validate their proficiency \citep{Flightradar2024}.
-
-During qualification assessments, pilots are evaluated through a series of subjects designed to test their ability to manage diverse operational challenges. These subjects are carefully crafted based on real-world flight data and historical incident analyses%, ensuring relevance to actual flight conditions 
+The primary application of the FFS lies in pilot training and qualification maintenance, with a particular emphasis on mandatory recurrent training to renew licenses. Pursuant to regulations set by the International Civil Aviation Organization (ICAO) and national aviation authorities, pilots are required to undergo recurrent training every six to twelve months, typically conducted in an FFS, to validate their proficiency \citep{Flightradar2024}.During qualification assessments, pilots are evaluated through a series of subjects designed to test their ability to manage diverse operational challenges. These subjects are carefully crafted based on real-world flight data and historical incident analyses%, ensuring relevance to actual flight conditions 
 \citep{NTSB2012}. Common subjects include ``Engine Failure on Takeoff,'' where pilots must stabilize the aircraft and execute a safe return to the airport following an engine malfunction immediately after liftoff; ``Low Visibility Approach,'' which tests precision navigation and landing in simulated adverse weather; and ``Emergency Descent and Decompression,'' requiring rapid altitude reduction and oxygen management in response to cabin pressure loss \citep{PilotWorkshops2023}. These assessments, which may span several hours, evaluate technical proficiency, decision-making speed, and crew coordination. Successful completion of these subjects results in license renewal, while deficiencies necessitate further training, ensuring consistent competency across the pilot workforce \citep{EASA2020}.
 
 Given the high cost of FFS and the critical need for regular pilot assessments, airlines must carefully balance budgetary constraints with the demand for efficient and effective evaluations. However, the current practice of selecting assessment subjects is often random or reliant on airlines' experiential judgment, which can fail to identify specific deficiencies or redundantly evaluate areas of established proficiency. This work aims to develop dedicated optimization approaches to enhance the selection of assessment subjects, maximizing the effectiveness of the evaluation process.
 
-Suppose there is a pool of $M$ different training modules from which $m$ are selected in one training session due to cost restriction. Ideally, these $m$ subjects should collectively cover a diverse range of skills to efficiently identify a pilot’s weaknesses. 
-
-Unlike conventional approaches, our strategy incorporates the correlations and variability in pilot performance across these modules, driven by individual differences in skills such as hand-eye coordination, spatial awareness, and stress resilience. For instance, pilots with strong coordination skills often excel in subjects like ``Precision Approach'' and ``Instrument Flying,'' as both require similar competencies, including accurate interpretation of flight instruments, stable aircraft control, and anticipation of spatial positioning \citep{Damos2003}. As a result, high performance in one module frequently predicts success in the other due to shared skill requirements. Conversely, pilots with superior stress management capabilities may outperform in complex emergency scenarios such as ``Multi-Engine Failure'', but struggle in subjects like ``Crosswind Landing'' if their coordination is less developed \citep{Szczepanska2025}. These correlations arise from overlapping skill sets and selecting multiple highly correlated subjects may lead to redundant testing.%, as pilots who excel or struggle in one are likely to perform similarly in the others. 
+Suppose there is a pool of $M$ different training modules from which $m$ are selected in one training session due to cost restriction. Ideally, these $m$ subjects should collectively cover a diverse range of skills to efficiently identify a pilot’s weaknesses. Unlike conventional approaches, our strategy incorporates the correlations and variability in pilot performance across these modules, driven by individual differences in skills such as hand-eye coordination, spatial awareness, and stress resilience. For instance, pilots with strong coordination skills often excel in subjects like ``Precision Approach'' and ``Instrument Flying,'' as both require similar competencies, including accurate interpretation of flight instruments, stable aircraft control, and anticipation of spatial positioning \citep{Damos2003}. As a result, high performance in one module frequently predicts success in the other due to shared skill requirements. Conversely, pilots with superior stress management capabilities may outperform in complex emergency scenarios such as ``Multi-Engine Failure'', but struggle in subjects like ``Crosswind Landing'' if their coordination is less developed \citep{Szczepanska2025}. These correlations arise from overlapping skill sets and selecting multiple highly correlated subjects may lead to redundant testing.%, as pilots who excel or struggle in one are likely to perform similarly in the others. 
  Accounting for these correlations is therefore critical in optimizing the selection of assessment modules to enhance training efficiency and safety \citep{Duruaku2024}. 
 
 We illustrate this with a simple example, where we need to select two subjects out of three for a pilot's assessment. From an aviation safety perspective, we aim to select the two subjects that best identify the subject with the lowest score, and thus the assessment metric is the minimum score of the two selected subjects. From an optimization perspective, the following objective function is considered:
-$$
+\begin{equation}
 	\min_{x_1,x_2} \mathbb{E}[\min\{Y(x_1),...,Y(x_2) \} ], 
 	\label{example}
-$$
+\end{equation}
 where $x_1,x_2$ are two selected subjects from the subjects pool $\{A,B,C\}$ and $Y(x_i)$ is the score on $x_i$. The scores of each pilot on these three subjects follow a discrete distribution with three scenarios (shown in Table \ref{tab:example}), each with probability 1/3.
 \begin{table}[ht]
 	\centering
@@ -132,23 +128,22 @@ where $x_1,x_2$ are two selected subjects from the subjects pool $\{A,B,C\}$ and
 \end{table}
 From the table, we can observe that the correlation between scores for subjects A and B is significantly higher than that between A and C or B and C, due to the differing skill requirements for the subjects, as previously discussed. If correlations are ignored, the first two subjects might be chosen (due to their lower mean scores). However, calculations reveal that the latter two subjects should be selected. This is precisely because their lower correlation allows them to more independently yield lower scores, increasing the likelihood of identifying the pilot’s weakest performance. Therefore, we need to design an optimization method that fully accounts for the correlations between scores of different subjects.
 
-Addressing this problem presents multiple challenges. First, computing the expected minimum value of several correlated distributions is inherently complex, particularly when selecting an optimal subset of $m$ modules from a larger set to minimize this value. Second, in practical applications, the expected values of these distributions are likely unknown. While we can infer correlations between scores based on the skill requirements of different subjects, estimating the mean scores of pilots across these subjects is considerably more difficult. Hence, an approach that simultaneously learns from data of previous test results and optimizes the selection process is necessary.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Addressing this problem presents multiple challenges. First, in practical applications, the expected values of these distributions are likely unknown. While we can infer correlations between scores based on the skill requirements of different subjects, estimating the mean scores of pilots across these subjects is considerably more difficult. Second, even when the parameters of the score distributions are fully known, computing the expected minimum value of several correlated distributions is inherently complex, particularly when selecting an optimal subset of mm modules from a larger set to minimize this value. This combinatorial optimization problem is computationally challenging and generally does not admit an exact solution, necessitating the use of approximation algorithms. Hence, an approach that simultaneously learns from data of previous test results and optimizes the selection process is necessary.
 
-To address the first challenge, we assume that the scores follow a multivariate normal distribution (a reasonable model for characterizing examination scores \citep{Ross2014} and has been validated through real-world FFS data). By analyzing the impact of parameters—such as means, variances, and correlations—on the target function, we derive insights to guide module selection. Furthermore, we identify the target function as a submodular problem, enabling the use of a greedy algorithm for approximate computation. To improve computational efficiency, we propose a heuristic algorithm informed by these analytical results. To tackle the second challenge, we develop a combinatorial multi-armed bandit (MAB) algorithm based on a Bayesian framework. This algorithm assigns a prior distribution to the score means, which is continuously updated through iterative testing. In each iteration, an upper confidence bound approach is used to select the module combination to be tested, and we prove the algorithm’s regret bound to ensure its theoretical robustness.
+To address the first challenge of estimating score means, we develop a combinatorial multi-armed bandit (CMAB) algorithm based on a Bayesian framework that assigns a prior distribution to the score means and continuously updates it through iterative testing. This learning framework, however, critically relies on an $\alpha$-approximation oracle to select near-optimal module combinations at each iteration based on the current estimates, which directly confronts the second computational challenge. To tackle the computational complexity challenge, we exploit the submodular structure of our objective function. This key property allows us to develop efficient greedy-style algorithms that serve as effective $\alpha$-approximation oracles for module selection. By combining these two components—the Bayesian learning framework and $\alpha$-approximation oracles for combinatorial selection—we create an integrated solution that simultaneously learns from evaluation data and optimizes the selection process. 
 
-This paper addresses a problem of significant practical relevance, representing an innovative effort to apply optimization and operations research algorithms to real-world challenges. Previously, the design of pilot training modules has relied heavily on intuition and experience. Beyond its practical significance, the optimization problem explored here also carries substantial theoretical value, presenting multiple challenges as outlined earlier. Moreover, while related to existing research domains, it exhibits notable distinctions. Our work primarily aligns with two categories of optimization studies. The first is simulation-based optimization \citep{Fu2015}, which employs simulation models to support decision-making in real-world systems (FFS is a highly precise simulation tool). Certain simulation optimization studies account for correlations in experimental results when selecting multiple design alternatives \citep{xie2016bayesian}. These correlations primarily arise from the use of common random numbers in computer simulations. However, no prior work in this field has targeted the same objective function as ours, as most focus on evaluating a single design’s performance without an internal minimization operation. The second category is combinatorial multi-armed bandit research \citep{Chen2013}, where some studies select multiple alternatives and use the best as the evaluation metric, akin to our objective function \eqref{example}. Yet, to the best of our knowledge, none have addressed correlations among alternatives. These correlations significantly complicate the problem while offering unique managerial insights.
+This paper addresses a problem of significant practical relevance, representing an innovative effort to apply optimization and operations research algorithms to real-world challenges. Previously, the design of pilot training modules has relied heavily on intuition and experience. Beyond its practical significance, the optimization problem explored here also carries substantial theoretical value, presenting multiple challenges as outlined earlier. Moreover, while related to existing research domains, it exhibits notable distinctions. Our work primarily aligns with two categories of optimization studies. The first is simulation-based optimization \citep{Fu2015}, which employs simulation models to support decision-making in real-world systems (FFS is a highly precise simulation tool). Certain simulation optimization studies account for correlations in experimental results when selecting multiple design alternatives \citep{xie2016bayesian}. These correlations primarily arise from the use of common random numbers in computer simulations. However, no prior work in this field has targeted the same objective function as ours, as most focus on evaluating a single design’s performance without an internal minimization operation. The second category is combinatorial multi-armed bandit research \citep{Chen2013}, where some studies select multiple alternatives and use the best as the evaluation metric, akin to our objective function \eqref{example}. Yet, to the best of our knowledge, none have addressed the complex reward structure in \eqref{example} while simultaneously accounting for correlations among alternatives. Although correlations in CMAB settings have been studied in prior works, these typically focus on simpler reward functions that depend only on marginal statistics rather than the full joint distribution of the selected arms. 
 
-The remainder of the paper is organized as follows. Section \ref{related works} reviews the related works. Section \ref{problem formulation} formulates the objective function. Section \ref{know means} offers some insights and heuristic algorithms for scenarios where expectations are known. Section \ref{unknown means} presents an algorithm that learns expectations during the optimization process, supported by theoretical guarantees. Section 6 reports numerical experiments. Finally, Section 7 concludes the paper.
+The remainder of the paper is organized as follows. Section \ref{related works} reviews the related works. Section\ref{problem formulation} formulates the objective function. Section \ref{BCUCB} presents our Bayesian Combinatorial Upper Confidence Bound (BCUCB) framework and its regret bound. Section \ref{oracle} develops $\alpha$-approximation oracles to tackle the computational challenge within the BCUCB framework. Section 6 reports numerical experiments. Finally, Section 7 concludes the paper.
 
 \section{Related works}
 \label{related works}
 We review relevant works in three aspects: existing approaches for pilot training modules design, simulation-based optimization, and combinatorial MAB.
 
-\textbf{Combinatorial MAB} Our module selection problem naturally fits into the combinatorial multi-armed bandit (CMAB) framework with semi-bandit feedback. In this framework, an agent sequentially selects a subset of base arms (referred to as a super arm) and observes a reward determined by the outcomes of all selected arms \citep{pmlr-v28-chen13a}, generalizing the classical multi-armed bandit problem to combinatorial action spaces and complex reward structures.
-
-The CMAB literature predominantly relies on two common modeling assumptions. A substantial body of work assumes that base arms are \emph{mutually independent} \citep{10.5555/3737916.3740755, Combes2015CombinatorialBR, 10.1145/3410220.3453926}. Alternatively, another line of research—including some works that incorporate dependencies—often restricts the reward function to be \emph{linear} with respect to the base arm outcomes \citep{Degenne2016CombinatorialSW, Kveton2014MatroidBF, Kveton2014TightRB}, or models the expected reward as a function of only the \emph{marginal means}, while our problem setting requires accounting for the influence of the full joint distribution on the reward function \citep{Demirel2021CombinatorialGP, Kveton2015CombinatorialCB}.
-
-Our work is most closely related to \citep{Chen2016CombinatorialMB}, who also consider the expected minimum (or maximum) of the selected arms as the reward function. A key distinction, however, is that their model does \emph{not} incorporate correlations between base arms, whereas our work explicitly addresses the impact of the joint distribution on the reward. \citep{Wang2023CombinatorialBF} also examine a minimum-based reward, but under a more restrictive \emph{full-bandit feedback} setting where only the maximum value and its originating arm index are observed, rather than the outcomes of all base arms in the super arm. This limited feedback significantly increases the learning difficulty. Moreover, their approach still assumes independent base arms, and their algorithm is confined to problems where the base arm outcomes lie in a \emph{finite, discrete set}, while our setting considers continuous distributions where the joint structure plays a crucial role. In a somewhat orthogonal direction, \citep{Degenne2016CombinatorialSW} consider correlated base arms with a known covariance matrix under a sub-Gaussian assumption, yet their reward function depends only on the \emph{means} of the arms, while our problem requires considering the effect of the joint distribution on the reward function.
+\textbf{Combinatorial MAB} Our module selection problem naturally fits into the combinatorial multi-armed bandit (CMAB) framework with semi-bandit feedback, where an agent sequentially selects a subset of base arms (super arm) and observes outcomes from all selected arms \citep{pmlr-v28-chen13a}. The CMAB literature predominantly makes two simplifying assumptions: either base arms are \emph{mutually independent} \citep{10.5555/3737916.3740755, Combes2015CombinatorialBR, 10.1145/3410220.3453926}, or the reward function is \emph{linear} in base arm outcomes or depends only on \emph{marginal means} \citep{Demirel2021CombinatorialGP, Kveton2015CombinatorialCB}. In contrast, our problem requires accounting for the full joint distribution's influence on the non-linear minimum-based reward function. Our work is most closely related to \citep{Chen2016CombinatorialMB}, who also consider the expected maximum of selected arms as the reward function but do not incorporate correlations between base arms. \citep{Wang2023CombinatorialBF} also examines a similar maximum reward function but under a more restrictive full-bandit feedback setting with discrete outcomes, whereas we consider continuous distributions with semi-bandit feedback. In an orthogonal direction, \citep{Degenne2016CombinatorialSW} considers correlated base arms with a known covariance matrix under a sub-Gaussian assumption, which aligns with our setting in terms of correlation structure, but focuses on linear reward functions, which fundamentally differ from our minimum-based reward structure that requires complete joint distribution information.
 
 \section{problem formulation}
 \label{problem formulation}
@@ -159,90 +154,92 @@ Our goal is to efficiently identify pilots’ deficiencies through rational modu
 \end{equation}
 where $x_1,...,x_m$ represent the $m$ modules in the training session, taken from the module set $\mathcal{X} = \{x_1,...,x_M\}$, and $Y(x_1,\xi)$ is the score the pilot obtain in module $x_i$. It is evaluated through simulation at FFS. In this model, we assume the score vector in the population $\{Y(x_1),...,Y(x_M)\}$ follows a multivariate normal distribution. For each specific person, his score is a sample from this distribution. In equation \eqref{obj}, the random vector $\xi$ is used to illustrate the randomness in this multivariate normal distribution. The inner minimization is to find the minimum score one pilot obtain across the given $m$ training modules. We take the minimum value as we need to find the weakness of the pilots considering flight safety. The outer minimization is the find the best set of training sessions in detecting the pilot inadequacy.
 
-\section{Insights and Algorithm with Known Score Means}
-\label{know means}
-We first consider an ideal scenario for solving Problem \eqref{obj}, where all parameters of the score distributions for all modules are fully known. That is, we aim to select a limited number of dimensions from a completely known multivariate normal distribution such that the expected value of the minimum score across these dimensions is minimized. It should be noted that, in general, this objective function cannot be simplified into a more computationally convenient form. Existing studies provide closed-form solutions for the expected minimum of two normal distributions \citep{nadarajah2008exact}. However, for more than two normal distributions, prior research remains limited. \cite{clark1961greatest} relied on numerical approximation, that recursively applies a three-variate formula, to compute the expected value of their minimum and has analyzed the accuracy of these approximations through numerical validation. Such computational methods are time-consuming, particularly in our optimization scenario, where we need to repeatedly select $m$ modules and compute the expected value of their minimum scores. Therefore, we aim to derive managerial insights from simple, analytically tractable examples and leverage these insights to develop efficient heuristic methods. This section is divided into two parts: in Section \ref{insights}, we use two simplified examples to obtain managerial insights; in Section \ref{submodular}, we demonstrate that the objective function is submodular, enabling the use of a greedy algorithm to achieve an efficient and theoretically guaranteed approximation; in Section \ref{heuristic}, we utilize these insights to develop an efficient heuristic method based on greedy approach.
+\section{A Combinatorial MAB Algorithm for Unknown Score Means}
+\label{BCUCB}
+\subsection{Model Formulation}
+We assume that the score has Gaussian noise: $Y(x) = Z(x) + \mathcal{N}(0,\sigma(x))$ and the joint distribution for $Y(x)_{x\in\{\mathcal{X}\}}$ is a multivariate normal distribution with mean vector $\theta = [Z(x_1),...,Z(x_M)]^T$ and covariance matrix $\Lambda$. We use a Bayesian approach to model $\theta$ and assume a normal prior:
+$$\theta \sim \mathcal{N}(\mu_0, \Sigma_0). $$
+As with \cite{xie2016bayesian}, we assume $\Lambda, \mu_0, \Sigma_0$ are known.
 
-\subsection{Insights from two simple examples}
-\label{insights}
-This subsection examines two simplified examples to investigate how parameters in a multivariate normal distribution—specifically the mean, correlation, and variance—affect the expected minimum value. The examples include a bivariate normal distribution (Section \ref{bivariate normal}) and a multi-variate scenario with same means, variances, and correlations (Section \ref{multi-variate}). Despite their simplicity, the conclusions and insights from these examples align with intuition and are corroborated by subsequent numerical experiments.
+The $i$th entry of a vector $v$ is denoted as $v(i)$ and the $(i,j)$th entry of a matrix $M$ is denoted as $M(i,j)$. For an ordered collection of $m$ alternatives ${\bf x}=(x_1,...,x_m)$ with element $x_i \in \{1,...,M\}$ for each $i$, we use $v(\bf x)$ to denote the subvector of $v$ with the $i$th entry equal to $v(x_i)$. We further denote by $M(\bf x, x')$ the $m$-by-$m$ submatrix of $M$ with the $(i,j)$th entry equal to $M(x_i, x_j')$.  
 
-\subsubsection{Bivariate normal example}
-\label{bivariate normal}
-
-For any two Gaussian random number $X_1\sim N(\mu_1,\sigma^2_1)$, $X_2\sim N(\mu_2,\sigma^2_2)$ with correlation $\rho$, the expectation $\text{E}[\min\{X_1, X_2\}]$ takes the following form \citep{clark1961greatest}:
+We consider a situation where in each iteration $t$, one pilot will attend $m$ different modules ${\bf x}_t = (x_{t,1},...,x_{t,m})^T$ and we obtain his score vector ${\bf y}_t = (Y(x_{t,1}),...,Y(x_{t,m}))^T$. The conditional distribution of ${\bf y}_t$ is:
+$${\bf y}_t | \theta,{\bf x}_t \sim \mathcal{N}(\theta({\bf x}_t), \Lambda({\bf x}_t,{\bf x}_t)). $$ 
+Let $\mathbb{X}_t = ({\bf x}_1^T,...,{\bf x}_t^T )$ denote the concatenation of the design points of the previous $t$ iteration and similarly $\mathbb{Y}_t =({\bf y}_1^T,...,{\bf y}_t^T )^T$. Then, the posterior distribution for $\theta$ is:
+$$\theta_n|\mathbb{X}_t,\mathbb{Y}_t  \sim \mathcal{N}(\mu_t, \Sigma_t),$$
+where for any vector ${\bf x} = (x_1, x_2,...,x_m)$,
 $$
-\text{E}[\min\{X_1, X_2\}] = \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta}) - \theta \phi(\frac{\mu_2-\mu_1}{\theta} ),
+	\mu_t({\bf x}) = \mu_0({\bf x}) + \Sigma_0(\bf x, \mathbb{X}_t)(\Sigma_0(\mathbb{X}_n,\mathbb{X}_t) + \Gamma_t)^{-1}(\mathbb{Y}_t-\mu_0(\mathbb{X}_t)),
 $$
-where $\phi$, $\Phi$ are cdf and pdf for standard normal distribution, respectively, and $\theta = \sqrt{\sigma^2_1+\sigma^2_2-2\rho \sigma_1\sigma_2} = \sqrt{\text{var}(X_1-X_2)}$.
+$$
+	\Sigma_n({\bf x},{\bf x}) = \Sigma_0({\bf x},{\bf x}) - \Sigma_0(\bf x, \mathbb{X}_t)(\Sigma_0(\mathbb{X}_t,\mathbb{X}_t) + \Gamma_t)^{-1}\Sigma_0(\mathbb{X}_t, \bf x),
+$$
+where $\Gamma_t$ can be calculated from the observed samples since we know the covariance matrix $\Lambda$.
 
-Denote $f=\text{E}[\min\{X_1, X_2\}] $. We have:
-\begin{equation}
-	\frac{\partial f}{\partial \theta} = -\phi(\frac{\mu_2-\mu_1}{\theta})<0,
-\end{equation}
-\begin{equation}
-	\label{rho}
-	\frac{\partial f}{\partial \rho} = \frac{\partial f}{\partial \theta} \frac{\partial \theta}{\partial \rho} =  \frac{\sigma_1\sigma_2}{\theta}\phi(\frac{\mu_2-\mu_1}{\theta})>0,
-\end{equation}
-\begin{equation}
-	\label{sigma}
-	\frac{\partial f}{\partial \sigma_1} = \frac{\partial f}{\partial \theta} \frac{\partial \theta}{\partial \sigma_1} = -\frac{\sigma_1-\rho\sigma_2}{\theta} \phi(\frac{\mu_2-\mu_1}{\theta}),
-\end{equation}
-\begin{equation}
-	\label{mu}
-	\frac{\partial f}{\partial \mu_1} = \Phi( \frac{\mu_2-\mu_1}{\theta})>0.
-\end{equation}
+\subsection{The BCUCB Algorithm} 
+To address the challenge of unknown score means, we propose a Bayesian Combinatorial Upper Confidence Bound (BCUCB) algorithm. This algorithm iteratively maintains a bayesian posterior distribution over the mean scores $\boldsymbol{\theta}$ and leverages an $\alpha$-approximation oracle for module selection.
 
-We summarize the conclusions is the following lemma:
-\begin{lemma}
-	In the bivariate normal example, the expectation of the minimum value is smaller when the two variables have smaller expectations and correlations.
-\end{lemma}
+The algorithm operates in two phases: an initial exploration phase that ensures each module is evaluated at least once, followed by the main optimization phase. At each iteration $t$, the algorithm constructs a lower confidence bound (LCB) estimate $\boldsymbol{\tilde{\mu}}_t = \boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$ based on the current posterior distribution. This LCB vector is then passed to an $\alpha$-approximation oracle $\mathcal{O}$ that selects a module set $S_t$ aiming to minimize the expected minimum score. The specific design and implementation of this oracle will be detailed in the next section. After evaluating the selected modules on a new pilot, the posterior distribution is updated with the observed scores. The complete procedure is summarized in Algorithm \ref{alg:bcucb_algorithm}.
 
-The relation between $f$ and the variance for each individual variable is not monotone. We can, however, derive some special cases:
-	\begin{enumerate}
-		\item When $\rho<\frac{\sigma_1}{\sigma_2}$ (specifically when $\rho<0$), a larger value of $\sigma_1$ is preferred.
-		\item When $\rho>\frac{\sigma_1}{\sigma_2}$, smaller value of $\sigma_1$ is preferred. This result may appear counter-intuitive. To gain insight, consider a special case where $\rho = 1$ and $\sigma_1<\sigma_2$. In this scenario, $X_1$ and $X_2$ are positively linear dependent, with $ X_1 = \frac{\sigma_1}{\sigma_2} X_2$. Consequently, $X_1$ and $X_2$ always share the same sign. When $X_1, X_2 > 0$, the minimum is $\min\{X_1, X_2\} = X_1 > 0$, which increases with $\sigma_1$. When $X_1, X_2 < 0$, the minimum is $\min\{X_1, X_2\} = X_2 < 0$, which is independent of $\sigma_1$. Thus, a larger $\sigma_1$ increases the objective function value in this case. Although a larger $\sigma_1$ reduces $X_1$ when negative, these negative values do not contribute to the objective function as  long as $\sigma_1 < \sigma_2$. This effect diminishes slightly as $\rho$ deviates from 1, but negative values of $X_1$ remain less likely to influence the objective function until $\rho < \frac{\sigma_1}{\sigma_2}$.
-	\end{enumerate}
+\begin{algorithm}
+\caption{Bayesian Combinatorial Upper Confidence Bound (BCUCB)}
+\label{alg:bcucb_algorithm}
+\begin{algorithmic}[1]
+\Require{Module set $\mathcal{X}$; Covariance matrix $\boldsymbol{\Lambda}$; Prior parameters $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$; Oracle $\mathcal{O}$; Iterations $N_0,N$}
+\State Initialize $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$ and count vector $\mathbf{T}_0 \gets \mathbf{0}$ 
+\For{$i = 1$ to $N_0$} \Comment{Initial exploration phase}
+	\State Play a super arm $S_i$ that contains module $i$
+	\State Observe $\mathbf{y}_i$,Update $(\boldsymbol{\mu}, \boldsymbol{\Sigma},\mathbf{T}_i)$,Calculate $R(S_i)$ \Comment Same as steps 11, 12, and 13
+\EndFor
+\For{$t = N_0+1$ to $N$} \Comment{Main optimization phase}
+    \State $\boldsymbol{\sigma}_{t-1} \gets \sqrt{\text{diag}(\boldsymbol{\Sigma}_{t-1})}$ \Comment{Compute posterior standard deviations}
+    \State $\boldsymbol{\beta}_t[x] \gets \sqrt{6 \ln t / \mathbf{T}_{t-1}[x]}$ for each $x \in \mathcal{X}$ \Comment $\mathbf{T}_{t-1}[x]$ represents the number of times module $x$ was observed before round $t-1$
+    \State $\boldsymbol{\tilde{\mu}}_t \gets \boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$ \Comment{Construct LCB-based mean estimate}
+    \State $S_t \gets \mathcal{O}(\boldsymbol{\tilde{\mu}}, \boldsymbol{\Lambda})$ \Comment{Query $\alpha$-approximation oracle}
+    \State Observe score vector $\mathbf{y}_t$ for modules $S_t$ on a new pilot.
+    \State Update $(\boldsymbol{\mu}_t, \boldsymbol{\Sigma}_t)$ with $(\mathbf{y}_t, S_t)$; Update $\mathbf{T}_t[x] \gets \mathbf{T}_t[x] + 1$ for each $x \in S_t$
+    \State Calculate $R(S_t) = \mathbb{E}[\min\,\{Y(x) : x \in S_t\}]$, track minimal $R(S_t)$ and corresponding $S_t$ 
+\EndFor
+\State \Return $S^*$ with minimal $R(S^*)$
+\end{algorithmic}
+\end{algorithm}
+\subsection{Regret bounds}
+We establish both distribution-dependent and distribution-independent regret bounds for Algorithm \ref{alg:bcucb_algorithm}, proving $O(\log T)$ and $O(\sqrt{T \log T})$ rates respectively.
 
+For any approximation parameter $0 < \alpha < 1$, we define a super arm $S$ as \emph{bad} if $R(S) > \alpha R(S^*)$, where $S^*$ denotes the true optimal super arm. The suboptimality gap for each super arm $S$ is defined as:
+$$
+\Delta_S = \max\{R(S) - \alpha \cdot R(S^*), 0\}.
+$$
 
-\subsubsection{Multi-variate normal example}
-\label{multi-variate}
+Let $\mathcal{F}_B = \{S \in \mathcal{F} \mid \Delta_S > 0\}$ denote the set of all bad super arms, and let $E_B \subseteq \mathcal{X}$ be the set of modules contained in at least one bad super arm. For each module $i \in E_B$, we define its minimal suboptimality gap as:
+$$
+\Delta_{i,\min} = \min\{\Delta_S \mid S \in \mathcal{F}_B, i \in S\}.
+$$
 
-We consider the following scenario: $m$ normal random numbers $X_1,...,X_m$ with equal mean $\mu$ and equal variance $\sigma^2$. The correlation between each pair of variables is $\rho\geq 0$. We would like to explore the relationship between the objective function  $f = \text{E}[\min\{X_1,...,X_m\}]$ and $\rho$, $\mu$, and $\sigma$.
+Let $\sigma^2$ represent the maximum variance among all modules (the largest diagonal element of covariance matrix $\boldsymbol{\Lambda}$). Recall that $m = |S|$ is the cardinality of the selected super arm, and $y_{\text{max}}$ is the maximum possible score for any module.
 
-In this case, each random variable can be represented as $X_i = \mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_i )$, where $W$ and $N_1,...,N_m$ are i.i.d. standard normal random variables. Then,
-$$f = \text{E}[\min\{X_1,...,X_m\}] =  \text{E}[\min\{\mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_1 ),...,\mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_m )\}] $$
-$$=\mu+ \sigma\text{E}[\min\{\sqrt{\rho}W + \sqrt{1-\rho} N_1 ,...,\sqrt{\rho}W + \sqrt{1-\rho} N_m \}]  $$
-$$=\mu + \sigma\text{E}[\sqrt{\rho}W+ \sqrt{1-\rho} \min\{N_1,...,N_m\} ] =\mu + \sigma\sqrt{1-\rho} \text{E}[\min\{N_1,...,N_m\} ]. $$
-
-Noted that $\text{E}[\min\{N_1 ,...,N_m \}]$ is a constant for a given $m$. It is negative and can be approximated as 
-$$-\sqrt{2 \ln m} + \frac{\ln \ln m + \ln 4\pi}{ 2 \sqrt{2 \ln m}}. $$
-Hence, $f\approx \mu - \sigma\sqrt{1-\rho}\sqrt{2 \ln m}$. 
-
-We summarize the insights from this example in the following lemma.
-
-\begin{lemma}
-	In the simple multi-variate normal example, the expectation of the minimum value is smaller with smaller $\mu$, larger $\sigma$ or smaller $\rho$.
-\end{lemma}
-
-For a general multi-variate normal distribution, analyzing the impact of the covariance matrix on the objective function $   f   $ using simple algebra is challenging. However, we can derive the following lemma regarding the influence of the means.
-\begin{lemma}
-	In a general multi-variate normal distribution, if the covariance matrix is fixed, the value of $f$ reduces if the mean vector gets smaller pointwisely.
-\end{lemma}
-
-We summarize the managerial insights derived from these examples for decision-making as follows. To achieve a smaller value for the objective function, we should generally select: 
+\begin{theorem}
+\label{thm:regret_bound}
+The $\alpha$-approximation regret of Algorithm \ref{alg:gp_ucb_algorithm_adaptive} over $T$ rounds satisfies the following upper bounds:
 \begin{enumerate}
-	\item $m$ Gaussian variables with smaller means;
-	\item variables with lower correlations;
-	\item variables with larger variances.
+    \item \textbf{Distribution-dependent bound:}
+    $$
+    \sigma^2 m \sum_{i \in E_B} \frac{2136}{\Delta_{i,\min}} \ln T + \left(\frac{\pi^2}{6} + 1\right) \alpha y_{\text{max}} M.
+    $$
+    
+    \item \textbf{Distribution-independent bound:}
+    $$
+    93\sigma \sqrt{M m T \ln T} + \left(\frac{\pi^2}{6} + 1\right) \alpha y_{\text{max}} M.
+    $$
 \end{enumerate}
-According to Lemma 3, when other factors remain constant, a smaller mean vector directly reduces the expected minimum value. Furthermore, regarding the other two points, the lower the correlations and the larger the variances of the $m$ variables, the more independently each variable can take potentially smaller values, thereby reducing the minimum value.
+\end{theorem}
 
-%-----------------------------------------------------------------------------------------
-\subsection{Demonstration of Submodular Objective Function and Greedy Algorithm}
-\label{submodular}
+\section{Design of $\alpha$-Approximation Oracles}
+\label{oracle}
 
-The analytical insights from Section 4.1 provide intuitive guidelines for module selection. In this subsection, we unveil a deeper, more powerful mathematical property of our objective function—submodularity. This property allows us to tackle the complex combinatorial optimization problem using a greedy algorithm with a provable performance guarantee.
+This section details the design of the $\alpha$-approximation oracle $\mathcal{O}$ used in the BCUCB algorithm. The oracle's purpose is to efficiently select a set of $m$ modules that (approximately) minimizes the expected minimum score given current parameter estimates. Our approach leverages the submodular structure of the objective function to develop oracles with theoretical guarantees.
+
+\subsection{Submodularity and Greedy Approximation}
 
 We first recall the definition of submodularity. For a finite set $\mathcal{V}$ (the set of all training modules $\mathcal{X}$ in our context), a set function $F: 2^{\mathcal{V}} \to \mathbb{R}$ is \textbf{submodular} if it satisfies the diminishing returns property: for any subsets $S \subseteq T \subseteq \mathcal{V}$ and any element $x \in \mathcal{V} \setminus T$,
 $$
@@ -275,16 +272,28 @@ Let $S^*$ be the optimal set of size $m$ that maximizes $U(S)$, and let $S^{\tex
 $$
 U(S^{\text{greedy}}_m) \geq \left(1 - \frac{1}{e}\right) U(S^*) \approx 0.632 \cdot U(S^*).
 $$
-This guarantee holds regardless of the order of the modules added after the first optimal choice, making the greedy algorithm highly effective for large-scale problems where exhaustive search is infeasible.
 \end{theorem}
 
-This theoretical guarantee is significant. It ensures that even without computing the computationally expensive exact optimal solution, the greedy heuristic yields a solution that is provably within at least approximately 63\% of the optimal value in the worst case. This result justifies the development of greedy-inspired heuristic methods in the next section. Although calculating the exact marginal gain $U(S \cup \{x\}) - U(S)$ for each candidate module $x$ may require numerical integration of the expected minimum (as discussed in Section 4.1), the submodularity property allows us to use the insights derived in Section 4.1—favoring modules with lower means, higher variances, and lower correlations—as effective proxies for the true marginal gain when designing efficient heuristics.
-%-----------------------------------------------------------------------------------------
-\subsection{Heuristic algorithms}
-\label{heuristic}
-The greedy algorithm established in the preceding section provides a theoretically sound framework for module selection. A direct implementation of this algorithm, however, requires the computation of the marginal gain $x_{k} = \argmax_{x \in \mathcal{X} \setminus S_{k-1}} \left[ U(S_{k-1} \cup \{x\}) - U(S_{k-1}) \right]$ at each iteration. Calculating this expectation of the minimum of correlated normal distributions poses a significant computational challenge, as it lacks a closed-form solution for the general case. While numerical techniques, such as Sample Average Approximation (SAA), can be employed to estimate this value, they often require a substantial number of Monte Carlo simulations to achieve acceptable accuracy. Consequently, for large-scale instances of the problem where the module pool size $M$ is substantial, the computational burden of repeatedly evaluating the marginal gain for each candidate module becomes prohibitive. This computational intractability motivates the development of efficient heuristic methods.
 
-\subsubsection{Improvement-based approach}
+This theoretical guarantee allows us to use the greedy algorithm as an $\alpha$-approximation oracle with $\alpha = (1 - 1/e)$. However, a direct implementation requires computing the expected minimum value, which remains computationally challenging. While Sample Average Approximation (SAA) can be employed, it requires extensive Monte Carlo simulations and becomes prohibitive for large-scale problems.
+
+\subsection{Efficient Heuristic Oracles}
+
+To address the computational challenge, we derive inspiration from the analytical solution for the bivariate case:
+
+\begin{lemma}[\cite{clark1961greatest}]
+\label{lem:bivariate}
+For two Gaussian random variables $X_1\sim N(\mu_1,\sigma^2_1)$, $X_2\sim N(\mu_2,\sigma^2_2)$ with correlation $\rho$, the expectation $\mathbb{E}[\min\{X_1, X_2\}]$ has closed-form solution:
+$$
+\mathbb{E}[\min\{X_1, X_2\}] = \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta}) - \theta \phi(\frac{\mu_2-\mu_1}{\theta} )
+$$
+where $\theta = \sqrt{\sigma^2_1+\sigma^2_2-2\rho \sigma_1\sigma_2}$, and $\phi$, $\Phi$ are PDF and CDF of standard normal distribution.
+\end{lemma}
+
+This analytical insight motivates the development of more efficient heuristic oracles that approximate the marginal gain without expensive numerical integration.
+
+\subsubsection{Improvement-based Oracle}
+
 As established in Section 4.1.1, the expected value of the minimum of two module scores, $\mathbb{E}[\min\{Y(x_1), Y(x_2)\}]$, admits an exact closed-form solution under the bivariate normal distribution assumption. Leveraging this analytical tractability, we define a pairwise measure of deficiency enhancement for any two modules $x_1$ and $x_2$. Specifically, the \textbf{improvement} (Ipr) of incorporating module $x_2$ given a baseline module $x_1$ is defined as:
 $$
 \text{Ipr}(x_2 | x_1) = \mathbb{E}[\min\{Y(x_1), Y(x_2)\}] - \mathbb{E}[Y(x_1)].
@@ -306,7 +315,7 @@ Here, the contribution measure $\text{Ctr}(x_1|S)$ represents quantifies the red
 Based on this we can get our improvement-based approach as follows:
 
 \begin{algorithm}
-\caption{Improvement-based approach} % 算法名称
+\caption{Improvement-based Oracle} % 算法名称
 \label{alg:improvement} % 标签
 \begin{algorithmic}[1] % [1] 表示每行都显示行号
 \State \textbf{Input:} module set $\mathcal{X}$, number of selected modules $m$.
@@ -321,11 +330,11 @@ Based on this we can get our improvement-based approach as follows:
 \end{algorithm}
 Algorithm 1 likewise employs a greedy strategy for problem resolution, yet it achieves significantly higher computational efficiency compared to the SAA-based greedy algorithm, rendering it suitable for large-scale applications. However, this gain in efficiency comes at the cost of solution quality for more complex problem instances, where the SAA-based algorithm frequently yields superior optimization results. To harness the complementary strengths of both methodologies---the computational efficiency of the heuristic and the solution quality of the SAA-based approach---we propose a novel hybrid greedy algorithm. This mixed strategy, which synergistically combines both approaches, is detailed in the following section.
 
-\subsubsection{Mixed approach}
+\subsubsection{Mixed Oracle}
 The workflow for Mixed approach is described below(\textbf{Algorithm 2}). In Step 4, the algorithm identifies the $q$ modules that offer the highest contribution to the current selected modules $S$. This step functions as a preliminary screening phase, designed to efficiently prune the candidate pool and mitigate the computational burden associated with evaluating all $M$ modules. The parameter $q$ is user-defined; a larger value for $q$ yields a more comprehensive search, leading to a solution that more closely approximates the one obtained by the full SAA-based greedy algorithm. Our numerical experiments presented in Section 6 shows that a value of $q=10$ can be sufficient for achieving near-optimal performance in most practical instances, effectively balancing computational efficiency with solution quality.
 
 \begin{algorithm}
-\caption{Mixed approach} % 算法名称
+\caption{Mixed Oracle} % 算法名称
 \label{alg:mixed} % 标签
 \begin{algorithmic}[1] % [1] 表示每行都显示行号
 \State \textbf{Input:} module set $\mathcal{X}$, number of selected modules $m$, size of candidate set $q=10$.
@@ -340,89 +349,8 @@ The workflow for Mixed approach is described below(\textbf{Algorithm 2}). In Ste
 \end{algorithmic}
 \end{algorithm}
 
+These oracles provide efficient alternatives to direct SAA-based greedy optimization while maintaining strong empirical performance, as demonstrated in our numerical experiments.
 
-\section{A Combinatorial MAB Algorithm for Unknown Score Means}
-\label{unknown means}
-\subsection{Model Formulation}
-We assume that the score has Gaussian noise: $Y(x) = Z(x) + \mathcal{N}(0,\sigma(x))$ and the joint distribution for $Y(x)_{x\in\{\mathcal{X}\}}$ is a multivariate normal distribution with mean vector $\theta = [Z(x_1),...,Z(x_M)]^T$ and covariance matrix $\Lambda$. We use a Bayesian approach to model $\theta$ and assume a normal prior:
-$$\theta \sim \mathcal{N}(\mu_0, \Sigma_0). $$
-As with \cite{xie2016bayesian}, we assume $\Lambda, \mu_0, \Sigma_0$ are known.
-
-The $i$th entry of a vector $v$ is denoted as $v(i)$ and the $(i,j)$th entry of a matrix $M$ is denoted as $M(i,j)$. For an ordered collection of $m$ alternatives ${\bf x}=(x_1,...,x_m)$ with element $x_i \in \{1,...,M\}$ for each $i$, we use $v(\bf x)$ to denote the subvector of $v$ with the $i$th entry equal to $v(x_i)$. We further denote by $M(\bf x, x')$ the $m$-by-$m$ submatrix of $M$ with the $(i,j)$th entry equal to $M(x_i, x_j')$.  
-
-We consider a situation where in each iteration $t$, one pilot will attend $m$ different modules ${\bf x}_t = (x_{t,1},...,x_{t,m})^T$ and we obtain his score vector ${\bf y}_t = (Y(x_{t,1}),...,Y(x_{t,m}))^T$. The conditional distribution of ${\bf y}_t$ is:
-$${\bf y}_t | \theta,{\bf x}_t \sim \mathcal{N}(\theta({\bf x}_t), \Lambda({\bf x}_t,{\bf x}_t)). $$ 
-Let $\mathbb{X}_t = ({\bf x}_1^T,...,{\bf x}_t^T )$ denote the concatenation of the design points of the previous $t$ iteration and similarly $\mathbb{Y}_t =({\bf y}_1^T,...,{\bf y}_t^T )^T$. Then, the posterior distribution for $\theta$ is:
-$$\theta_n|\mathbb{X}_t,\mathbb{Y}_t  \sim \mathcal{N}(\mu_t, \Sigma_t),$$
-where for any vector ${\bf x} = (x_1, x_2,...,x_m)$,
-$$
-	\mu_t({\bf x}) = \mu_0({\bf x}) + \Sigma_0(\bf x, \mathbb{X}_t)(\Sigma_0(\mathbb{X}_n,\mathbb{X}_t) + \Gamma_t)^{-1}(\mathbb{Y}_t-\mu_0(\mathbb{X}_t)),
-$$
-$$
-	\Sigma_n({\bf x},{\bf x}) = \Sigma_0({\bf x},{\bf x}) - \Sigma_0(\bf x, \mathbb{X}_t)(\Sigma_0(\mathbb{X}_t,\mathbb{X}_t) + \Gamma_t)^{-1}\Sigma_0(\mathbb{X}_t, \bf x),
-$$
-where $\Gamma_t$ can be calculated from the observed samples since we know the covariance matrix $\Lambda$.
-
-\subsection{The GP-UCB Algorithm} 
-To address the challenge of unknown score means, we propose a Bayesian optimization algorithm based on the Gaussian Process Upper Confidence Bound (GP-UCB) principle. This algorithm iteratively maintains a posterior distribution over the mean scores $\boldsymbol{\theta}$ and leverages the heuristic algorithms from Section 4.3 as a selection oracle.
-
-The algorithm's core mechanism involves using an optimistic estimate of the mean scores to guide exploration. Specifically, at each iteration $t$, we construct the lower confidence bound (LCB) vector $\boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$, where $\boldsymbol{\sigma}_{t-1}$ contains the posterior standard deviations. This LCB vector represents an optimistic estimate of the true means from the perspective of minimizing the expected minimum score. We then pass this optimistic estimate to a heuristic oracle from Section 4.3, which returns a module set $S_t$ for evaluation. The observed scores from testing $S_t$ are used to update our posterior belief about $\boldsymbol{\theta}$. The complete procedure is detailed in Algorithm \ref{alg:gp_ucb_algorithm_adaptive}. Note that in Step 14, the exact computation of $R(S_t)$ remains analytically intractable so we use SAA to estimate it.
-
-\begin{algorithm}
-\caption{GP-UCB Algorithm with Efficient Initialization}
-\label{alg:gp_ucb_algorithm_adaptive}
-\begin{algorithmic}[1]
-\Require{Module set $\mathcal{X}$; Covariance matrix $\boldsymbol{\Lambda}$; Prior parameters $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$; Oracle $\mathcal{O}$; Total iterations $N$}
-\State Initialize $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$ and count vector $\mathbf{T}_0 \gets \mathbf{0}$ 
-\State $N_0 \gets \lceil M/m \rceil$ \Comment{Calculate minimum number of super arms needed}
-\For{$i = 1$ to $N_0$} \Comment{Efficient initial phase: cover all modules with minimal super arms}
-    \State $S_i \gets$ Select a super arm that maximizes the number of unobserved modules
-    \State Play super arm $S_i$, observe $\mathbf{y}_i$
-    \State Update $(\boldsymbol{\mu}, \boldsymbol{\Sigma},\mathbf{T}_i)$, Calculate $R(S_i)$ \Comment{Same as steps 12, 13, and 14}
-\EndFor
-\For{$t = N_0+1$ to $N$} \Comment{Main optimization phase}
-    \State $\boldsymbol{\sigma}_{t-1} \gets \sqrt{\text{diag}(\boldsymbol{\Sigma}_{t-1})}$ \Comment{Compute posterior standard deviations}
-    \State $\boldsymbol{\beta}_t[x] \gets \sqrt{6 \ln t / \mathbf{T}_{t-1}[x]}$ for each $x \in \mathcal{X}$ \Comment{$\mathbf{T}_{t-1}[x]$: observation count of module $x$}
-    \State $\boldsymbol{\tilde{\mu}}_t \gets \boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$ \Comment{Construct LCB-based mean estimate}
-    \State $S_t \gets \mathcal{O}(\boldsymbol{\tilde{\mu}}, \boldsymbol{\Lambda})$ \Comment{Query selection oracle}
-    \State Observe score vector $\mathbf{y}_t$ for modules $S_t$ on a new pilot
-    \State Update $(\boldsymbol{\mu}_t, \boldsymbol{\Sigma}_t)$ with $(\mathbf{y}_t, S_t)$; Update $\mathbf{T}_t[x] \gets \mathbf{T}_t[x] + 1$ for each $x \in S_t$
-    \State Calculate $R(S_t) = \mathbb{E}[\min\,\{Y(x) : x \in S_t\}]$, track minimal $R(S_t)$ and corresponding $S_t$ 
-\EndFor
-\State \Return $S^*$ with minimal $R(S^*)$
-\end{algorithmic}
-\end{algorithm}
-\subsection{Regret bounds}
-We establish both distribution-dependent and distribution-independent regret bounds for Algorithm \ref{alg:gp_ucb_algorithm_adaptive}, proving $O(\log T)$ and $O(\sqrt{T \log T})$ rates respectively.
-
-For any approximation parameter $0 < \alpha < 1$, we define a super arm $S$ as \emph{bad} if $R(S) > \alpha R(S^*)$, where $S^*$ denotes the true optimal super arm. The suboptimality gap for each super arm $S$ is defined as:
-$$
-\Delta_S = \max\{R(S) - \alpha \cdot R(S^*), 0\}.
-$$
-
-Let $\mathcal{F}_B = \{S \in \mathcal{F} \mid \Delta_S > 0\}$ denote the set of all bad super arms, and let $E_B \subseteq \mathcal{X}$ be the set of modules contained in at least one bad super arm. For each module $i \in E_B$, we define its minimal suboptimality gap as:
-$$
-\Delta_{i,\min} = \min\{\Delta_S \mid S \in \mathcal{F}_B, i \in S\}.
-$$
-
-Let $\sigma^2$ represent the maximum variance among all modules (the largest diagonal element of covariance matrix $\boldsymbol{\Lambda}$). Recall that $m = |S|$ is the cardinality of the selected super arm, and $y_{\text{max}}$ is the maximum possible score for any module.
-
-\begin{theorem}
-\label{thm:regret_bound}
-The $\alpha$-approximation regret of Algorithm \ref{alg:gp_ucb_algorithm_adaptive} over $T$ rounds satisfies the following upper bounds:
-\begin{enumerate}
-    \item \textbf{Distribution-dependent bound:}
-    $$
-    \sigma^2 m \sum_{i \in E_B} \frac{2136}{\Delta_{i,\min}} \ln T + \left(\frac{\pi^2}{6} + 1\right) \alpha y_{\text{max}} M.
-    $$
-    
-    \item \textbf{Distribution-independent bound:}
-    $$
-    93\sigma \sqrt{M m T \ln T} + \left(\frac{\pi^2}{6} + 1\right) \alpha y_{\text{max}} M.
-    $$
-\end{enumerate}
-\end{theorem}
-\textbf{Proof sketch:} To establish Theorem \ref{thm:regret_bound}, we begin by defining the high-probability concentration event $\varepsilon_t = \left\{\text{there exists } i \in [m] \text{ such that } |\hat{\mu}_{T_{i,t-1}}^i-\mu^i| < \sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}\right\}$. We then decompose the $\alpha$-regret $\text{Reg}_{\alpha}(T)$ into three components: $\text{Reg}_{\alpha}(T)=\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}]+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}]+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]$. The first term corresponds to the initialization phase and is bounded trivially. The second term is controlled using concentration inequalities. For the third term, we identify certain events that must occur under $\varepsilon_t$ and demonstrate that these events occur infrequently, thereby bounding their cumulative contribution. The overall proof idea aligns with the methodologies employed in references \citep{Kveton2014TightRB}, \citep{Degenne2016CombinatorialSW}, and \citep{Chen2016CombinatorialMB}.
 
 \section{Numerical Experiments}
 \label{sec:experiments}
@@ -430,6 +358,7 @@ The $\alpha$-approximation regret of Algorithm \ref{alg:gp_ucb_algorithm_adaptiv
 We conduct extensive numerical experiments to evaluate the performance of the proposed heuristic algorithms under the known-means scenario and GP-UCB algorithm under the unknown-means scenario. Our experiments are designed to systematically assess the impact of problem scale and correlation structure on algorithmic performance.
 
 \subsection{Experimental Setup}
+\label{sec:exp_setup}
 
 \subsubsection{Problem Scales}
 We examine four distinct problem scales to represent varying levels of computational complexity:
@@ -495,8 +424,8 @@ To comprehensively evaluate the performance of our proposed algorithms (Improvem
     \item \textbf{Clustering-based Selection (CLS)}: This policy first clusters the $M$ modules into $m$ groups based on their correlation matrix using spectral clustering, aiming to group highly correlated modules together. It then selects the module with the smallest mean score from each cluster. This approach seeks diversity by explicitly minimizing correlation within the selected set.
 \end{enumerate}
 
-\subsection{Results and Discussion}
-\subsubsection{known-means scenario}
+subsection{Experiments with known Means}
+\label{sec:known_means}
 
 The experimental results across all 12 scenarios (3 structures $\times$ 4 scales) are succinctly presented in Table \ref{tab:results}. The best objective value(expected minimum score $\mathbb{E}[\min\{Y(x_1), ..., Y(x_m)\}]$) achieved in each scenario is highlighted in \textbf{bold}. We also show the running time of the algorithms. 
 
@@ -532,10 +461,87 @@ The experimental results across all 12 scenarios (3 structures $\times$ 4 scales
 \end{table}
 The comprehensive evaluation reveals that the SAA-based greedy algorithm achieves the best results in most cases, while the Mixed algorithm produces nearly identical results with minimal optimality gaps, demonstrating their superior performance. In contrast, both SM and CLS exhibit significant performance degradation compared to SAA in the challenging Worst Case and Random Case configurations, although the Improvement algorithm shows relatively better performance than these benchmarks while still falling short of Mixed and SAA. For the Best Case conditions, all algorithms except CLS yield comparable results. Overall, the proposed algorithms (Improvement, Mixed, and SAA) consistently outperform the benchmark approaches, confirming the value of systematic optimization; however, it is important to note that SAA's computational time increases substantially with problem scale, particularly as the total number of modules $M$ grows, while the performance differences between all algorithms diminish as the selection size $m$ increases. These results collectively indicate that while SAA provides optimal performance, Mixed offers an attractive balance between solution quality and computational efficiency for practical applications.
 
+\subsection{Experiments with Unknown Means}
+\label{sec:unknown_means}
+
+In practical applications, the true means of module scores are typically unknown and must be estimated through sequential testing. This subsection evaluates the performance of the proposed Bayesian learning framework under this more realistic and challenging setting, using the same experimental configuration described in Section \ref{sec:exp_setup}.
+
+\subsubsection{Learning Framework and Algorithms}
+
+We employ a Gaussian Process Upper Confidence Bound (GP-UCB) approach to address the unknown means scenario. The algorithmic framework, outlined in Algorithm \ref{alg:gp_ucb_algorithm_adaptive}, maintains Gaussian posterior distributions for the mean scores of all modules. The algorithm proceeds in two phases: an efficient initialization phase that ensures each module is observed at least once using the minimal number of super arms, followed by a main optimization phase that balances exploration and exploitation.
+
+Three algorithms are compared within this framework:
+
+\begin{enumerate}
+    \item \textbf{GP-UCB (Proposed)}: Our proposed algorithm employs a Lower Confidence Bound (LCB) strategy for module selection. At each iteration $t$, it constructs pessimistic mean estimates $\boldsymbol{\tilde{\mu}}_t = \boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$, where $\boldsymbol{\beta}_t[x] = \sqrt{6 \ln t / \mathbf{T}_{t-1}[x]}$ controls the exploration-exploitation trade-off. The oracle $\mathcal{O}$ then selects the super arm $S_t$ that minimizes the expected minimum score based on these conservative estimates.
+
+    \item \textbf{GP-SM}: This benchmark algorithm follows the same Bayesian learning framework but employs a greedy selection strategy. At each iteration, it simply selects the $m$ modules with the smallest posterior mean estimates $\boldsymbol{\mu}_{t-1}$, ignoring uncertainty information and correlation structure. This approach corresponds to the SM algorithm in the known-means scenario.
+
+    \item \textbf{GP-CLS}: This algorithm incorporates correlation information through clustering. It first partitions the $M$ modules into $m$ groups using spectral clustering based on the correlation matrix $\boldsymbol{\Lambda}$, then selects the module with the smallest posterior mean from each cluster. This strategy mirrors the CLS approach in the known-means setting while maintaining the Bayesian learning framework.
+\end{enumerate}
+
+\subsubsection{Experimental Configuration}
+
+The experimental setup mirrors that of the known-means scenario in terms of problem scales and correlation structures (Section \ref{sec:exp_setup}). All algorithms share the same Gaussian prior initialization $\mathcal{N}(\mathbf{70}, \mathbf{\Sigma}_0)$ and update their posterior distributions identically upon receiving new observations. Each algorithm executes for a total of $N = 150$ iterations, with the initial phase using the minimal number of super arms required to cover all modules ($N_0 = \lceil M/m \rceil$).
+All results are averaged over \textbf{30} independent runs with different random seeds.
+
+\subsubsection{Performance Metrics}
+
+We employ three complementary metrics:
+
+\begin{enumerate}
+    \item \textbf{Cumulative Regret}: We define the optimal reward $R^*$ as the expected minimum score obtained by the SAA-based greedy algorithm with access to the true means. The cumulative regret is then calculated as $\sum_{t=1}^{N} (R^* - R(S_t))$, where $R(S_t)$ is the actual reward obtained by the selected super arm $S_t$ at iteration $t$. Additionally, we analyze the \textit{instant regret} $R^* - R(S_t)$ at each iteration to examine the transient behavior and convergence properties.
+
+    \item \textbf{Simple Regret (obs\_based)}: Simple Regret quantifies the gap between the currently believed best solution and the true optimal solution. For obs\_based definition, we maintain a running estimate of the best super arm encountered thus far. Specifically, at each iteration $t$, we compute the expected minimum score for all previously tested super arms using their empirical means and select the minimal value as the current best estimate: $\tilde{R}_t = \min_{k=1,\ldots,t} \mathbb{E}[\min\{Y(x) : x \in S_k\}]$. The simple regret is then defined as $R^* - \tilde{R}_t$.
+
+    \item \textbf{Simple Regret (global\_based)}: This definition employs a more optimistic approach by treating the current posterior means as ground truth. At each iteration $t$, we apply the SAA-based greedy algorithm using the current posterior mean estimates $\boldsymbol{\mu}_{t-1}$ to identify the theoretically optimal super arm $S_t^*$ under these beliefs. The simple regret is then computed as $R^* - \mathbb{E}[\min\{Y(x) : x \in S_t^*\}]$, where the expectation is calculated using the true (but unknown) means.
+\end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/best_50_8.png}
+        %\caption{}
+        \label{}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/best_50_16.png}
+        %\caption{}
+        \label{}
+    \end{minipage}
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/worst_50_8.png}
+        %\caption{}
+        \label{}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/worst_50_16.png}
+        %\caption{}
+        \label{}
+    \end{minipage}
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/random_50_8.png}
+        %\caption{}
+        \label{}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/random_50_16.png}
+        %\caption{}
+        \label{}
+    \end{minipage}
+\end{figure}
 
 
 %--------------------------------------------------------------------------------------
-
 
 \bibliographystyle{informs2014} 
 \bibliography{sample} 
@@ -861,7 +867,7 @@ Then by the definitions of $\mathcal{G}_{k,t}$ and $\mathcal{G}_{i,k,t}$ we have
 $$\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\leq\frac{1}{\beta_kK}\sum_{i\in E_\mathrm{B}}\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}.$$
 
 Therefore
-$$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}\frac{\Delta_{S_t}}{\beta_kK}.$$
+$T∑t=m+1I{Ht}ΔSt≤∑i∈EB∞∑k=1T∑t=m+1I{Gi,k,t,ΔSt>0}ΔStβkK.\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}\frac{\Delta_{S_t}}{\beta_kK}$.
 
 For each arm $i\in E_B$, suppose $i$ is contained in $N_i$ bad super arms $S_{i,1}^\mathrm{B},S_{i,2}^\mathrm{B},\ldots,S_{i,N_i}^\mathrm{B}$. Let $\Delta_{i,l} = \Delta_{S_{i,l}^\mathrm{B}}(l\in[N_i])$. Without loss of generality, we assume $\Delta_{i,1}\geq\Delta_{i,2}\geq\ldots\geq\Delta_{i,N_i}$. Note that $\Delta_{i,N_i}=\Delta_{i,\min}$. For convenience, we also define $\Delta_{i,0}=+\infty,\mathrm{~i.e.,~}\alpha_k\left(\frac{2\sigma K}{\Delta_{i,0}}\right)^2=0$. Then we have
 $$\begin{aligned}
@@ -925,7 +931,6 @@ $$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq2\sqrt{2136\sigma^2Km
 
 Combining this with Lemma 4, we conclude the proof of the distribution-independent regret bound in Theorem 1.\hfill $\blacksquare$
 %\end{appendices}
-
 
 %%%%%%%%%%%%%%%%%
 \end{document}
