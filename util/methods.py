@@ -302,7 +302,7 @@ def cholesky_update(U_old, A_new):
     
     return U_new
 
-def calculate_course_contributions_generalized(mu, Sigma2, selected_courses, candidate, z_samples):
+def calculate_course_contributions(mu, Sigma2, selected_courses, candidate, z_samples):
     """
     泛化版本：计算用候选课程替换最后一门课程后的平均贡献值
     
@@ -351,13 +351,13 @@ def calculate_course_contributions_generalized(mu, Sigma2, selected_courses, can
     new_Sigma = Sigma2[np.ix_(new_courses, new_courses)]
     
     # 计算新的Cholesky分解的最后一行
-    U_new_last_row = cholesky_update(U_current, new_Sigma)
+    U_new_last_row = cholesky_update(U_current, new_Sigma)[n_selected-1,:]
     
     # 计算新课程的值：mu_candidate + U_new_last_row @ z^T
     new_course_values = mu[candidate] + np.dot(z_valid, U_new_last_row)
     
-    # 计算贡献值：新课程值 - 第二小的值
-    contributions = new_course_values - second_smallest_values
+    # 计算贡献值：第二小的值 - 新课程值
+    contributions = second_smallest_values - new_course_values
     
     # 取平均作为该候选课程的平均贡献值
     improvement_scores[candidate] = np.mean(contributions)
