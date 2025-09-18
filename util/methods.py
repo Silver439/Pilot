@@ -28,74 +28,6 @@ def improvement(p,m,mu,std,R,Sigma,J=10000):
     B = np.linalg.cholesky(sub_Sigma) #对协方差矩阵进行cholesky分解
     return B,choosen_index
 
-def LCB(p,m,mu,std,R,Sigma,J=10000,num=10,method = 'max'):
-    B,choosen_index = improvement(p,2,mu,std,R,Sigma)
-    remain_index = np.setdiff1d(np.arange(p), choosen_index)
-    Gmin = 100
-    bestid = -1
-    for t in range(m-2):
-        rou = np.ones(p)
-        for idr in remain_index:
-            correlations = R[idr, choosen_index]
-            if method=='mean':
-                corr = np.mean(correlations)
-            else:
-                corr = np.max(correlations)
-            rou[idr] = corr
-        remain_mu = mu[remain_index]
-        remain_std = std[remain_index]
-        remain_rou = rou[remain_index]
-        n = len(remain_index)
-        mu_matrix = remain_mu.reshape(1, n) < remain_mu.reshape(n, 1)
-        std_matrix = remain_std.reshape(1, n) > remain_std.reshape(n, 1)
-        rou_matrix = remain_rou.reshape(1, n) < remain_rou.reshape(n, 1)
-        dominated_matrix = mu_matrix & std_matrix & rou_matrix
-        is_dominated = np.any(dominated_matrix, axis=0)
-        nondominated_index = remain_index[~is_dominated]
-        if len(nondominated_index) > num:
-             weights = np.random.dirichlet(np.ones(3))
-             w_mu,w_std,w_rou = weights[0], weights[0], weights[1]
-             sub_mu = mu[nondominated_index]
-             sub_std = std[nondominated_index]
-             sub_rou = rou[nondominated_index]
-             norm_mu = (sub_mu - np.min(sub_mu)) / (np.max(sub_mu) - np.min(sub_mu))
-             norm_std = (sub_std - np.min(sub_std)) / (np.max(sub_std) - np.min(sub_std))
-             norm_rou = (sub_rou - np.min(sub_rou)) / (np.max(sub_rou) - np.min(sub_rou))
-             weighted_scores = w_mu * norm_mu - w_std * norm_std + w_rou * norm_rou
-             selected_positions = np.argsort(weighted_scores)[:num]
-             final_indices = nondominated_index[selected_positions]
-        else:
-            final_indices = nondominated_index
-        if len(final_indices)==1:
-            choosen_index.append(int(final_indices[0])) 
-            ids = np.where(remain_index == final_indices[0])[0]
-            remain_index = np.delete(remain_index, ids)
-            Gmin = 100
-        else:
-            for i in final_indices:
-                #print(final_indices)
-                copy_index = copy.deepcopy(choosen_index)
-                copy_index.append(i)
-                sub_Sigma = Sigma[np.ix_(copy_index, copy_index)]
-                sub_B = np.linalg.cholesky(sub_Sigma) #对协方差矩阵进行cholesky分解
-                G_cul = 0
-                for j in range(J):
-                    z = np.random.randn(len(copy_index))
-                    temp = mu[copy_index] + sub_B @ z
-                    G_cul += np.min(temp)
-                G_temp = G_cul/J
-                if G_temp < Gmin:
-                    Gmin = G_temp
-                    bestid = i
-            Gmin = 100
-            choosen_index.append(int(bestid)) 
-            ids = np.where(remain_index == bestid)[0]
-            remain_index = np.delete(remain_index, ids)
-
-    sub_Sigma = Sigma[np.ix_(choosen_index, choosen_index)]
-    U = np.linalg.cholesky(sub_Sigma) 
-    return U,choosen_index
-
 def SAA(p,m,mu,std,R,Sigma,J=10000):
     B,submodular_index = improvement(p,2,mu,std,R,Sigma)
     Gmin = 100
@@ -184,14 +116,6 @@ def cluster_subjects(R, n_clusters=None, method='single'):
     else:
         # 或者使用距离阈值
         cluster_labels = hierarchy.fcluster(linkage_matrix, 0.8, criterion='distance')
-    
-    # # 绘制树状图
-    # plt.figure(figsize=(12, 8))
-    # dendrogram = hierarchy.dendrogram(linkage_matrix, labels=np.arange(1, R.shape[0]+1))
-    # plt.title('Subject Clustering Dendrogram')
-    # plt.xlabel('Subject Index')
-    # plt.ylabel('Distance (1 - |correlation|)')
-    # plt.show()
     
     return cluster_labels
 
@@ -351,4 +275,29 @@ def efficient_initialization(p, m, obs_num, mu_0, std2, R2, Sigma2, J):
     
     return ids
 
-
+def cholesky_update(U_old, A_new):
+    """
+    只更新Cholesky分解的最后一行
+    
+    参数:
+    U_old: 旧的Cholesky分解（下三角矩阵，n×n）
+    A_new: 新的协方差矩阵（n×n）
+    返回:
+    更新后的Cholesky分解
+    """
+    n = U_old.shape[0]
+    U_new = U_old.copy()
+    
+    for i in range(n):
+        off_diagonal_sum = 0.0
+        for k in range(i):
+            off_diagonal_sum += U_new[n-1, k] * U_new[i, k]
+        
+        U_new[n-1, i] = (A_new[n-1, i] - off_diagonal_sum) / U_new[i, i]
+    
+    diagonal_sum = 0.0
+    for k in range(n-1):
+        diagonal_sum += U_new[n-1, k] ** 2
+    U_new[n-1, n-1] = np.sqrt(A_new[n-1, n-1] - diagonal_sum)
+    
+    return U_new

@@ -203,24 +203,69 @@ The algorithm operates in two phases: an initial exploration phase that ensures 
 \State \Return $S^*$ with minimal $R(S^*)$
 \end{algorithmic}
 \end{algorithm}
-\subsection{Regret bounds}
-We establish both distribution-dependent and distribution-independent regret bounds for Algorithm \ref{alg:bcucb_algorithm}, proving $O(\log T)$ and $O(\sqrt{T \log T})$ rates respectively.
 
-For any approximation parameter $0 < \alpha < 1$, we define a super arm $S$ as \emph{bad} if $R(S) > \alpha R(S^*)$, where $S^*$ denotes the true optimal super arm. The suboptimality gap for each super arm $S$ is defined as:
+\subsection{Regret analysis}
+In this section we bound the regret of Algorithm \ref{alg:bcucb_algorithm}.
+First, we derive a concentration inequality that characterizes the uncertainty reduction through Bayesian inference. Let $T_{i,t-1}$ be the number of times module $i$ has been observed before round $t$.
+\begin{lemma}
+\label{lemma:concentration}
+For any module $i \in \mathcal{X}$, any number of observations $n = T_{i,t-1} \geq 1$, and any $\epsilon > 0$, the deviation of the posterior mean $\mu_{t-1}(i)$ from the true mean $\mu(i)$ is bounded by:
 $$
-\Delta_S = \max\{R(S) - \alpha \cdot R(S^*), 0\}.
+\mathrm{Pr}\left[|\mu_{t-1}(i) - \mu(i)| \geq \epsilon \right] \leq \exp\left(-\frac{n \epsilon^2}{2\sigma^2(i)}\right),
+$$
+where $\sigma^2(i)$ is the noise variance for module $i$.
+\end{lemma}
+
+Second, we show two critical properties of our reward $R(S) = \mathbb{E}[\min\,\{Y(x) : x \in S\}]$ that are fundamental to our analysis. Consider two multivariate normal distributions $\mathcal{N}_1$ and $\mathcal{N}_2$ that share the same covariance matrix but have different mean vectors $\boldsymbol{\mu}_1$ and $\boldsymbol{\mu}_2$. We have the following two lemmas:
+
+\begin{lemma}
+\label{lemma:monotonicity}
+If $\boldsymbol{\mu}_1 \geq \boldsymbol{\mu}_2$ component-wise, then for any super arm $S$, the reward satisfies:
+$$
+R_{\mathcal{N}_1}(S) \geq R_{\mathcal{N}_2}(S).
+$$
+\end{lemma}
+
+\begin{lemma}
+\label{lemma:lipschitz}
+If $|\mu_1(i) - \mu_2(i)| \leq \Lambda_i$ for all modules $i \in \mathcal{X}$, then for any super arm $S$, the difference in rewards is bounded by:
+$$
+|R_{\mathcal{N}_1}(S) - R_{\mathcal{N}_2}(S)| \leq \max_{i \in S} \Lambda_i.
+$$
+\end{lemma}
+The lemmas characterize fundamental properties of the reward function. Lemma \ref{lemma:monotonicity} demonstrates its monotonicity with respect to the component-wise ordering of the mean vectors. Lemma \ref{lemma:lipschitz} establishes a bounded difference property, showing that the change in reward is constrained by the maximum change in any constituent module's mean.
+
+Next we define two pivotal events for rounds \(m+1 \leq t \leq T\):
+$$
+\varepsilon_t = \left\{\exists\, i \in [m] \text{ such that } \left|\hat{\mu}_{T_{i,t-1}}^i - \mu^i\right| \geq \sigma(i)\sqrt{\frac{6\ln t}{T_{i,t-1}}} \right\}
+$$
+$$
+\mathcal{H}_t = \left\{0 < \Delta_{S_t} \leq 2 \max_{i \in S_t} \sigma(i)\sqrt{\frac{6\ln t}{T_{i,t-1}}} \right\}
 $$
 
-Let $\mathcal{F}_B = \{S \in \mathcal{F} \mid \Delta_S > 0\}$ denote the set of all bad super arms, and let $E_B \subseteq \mathcal{X}$ be the set of modules contained in at least one bad super arm. For each module $i \in E_B$, we define its minimal suboptimality gap as:
-$$
-\Delta_{i,\min} = \min\{\Delta_S \mid S \in \mathcal{F}_B, i \in S\}.
-$$
+Then we can get the following lemma:
 
-Let $\sigma^2$ represent the maximum variance among all modules (the largest diagonal element of covariance matrix $\boldsymbol{\Lambda}$). Recall that $m = |S|$ is the cardinality of the selected super arm, and $y_{\text{max}}$ is the maximum possible score for any module.
+\begin{lemma}
+\label{lemma:decomposition}
+The \(\alpha\)-approximation regret over \(T\) rounds satisfies:
+$$
+\text{Reg}_{P,\alpha}(T) \leq \mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\mathcal{H}_t\} \Delta_{S_t}\right] + \left(\frac{\pi^2}{6} + 1\right) \alpha M m.
+$$
+\end{lemma}
+
+This result is derived from a regret decomposition based on the event \(\varepsilon_t\):
+$
+\text{Reg}_{P,\alpha}(T) \leq \mathbb{E}\left[\sum_{t=1}^{m} \Delta_{S_t}\right] + \mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\varepsilon_t\} \Delta_{S_t}\right] + \mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\neg \varepsilon_t\} \Delta_{S_t}\right]
+$. The first term corresponds to the initialization phase and can be trivially bounded. The second term is controlled using the concentration inequality from Lemma 1. For the third term, we can employ the properties established in Lemmas 2 and 3 to show that:
+$
+\mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\neg \varepsilon_t\} \Delta_{S_t}\right] \leq \mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\mathcal{H}_t\} \Delta_{S_t}\right].
+$ 
+
+Now, the remaining task reduces to bounding the key quantity \(\mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\mathcal{H}_t\} \Delta_{S_t}\right]\). To bound this term, we proceed with the following strategy. We first demonstrate that whenever event \(\mathcal{H}_t\) occurs, at least one event from a specific collection of events must happen. We then establish an upper bound on the expected number of occurrences for each event in this collection. By combining these individual bounds, we ultimately derive an upper bound for the target term. Finally, we can get the following result:
 
 \begin{theorem}
 \label{thm:regret_bound}
-The $\alpha$-approximation regret of Algorithm \ref{alg:gp_ucb_algorithm_adaptive} over $T$ rounds satisfies the following upper bounds:
+The $\alpha$-approximation regret of Algorithm \ref{alg:bcucb_algorithm} over $T$ rounds satisfies the following upper bounds:
 \begin{enumerate}
     \item \textbf{Distribution-dependent bound:}
     $$
@@ -233,6 +278,7 @@ The $\alpha$-approximation regret of Algorithm \ref{alg:gp_ucb_algorithm_adaptiv
     $$
 \end{enumerate}
 \end{theorem}
+
 
 \section{Design of $\alpha$-Approximation Oracles}
 \label{oracle}
@@ -487,14 +533,13 @@ All results are averaged over \textbf{30} independent runs with different random
 
 \subsubsection{Performance Metrics}
 
-We employ three complementary metrics:
+We employ the following two complementary metrics:
 
 \begin{enumerate}
     \item \textbf{Cumulative Regret}: We define the optimal reward $R^*$ as the expected minimum score obtained by the SAA-based greedy algorithm with access to the true means. The cumulative regret is then calculated as $\sum_{t=1}^{N} (R^* - R(S_t))$, where $R(S_t)$ is the actual reward obtained by the selected super arm $S_t$ at iteration $t$. Additionally, we analyze the \textit{instant regret} $R^* - R(S_t)$ at each iteration to examine the transient behavior and convergence properties.
 
-    \item \textbf{Simple Regret (obs\_based)}: Simple Regret quantifies the gap between the currently believed best solution and the true optimal solution. For obs\_based definition, we maintain a running estimate of the best super arm encountered thus far. Specifically, at each iteration $t$, we compute the expected minimum score for all previously tested super arms using their empirical means and select the minimal value as the current best estimate: $\tilde{R}_t = \min_{k=1,\ldots,t} \mathbb{E}[\min\{Y(x) : x \in S_k\}]$. The simple regret is then defined as $R^* - \tilde{R}_t$.
+    \item \textbf{Simple Regret}: Simple Regret quantifies the gap between the currently believed best solution and the true optimal solution. For this definition, we maintain a running estimate of the best super arm encountered thus far. Specifically, at each iteration $t$, we compute the expected minimum score for all previously tested super arms using their empirical means and select the minimal value as the current best estimate: $\tilde{R}_t = \min_{k=1,\ldots,t} \mathbb{E}[\min\{Y(x) : x \in S_k\}]$. The simple regret is then defined as $R^* - \tilde{R}_t$.
 
-    \item \textbf{Simple Regret (global\_based)}: This definition employs a more optimistic approach by treating the current posterior means as ground truth. At each iteration $t$, we apply the SAA-based greedy algorithm using the current posterior mean estimates $\boldsymbol{\mu}_{t-1}$ to identify the theoretically optimal super arm $S_t^*$ under these beliefs. The simple regret is then computed as $R^* - \mathbb{E}[\min\{Y(x) : x \in S_t^*\}]$, where the expectation is calculated using the true (but unknown) means.
 \end{enumerate}
 
 \begin{figure}[htbp]
@@ -550,50 +595,8 @@ We employ three complementary metrics:
 %%% Main head for the e-companion
 \ECHead{Online Appendix}
 %\begin{appendices}
-\section{Proof of Theorem \ref{thm:submodular}}
-\textit{Proof.} Monotone Increasing is quite obvious. Here we show that $U(\cdot)$ is submodular. i.e., for any $S \subseteq T \subseteq \mathcal{X}$ and $x \in \mathcal{X} \setminus T$:
-$$
-U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
-$$
-which is equivalent to:
-$$
-R(S)-R(S \cup \{x\}) \geq R(T) - R(T \cup \{x\}).
-$$
 
-Let $Y_S = \min_{i \in S} Y(i,\xi)$, $Y_T = \min_{i \in T} Y(i,\xi)$, $Y_x = Y(x,\xi)$. Then $Y_T \leq Y_S$. We have:
-\[
-R(S) - R(S \cup \{x\}) = \mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right],
-\]
-\[
-R(T) - R(T \cup \{x\}) = \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right].
-\]
-
-Consider the function $g(y) = y - \min\{y, x\}$. For fixed $x$:
-\begin{itemize}
-    \item If $y \leq x$, then $g(y) = 0$;
-    \item If $y > x$, then $g(y) = y - x$.
-\end{itemize}
-Thus, $g(y)$ is non-decreasing in $y$. Since $Y_A \geq Y_B$, we have:
-\[
-Y_S - \min\{Y_S, Y_x\} \geq Y_T - \min\{Y_T, Y_x\}.
-\]
-Taking expectation:
-\[
-\mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right] \geq \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right],
-\]
-which implies:
-$$
-U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
-$$
-Therefore, $U(\cdot)$ is submodular.\hfill $\blacksquare$
-
-\subsection{Proof of Theorem \ref{thm:regret_bound}}
-\begin{lemma}
-For any $\epsilon > 0$ and any $n = T_{i,t-1} \in \mathbb{Z}_+$, we have :
-$$
-\textnormal{Pr}[|\mu_{t-1}(i)-\mu(i)|\geq \epsilon_i]\leq \exp(-\frac{n\epsilon_i^2}{2\sigma^2(i)})
-$$
-\end{lemma} 
+\section{Proof of lemma \ref{lemma:concentration}}
 \textit{Proof.} Fix $t\geq 1$ and $i\in [m]$. Conditioned on $(\mathbf{y}_1,...,\mathbf{y}_{t-1}), \{S_1,...,S_{t-1}\}$ are deterministic, and $\mu(i)\thicksim N(\mu_{t-1}(i),\sigma_{t-1}^2(i))$. Now, if $r\thicksim N(0,1)$,then: 
 $$\begin{gathered}
 \mathrm{Pr}\{r>c\}
@@ -639,27 +642,15 @@ Considering that adding other observation points will not increase the uncertain
 $$\textnormal{Pr}\left\{|\mu_{t-1}(i)-\mu(i)|>\lambda_i \frac{\sigma(i)}{\sqrt{n}}\right\}\leq\textnormal{Pr}\{|\mu_{t-1}(i)-\mu(i)|>\lambda_i \sigma_{t-1}(i)\}\leq e^{-\lambda_i/2}$$
 Denote $\epsilon_i = \lambda_i \frac{\sigma(i)}{\sqrt{n}}$, then we have $\textnormal{Pr}[|\mu_{t-1}(i)-\mu(i)|\geq \epsilon_i]\leq \exp(-\frac{n\epsilon_i^2}{2\sigma^2(i)})$  \hfill $\blacksquare$
 
-\begin{lemma}
-If for any $i \in [m]$ we have $\mu_1(i) \geq \mu_2(i)$ (Abbreviated as $\boldsymbol{\mu}_1 \geq \boldsymbol{\mu}_2)$, then for any super arm $S \in \mathcal{F}$,we have:
-$$
-r_{P_1}(S) \geq r_{P_2}(S)
-$$	
-\end{lemma}
-
-\begin{lemma}
-If for any $i \in [m]$ we have $\mu_1(i) - \mu_2(i) \leq \Lambda_i (\Lambda_i>0)$ ($\boldsymbol{\mu}_1 \geq \boldsymbol{\mu}_2$). For any super arm $S \in \mathcal{F}$, let $\Lambda_S = \mathop{\max}\limits_{i\in S}\Lambda_i$, then we have:
-$$
-r_{P_1}(S) - r_{P_2}(S) \leq \Lambda_S
-$$
-\end{lemma}
+\section{Prrof of lemma \ref{lemma:lipschitz}}
 \textit{Proof.} For any super arm $S = \{i_1,...,i_n\}$, denote the corresponding mean vectors in distributions $P_1$ and $P_2$ as $\boldsymbol{\mu}_{1,S} = [\mu_1(i_1),...,\mu_1(i_n)]^T$, $\boldsymbol{\mu}_{2,S} = [\mu_1(i_2),...,\mu_2(i_n)]^T$. Note that $P_1$ and $P_2$ are both multivariate normal distributions, and have same covariance matrices $\Sigma_S$.
 
 Now, let $\mathbf{z} = [z_1,...,z_n]^T \sim N(0,\Sigma_S)$. We have:
 $$
-r_{P_1}(S) = \idotsint_\mathbf{z} \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\} \,dz_1 \dots dz_k
+R_{P_1}(S) = \idotsint_\mathbf{z} \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\} \,dz_1 \dots dz_k
 $$
 $$
-r_{P_2}(S) = \idotsint_\mathbf{z} \min \{\mu_2(i_1)+z_1,\mu_2(i_2)+z_2, \dots ,\mu_2(i_n)+z_n\} \,dz_1 \dots dz_k
+R_{P_2}(S) = \idotsint_\mathbf{z} \min \{\mu_2(i_1)+z_1,\mu_2(i_2)+z_2, \dots ,\mu_2(i_n)+z_n\} \,dz_1 \dots dz_k
 $$
 
 Denote $f(\boldsymbol{\mu}_{1,S}+\mathbf{z}) = \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\}$ and $f(\boldsymbol{\mu}_{2,S}+\mathbf{z}) = \min \{\mu_2(i_1)+z_1,\mu_2(i_2)+z_2, \dots ,\mu_2(i_n)+z_n\}$. We want to show that $f(\mu_{1,S}+\mathbf{z})-f(\mu_{2,S}+\mathbf{z})\leq \Lambda_S$.
@@ -672,37 +663,19 @@ Therefore
 
 $$
 \begin{aligned}
-r_{P_1}(S)-r_{P_2}(S) &= \idotsint_\mathbf{z} f(\boldsymbol{\mu}_{1,S}+\mathbf{z})-f(\boldsymbol{\mu}_{2,S}+\mathbf{z}) \,dz_1 \dots dz_k\\
+R_{P_1}(S)-R_{P_2}(S) &= \idotsint_\mathbf{z} f(\boldsymbol{\mu}_{1,S}+\mathbf{z})-f(\boldsymbol{\mu}_{2,S}+\mathbf{z}) \,dz_1 \dots dz_k\\
 &\leq \idotsint_\mathbf{z} \Lambda_S \,dz_1 \dots dz_k = \Lambda_S 
 \end{aligned}
 $$
 \hfill $\blacksquare$
 
-\begin{lemma}
-Define an event in each round $t(m+1)\leq t \leq T$:
-$$
-	\mathcal{H}_t = \left\{0<\Delta_{S_t}\leq 2\mathop{\max}\limits_{i\in S_t}\sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}\right\}
-$$
-Then the $\alpha$-approximation regret in $T$ rounds is at most
-$$
-	\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}] + (\frac{\pi^2}{6}+1)\alpha M m.
-$$
-\end{lemma}
-\textit{Proof.} For each super arm $S$, we define:
-$$
-\Delta_S = \text{max}\{r_P(S) - \alpha \cdot r_P(S^*), 0 \}
-$$
-
-From $m+1\leq t \leq T$, Define an event:
-$$
-\varepsilon_t = \left\{\text{there exists } i \in [m] \text{ such that } |\hat{\mu}_{T_{i,t-1}}^i-\mu^i| \geq \sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}\right\}
-$$
-
+\section{Proof of Lemma \ref{lemma:decomposition}}
+\textit{Proof.} 
 We bound the $\alpha$-approximation regret as:
 
 \begin{equation}
 	\begin{aligned}
-		  \text{Reg}_{P,\alpha}(T) &= \sum_{t=1}^{T}\mathbb{E}\big[\alpha r_P(S^*) - r_P(S_t)\big]\\
+		  \text{Reg}_{P,\alpha}(T) &= \sum_{t=1}^{T}\mathbb{E}\big[\alpha R_P(S^*) - R_P(S_t)\big]\\
 		  &\leq \sum_{t=1}^{T}\mathbb{E}[\Delta_{S_t}]\\
 		  &=\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}]+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]\\
 		  &+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}]
@@ -713,7 +686,7 @@ We bound the $\alpha$-approximation regret as:
 
 Let $M  = 100$, The first term can be trivially bounded as:
 \begin{equation}
-	\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}] \leq \sum_{t=1}^{m}\alpha \cdot r_P(S^*) \leq m \cdot \alpha M
+	\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}] \leq \sum_{t=1}^{m}\alpha \cdot R_P(S^*) \leq m \cdot \alpha M
 \end{equation}
 
 (b) the second term 
@@ -737,7 +710,8 @@ Therefore
 and then the second term in (6) can be bounded as
 \begin{equation}
 	\begin{aligned}
-		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]\leq \frac{\pi^2}{6}m \cdot (\alpha \cdot r_P(S^*)) \leq \frac{\pi^2}{6}\alpha M m
+		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]&\leq \frac{\pi^2}{6}m \cdot (\alpha \cdot R_P(S^*))\\
+        &\leq \frac{\pi^2}{6}\alpha M m
 	\end{aligned}
 \end{equation}
 
@@ -755,12 +729,12 @@ Recall that in round $t$, the input to the oracle is $\underline{P} = \mathcal{N
 
 From (10) and (11) we  konw that $\mu(i)>\underline{\mu}(i)>\mu(i)-2c_i$ for all $i \in [m]$. Thus, from Lemma 2 we have:
 \begin{equation}
-	r_{\underline{P}}(S)\leq r_P(S) ~~~ \forall S \in \mathcal{F}.
+	r_{\underline{P}}(S)\leq R_P(S) ~~~ \forall S \in \mathcal{F}.
 \end{equation}
 
 and from Lemma 3 we have:
 \begin{equation}
-	r_{\underline{P}}(S)\geq r_P(S)-2\Lambda_S ~~~ \forall S \in \mathcal{F}.
+	r_{\underline{P}}(S)\geq R_P(S)-2\Lambda_S ~~~ \forall S \in \mathcal{F}.
 \end{equation}
 where $\Lambda = \mathop{\max}\limits_{i}c_i$
 
@@ -770,7 +744,7 @@ Also, from the fact that the algorithm chooses $S_t$ in the t-th round, we have:
 \end{equation}
 From (12),(13) and (14) we have:
 \begin{equation}
-	r_P(S)-2\Lambda_S \leq r_{\underline{P}}(S_t) \leq \alpha \cdot r_{\underline{P}}(S^*) \leq \alpha \cdot r_P(S^*)
+	R_P(S)-2\Lambda_S \leq r_{\underline{P}}(S_t) \leq \alpha \cdot r_{\underline{P}}(S^*) \leq \alpha \cdot R_P(S^*)
 \end{equation}
 
 which implies:
@@ -799,14 +773,14 @@ $$
 $$
 \hfill $\blacksquare$
 
-Now it remains to bound $\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}]$.
+\section{Proof of theorem \ref{thm:regret_bound}}
+According to Lemma \ref{lemma:decomposition}, now it remains to bound $\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}]$.
 
 Define two decreasing sequences of positive contants:
 $$\begin{aligned}
 1 & =\beta_0>\beta_1>\beta_2>\ldots \\
  & \alpha_1>\alpha_2>\ldots
 \end{aligned}$$
-
 such that $\lim_{k \to \infty}\alpha_k = \lim_{k \to \infty}\beta_k=0$. We choose $\{\alpha_k\}$ and $\{\beta_k\}$ as in Theorem 4 of \citep{Kveton2014TightRB}, which satisfy:
 
 \begin{equation}\sqrt{6}\sum_{k=1}^\infty\frac{\beta_{k-1}-\beta_k}{\sqrt{\alpha_k}}\leq1\end{equation}
@@ -860,14 +834,13 @@ We reach a contradiction here. The proof of lemma 5 is completed.
 By Lemma 5 we have
 $$\sum_{t=m+1}^T\mathbb{I} \{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\Delta_{S_t}.$$
 
-For $i\in [m], k\in \mathbb{Z}_+, t\in \{m+1,...,T\}$, define an event
-$Gi,k,t=Gk,t∧{i∈St,Ti,t−1≤mk,t}.\mathcal{G}_{i,k,t}=\mathcal{G}_{k,t}\wedge\{i\in S_t,T_{i,t-1}\leq m_{k,t}\}$.
+For $i\in [m], k\in \mathbb{Z}_+, t\in \{m+1,...,T\}$, define an event $\mathcal{G}_{i,k,t}=\mathcal{G}_{k,t}\wedge\{i\in S_t,T_{i,t-1}\leq m_{k,t}\}.$
 
 Then by the definitions of $\mathcal{G}_{k,t}$ and $\mathcal{G}_{i,k,t}$ we have
 $$\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\leq\frac{1}{\beta_kK}\sum_{i\in E_\mathrm{B}}\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}.$$
 
 Therefore
-$T∑t=m+1I{Ht}ΔSt≤∑i∈EB∞∑k=1T∑t=m+1I{Gi,k,t,ΔSt>0}ΔStβkK.\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}\frac{\Delta_{S_t}}{\beta_kK}$.
+$$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}\frac{\Delta_{S_t}}{\beta_kK}.$$
 
 For each arm $i\in E_B$, suppose $i$ is contained in $N_i$ bad super arms $S_{i,1}^\mathrm{B},S_{i,2}^\mathrm{B},\ldots,S_{i,N_i}^\mathrm{B}$. Let $\Delta_{i,l} = \Delta_{S_{i,l}^\mathrm{B}}(l\in[N_i])$. Without loss of generality, we assume $\Delta_{i,1}\geq\Delta_{i,2}\geq\ldots\geq\Delta_{i,N_i}$. Note that $\Delta_{i,N_i}=\Delta_{i,\min}$. For convenience, we also define $\Delta_{i,0}=+\infty,\mathrm{~i.e.,~}\alpha_k\left(\frac{2\sigma K}{\Delta_{i,0}}\right)^2=0$. Then we have
 $$\begin{aligned}
@@ -931,6 +904,43 @@ $$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq2\sqrt{2136\sigma^2Km
 
 Combining this with Lemma 4, we conclude the proof of the distribution-independent regret bound in Theorem 1.\hfill $\blacksquare$
 %\end{appendices}
+
+\section{Proof of Theorem \ref{thm:submodular}}
+\textit{Proof.} Monotone Increasing is quite obvious. Here we show that $U(\cdot)$ is submodular. i.e., for any $S \subseteq T \subseteq \mathcal{X}$ and $x \in \mathcal{X} \setminus T$:
+$$
+U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
+$$
+which is equivalent to:
+$$
+R(S)-R(S \cup \{x\}) \geq R(T) - R(T \cup \{x\}).
+$$
+
+Let $Y_S = \min_{i \in S} Y(i,\xi)$, $Y_T = \min_{i \in T} Y(i,\xi)$, $Y_x = Y(x,\xi)$. Then $Y_T \leq Y_S$. We have:
+\[
+R(S) - R(S \cup \{x\}) = \mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right],
+\]
+\[
+R(T) - R(T \cup \{x\}) = \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right].
+\]
+
+Consider the function $g(y) = y - \min\{y, x\}$. For fixed $x$:
+\begin{itemize}
+    \item If $y \leq x$, then $g(y) = 0$;
+    \item If $y > x$, then $g(y) = y - x$.
+\end{itemize}
+Thus, $g(y)$ is non-decreasing in $y$. Since $Y_A \geq Y_B$, we have:
+\[
+Y_S - \min\{Y_S, Y_x\} \geq Y_T - \min\{Y_T, Y_x\}.
+\]
+Taking expectation:
+\[
+\mathbb{E}\left[Y_S - \min\{Y_S, Y_x\}\right] \geq \mathbb{E}\left[Y_T - \min\{Y_T, Y_x\}\right],
+\]
+which implies:
+$$
+U(S \cup \{x\}) - U(S) \geq U(T \cup \{x\}) - U(T).
+$$
+Therefore, $U(\cdot)$ is submodular.\hfill $\blacksquare$
 
 %%%%%%%%%%%%%%%%%
 \end{document}

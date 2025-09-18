@@ -1,0 +1,59 @@
+This is BibTeX, Version 0.99d (TeX Live 2025)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: draft.aux
+The style file: informs2014.bst
+Database file #1: sample.bib
+Warning--to sort, need author or key in ICAO2015
+Warning--to sort, need author or key in Advancements2024
+Warning--to sort, need author or key in CAE7000XR
+Warning--to sort, need author or key in IBAAero2023
+Warning--to sort, need author or key in Flightradar2024
+Warning--to sort, need author or key in PilotWorkshops2023
+Warning--empty author in Advancements2024
+Warning--empty author in Flightradar2024
+Warning--empty journal in Flightradar2024
+Warning--can't use both volume and number fields in pmlr-v28-chen13a
+Warning--empty journal in Damos2003
+Warning--missing institution in FAA1995
+You've used 27 entries,
+            2869 wiz_defined-function locations,
+            784 strings with 10582 characters,
+and the built_in function-call counts, 21813 in all, are:
+= -- 2220
+> -- 497
+< -- 12
++ -- 198
+- -- 165
+* -- 1593
+:= -- 2714
+add.period$ -- 51
+call.type$ -- 27
+change.case$ -- 190
+chr.to.int$ -- 28
+cite$ -- 51
+duplicate$ -- 2235
+empty$ -- 1738
+format.name$ -- 223
+if$ -- 4492
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 237
+newline$ -- 87
+num.names$ -- 86
+pop$ -- 1076
+preamble$ -- 1
+purify$ -- 162
+quote$ -- 0
+skip$ -- 439
+stack$ -- 0
+substring$ -- 2058
+swap$ -- 533
+text.length$ -- 2
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 240
+warning$ -- 12
+while$ -- 131
+width$ -- 0
+write$ -- 312
+(There were 12 warnings)
