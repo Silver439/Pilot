@@ -301,3 +301,65 @@ def cholesky_update(U_old, A_new):
     U_new[n-1, n-1] = np.sqrt(A_new[n-1, n-1] - diagonal_sum)
     
     return U_new
+
+def calculate_course_contributions_generalized(mu, Sigma2, selected_courses, candidate, z_samples):
+    """
+    泛化版本：计算用候选课程替换最后一门课程后的平均贡献值
+    
+    参数:
+    mu: 所有课程的均值向量
+    Sigma2: 协方差矩阵
+    selected_courses: 当前选择的课程列表
+    candidate: 替换课程
+    z_samples: 采样点
+    """
+    n_selected = len(selected_courses)
+    last_course_idx = n_selected - 1  # 最后一门课的索引
+    
+    # 1. 生成初始样本并找到有效行
+    current_mu = mu[selected_courses]
+    current_Sigma = Sigma2[np.ix_(selected_courses, selected_courses)]
+    U_current = np.linalg.cholesky(current_Sigma)
+    
+    samples = current_mu + (U_current @ z_samples.T).T
+    
+    # 找到有效行：最后一门课是该行最小值的行
+    last_col_values = samples[:, last_course_idx:last_course_idx+1]  # 保持二维形状
+    other_cols_values = np.delete(samples, last_course_idx, axis=1)  # 删除最后一列
+    
+    is_last_course_min = np.all(last_col_values < other_cols_values, axis=1)
+    valid_indices = np.where(is_last_course_min)[0]
+    
+    if len(valid_indices) == 0:
+        print("警告: 没有找到有效样本（最后一门课从未是最小值）")
+        return {}
+    
+    # 记录有效行中其他课程的最小值（第二小的值）
+    second_smallest_values = np.min(other_cols_values[valid_indices], axis=1)
+    z_valid = z_samples[valid_indices, :]
+    
+    print(f"找到 {len(valid_indices)} 个有效样本（最后一门课是最小值）")
+    
+    # 2. 遍历候选课程计算贡献值
+    improvement_scores = {}
+    
+    # 创建新的课程组合：用候选课程替换最后一门课
+    new_courses = selected_courses.copy()
+    new_courses[last_course_idx] = candidate
+    
+    # 计算新的协方差矩阵
+    new_Sigma = Sigma2[np.ix_(new_courses, new_courses)]
+    
+    # 计算新的Cholesky分解的最后一行
+    U_new_last_row = cholesky_update(U_current, new_Sigma)
+    
+    # 计算新课程的值：mu_candidate + U_new_last_row @ z^T
+    new_course_values = mu[candidate] + np.dot(z_valid, U_new_last_row)
+    
+    # 计算贡献值：新课程值 - 第二小的值
+    contributions = new_course_values - second_smallest_values
+    
+    # 取平均作为该候选课程的平均贡献值
+    improvement_scores[candidate] = np.mean(contributions)
+    
+    return improvement_scores
