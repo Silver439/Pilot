@@ -302,15 +302,15 @@ def cholesky_update(U_old, A_new):
     
     return U_new
 
-def calculate_course_contributions(mu, Sigma2, selected_courses, candidate, z_samples):
+def refine_last_course(mu, Sigma2, selected_courses, courses, z_samples):
     """
-    泛化版本：计算用候选课程替换最后一门课程后的平均贡献值
+    计算用候选课程替换最后一门课程后的平均贡献值
     
     参数:
     mu: 所有课程的均值向量
     Sigma2: 协方差矩阵
     selected_courses: 当前选择的课程列表
-    candidate: 替换课程
+    courses: 所有课程
     z_samples: 采样点
     """
     n_selected = len(selected_courses)
@@ -319,9 +319,9 @@ def calculate_course_contributions(mu, Sigma2, selected_courses, candidate, z_sa
     # 1. 生成初始样本并找到有效行
     current_mu = mu[selected_courses]
     current_Sigma = Sigma2[np.ix_(selected_courses, selected_courses)]
-    U_current = np.linalg.cholesky(current_Sigma)
+    U_old = np.linalg.cholesky(current_Sigma)
     
-    samples = current_mu + (U_current @ z_samples.T).T
+    samples = current_mu + (U_old @ z_samples.T).T
     
     # 找到有效行：最后一门课是该行最小值的行
     last_col_values = samples[:, last_course_idx:last_course_idx+1]  # 保持二维形状
@@ -340,26 +340,123 @@ def calculate_course_contributions(mu, Sigma2, selected_courses, candidate, z_sa
     
     print(f"找到 {len(valid_indices)} 个有效样本（最后一门课是最小值）")
     
+    valid_candidates = [c for c in courses if c not in selected_courses[:-1]]
+
     # 2. 遍历候选课程计算贡献值
-    improvement_scores = {}
+    best_improvement_score = 0
+    best_idx = -1
     
-    # 创建新的课程组合：用候选课程替换最后一门课
-    new_courses = selected_courses.copy()
-    new_courses[last_course_idx] = candidate
+    for last_course_idx in valid_candidates:
+        # 创建新的课程组合：用候选课程替换最后一门课
+        new_courses = selected_courses.copy()
+        new_courses[-1] = last_course_idx
+        
+        # 计算新的协方差矩阵
+        new_Sigma = Sigma2[np.ix_(new_courses, new_courses)]
+        
+        # 计算新的Cholesky分解的最后一行
+        U_new = cholesky_update(U_old, new_Sigma)
+        U_new_last_row = U_new[n_selected-1,:]
+        
+        # 计算新课程的值：mu_candidate + U_new_last_row @ z^T
+        new_course_values = mu[last_course_idx] + np.dot(z_valid, U_new_last_row)
+        
+        # 计算贡献值：第二小的值 - 新课程值
+        contributions = second_smallest_values - new_course_values
+        
+        # 取平均作为该候选课程的平均贡献值
+        improvement_score = np.mean(contributions)
+        if improvement_score > best_improvement_score:
+            best_idx = last_course_idx
+            best_improvement_score = improvement_score
+        # print(last_course_idx,end=': ')
+        # print(improvement_score)
+
+    return best_idx, best_improvement_score
+
+def cyclic_optimization_persistent(mu, Sigma2, initial_courses, all_courses, num_cycles=10,num_samples=10000, max_random_tries=10):
+    """
+    循环优化课程组
     
-    # 计算新的协方差矩阵
-    new_Sigma = Sigma2[np.ix_(new_courses, new_courses)]
+    参数:
+    mu: 所有课程的均值向量
+    Sigma2: 协方差矩阵
+    initial_courses: 初始课程组
+    all_courses: 所有课程列表
+    num_samples: 采样数量
+    num_cycles: 循环轮数
+    max_random_tries: 最大随机尝试次数
+    """
+    # 生成采样点
+    current_courses = initial_courses.copy()
+    optimization_history = []
     
-    # 计算新的Cholesky分解的最后一行
-    U_new_last_row = cholesky_update(U_current, new_Sigma)[n_selected-1,:]
+    print(f"初始课程组: {current_courses}")
     
-    # 计算新课程的值：mu_candidate + U_new_last_row @ z^T
-    new_course_values = mu[candidate] + np.dot(z_valid, U_new_last_row)
+    for cycle in range(num_cycles):
+        print(f"\n=== 第 {cycle + 1} 轮循环优化 ===")
+        course_change = False
+        
+        for i in range(len(current_courses)):
+            optimize_position = len(current_courses) - 1
+            original_course = current_courses[optimize_position]
+            
+            print(f"\n优化第 {optimize_position + 1} 门课程 (课程 {original_course})")
+            
+            # 尝试优化，如果失败则持续随机替换
+            success = False
+            random_tries = 0
+            current_attempt_courses = current_courses.copy()
+            
+            while not success and random_tries < max_random_tries:
+                # 调用 refine_last_course
+                z_samples = np.random.randn(num_samples, len(initial_courses))
+                result = refine_last_course(mu, Sigma2, current_attempt_courses, all_courses, z_samples)
+                
+                if result == {}:  # 没有有效样本
+                    random_tries += 1
+                    print(f"随机尝试 {random_tries}/{max_random_tries}: 没有有效样本")
+                    
+                    # 获取可用的候选课程
+                    available_candidates = [c for c in all_courses if c not in current_attempt_courses]
+                    
+                    if not available_candidates:
+                        print("没有可用的候选课程，终止尝试")
+                        break
+                    
+                    # 随机选择一门课程替换最后一门课
+                    random_candidate = np.random.choice(available_candidates)
+                    print(f"随机替换: 课程 {current_attempt_courses[-1]} → {random_candidate}")
+                    
+                    # 更新课程组进行下一次尝试
+                    current_attempt_courses[-1] = random_candidate
+                    
+                else:  
+                    success = True
+                    best_candidate, best_score = result
+                
+                    print(f"最佳替换: 课程 {best_candidate}, 改进分数: {best_score:.6f}")
+                    
+                    # 更新当前课程组
+                    current_courses[optimize_position] = best_candidate
+                    
+            # 如果达到最大尝试次数仍然没有成功，使用最后一次随机替换的结果
+            if not success and random_tries >= max_random_tries:
+                print(f"达到最大随机尝试次数 {max_random_tries}，使用最后一次随机替换")
+                last_random_course = current_attempt_courses[-1]
+                
+                current_courses[optimize_position] = last_random_course
+            
+            # 将优化后的课程移到首位
+            optimized_course = current_courses.pop(optimize_position)
+            current_courses.insert(0, optimized_course)
+
+            if original_course != optimized_course:
+                course_change = True
+            
+            print(f"更新后课程组: {current_courses}")
+        if course_change == False:
+            print("无课程被替换，算法已收敛")
+            break
     
-    # 计算贡献值：第二小的值 - 新课程值
-    contributions = second_smallest_values - new_course_values
-    
-    # 取平均作为该候选课程的平均贡献值
-    improvement_scores[candidate] = np.mean(contributions)
-    
-    return improvement_scores
+    return current_courses, optimization_history
