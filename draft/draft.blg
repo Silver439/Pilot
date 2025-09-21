@@ -3,6 +3,16 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: draft.aux
 The style file: informs2014.bst
 Database file #1: sample.bib
+Warning--I didn't find a database entry for "fu2004optimal"
+Warning--I didn't find a database entry for "nelson1995using"
+Warning--I didn't find a database entry for "nakayama2000multiple"
+Warning--I didn't find a database entry for "kim2005comparison"
+Warning--I didn't find a database entry for "wu2016parallel"
+Warning--I didn't find a database entry for "daulton2021parallel"
+Warning--I didn't find a database entry for "ginsbourger2008multi"
+Warning--I didn't find a database entry for "chevalier2013fast"
+Warning--I didn't find a database entry for "wang2020parallel"
+Warning--I didn't find a database entry for "men2023simulation"
 Warning--to sort, need author or key in ICAO2015
 Warning--to sort, need author or key in Advancements2024
 Warning--to sort, need author or key in CAE7000XR
@@ -15,45 +25,45 @@ Warning--empty journal in Flightradar2024
 Warning--can't use both volume and number fields in pmlr-v28-chen13a
 Warning--empty journal in Damos2003
 Warning--missing institution in FAA1995
-You've used 27 entries,
+You've used 28 entries,
             2869 wiz_defined-function locations,
-            784 strings with 10582 characters,
-and the built_in function-call counts, 21813 in all, are:
-= -- 2220
-> -- 497
-< -- 12
-+ -- 198
-- -- 165
-* -- 1593
-:= -- 2714
-add.period$ -- 51
-call.type$ -- 27
-change.case$ -- 190
-chr.to.int$ -- 28
-cite$ -- 51
-duplicate$ -- 2235
-empty$ -- 1738
-format.name$ -- 223
-if$ -- 4492
+            802 strings with 10952 characters,
+and the built_in function-call counts, 22672 in all, are:
+= -- 2308
+> -- 516
+< -- 13
++ -- 205
+- -- 171
+* -- 1657
+:= -- 2822
+add.period$ -- 53
+call.type$ -- 28
+change.case$ -- 197
+chr.to.int$ -- 29
+cite$ -- 52
+duplicate$ -- 2317
+empty$ -- 1807
+format.name$ -- 234
+if$ -- 4668
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 237
-newline$ -- 87
-num.names$ -- 86
-pop$ -- 1076
+missing$ -- 247
+newline$ -- 90
+num.names$ -- 90
+pop$ -- 1113
 preamble$ -- 1
-purify$ -- 162
+purify$ -- 168
 quote$ -- 0
-skip$ -- 439
+skip$ -- 455
 stack$ -- 0
-substring$ -- 2058
-swap$ -- 533
+substring$ -- 2145
+swap$ -- 559
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 240
+type$ -- 249
 warning$ -- 12
-while$ -- 131
+while$ -- 138
 width$ -- 0
-write$ -- 312
-(There were 12 warnings)
+write$ -- 323
+(There were 22 warnings)

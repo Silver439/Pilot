@@ -100,17 +100,17 @@ The Full Flight Simulator (FFS) is a highly sophisticated flight training device
 It is capable of simulating the entire spectrum of flight operations, from takeoff and cruise to landing, encompassing both routine procedures and complex scenarios such as engine failures, hydraulic system malfunctions, severe weather conditions, and even rare events like bird strikes or runway contamination \citep{Advancements2024}. The simulation integrates visual, auditory, and tactile feedback, alongside precise instrument readouts and control responses, to provide an immersive experience that closely mirrors actual flight conditions. Certified to the highest standards, such as Level D by aviation authorities like the Federal Aviation Administration (FAA) or the European Union Aviation Safety Agency (EASA), the FFS achieves unparalleled precision, enabling zero flight time training where pilots can qualify without operating an actual aircraft \citep{FAA1995,EASA2020}. However, this extraordinary accuracy comes at a significant cost, with a single FFS unit priced in the tens of millions of dollars, rendering its manufacture and maintenance a substantial financial commitment \citep{CAE7000XR}. Most airlines typically own only a limited number of FFS units outright or instead lease them from manufacturers such as CAE or L3Harris and dedicated flight training centers \citep{IBAAero2023}.
 
 % Explaining the role in pilot training
-The primary application of the FFS lies in pilot training and qualification maintenance, with a particular emphasis on mandatory recurrent training to renew licenses. Pursuant to regulations set by the International Civil Aviation Organization (ICAO) and national aviation authorities, pilots are required to undergo recurrent training every six to twelve months, typically conducted in an FFS, to validate their proficiency \citep{Flightradar2024}.During qualification assessments, pilots are evaluated through a series of subjects designed to test their ability to manage diverse operational challenges. These subjects are carefully crafted based on real-world flight data and historical incident analyses%, ensuring relevance to actual flight conditions 
+The primary application of the FFS lies in pilot training and qualification maintenance, with a particular emphasis on mandatory recurrent training to renew licenses. Pursuant to regulations set by the International Civil Aviation Organization (ICAO) and national aviation authorities, pilots are required to undergo recurrent training every six to twelve months, typically conducted in an FFS, to validate their proficiency \citep{Flightradar2024}. During qualification assessments, pilots are evaluated through a series of subjects designed to test their ability to manage diverse operational challenges. These subjects are carefully crafted based on real-world flight data and historical incident analyses %, ensuring relevance to actual flight conditions 
 \citep{NTSB2012}. Common subjects include ``Engine Failure on Takeoff,'' where pilots must stabilize the aircraft and execute a safe return to the airport following an engine malfunction immediately after liftoff; ``Low Visibility Approach,'' which tests precision navigation and landing in simulated adverse weather; and ``Emergency Descent and Decompression,'' requiring rapid altitude reduction and oxygen management in response to cabin pressure loss \citep{PilotWorkshops2023}. These assessments, which may span several hours, evaluate technical proficiency, decision-making speed, and crew coordination. Successful completion of these subjects results in license renewal, while deficiencies necessitate further training, ensuring consistent competency across the pilot workforce \citep{EASA2020}.
 
 Given the high cost of FFS and the critical need for regular pilot assessments, airlines must carefully balance budgetary constraints with the demand for efficient and effective evaluations. However, the current practice of selecting assessment subjects is often random or reliant on airlines' experiential judgment, which can fail to identify specific deficiencies or redundantly evaluate areas of established proficiency. This work aims to develop dedicated optimization approaches to enhance the selection of assessment subjects, maximizing the effectiveness of the evaluation process.
 
-Suppose there is a pool of $M$ different training modules from which $m$ are selected in one training session due to cost restriction. Ideally, these $m$ subjects should collectively cover a diverse range of skills to efficiently identify a pilot’s weaknesses. Unlike conventional approaches, our strategy incorporates the correlations and variability in pilot performance across these modules, driven by individual differences in skills such as hand-eye coordination, spatial awareness, and stress resilience. For instance, pilots with strong coordination skills often excel in subjects like ``Precision Approach'' and ``Instrument Flying,'' as both require similar competencies, including accurate interpretation of flight instruments, stable aircraft control, and anticipation of spatial positioning \citep{Damos2003}. As a result, high performance in one module frequently predicts success in the other due to shared skill requirements. Conversely, pilots with superior stress management capabilities may outperform in complex emergency scenarios such as ``Multi-Engine Failure'', but struggle in subjects like ``Crosswind Landing'' if their coordination is less developed \citep{Szczepanska2025}. These correlations arise from overlapping skill sets and selecting multiple highly correlated subjects may lead to redundant testing.%, as pilots who excel or struggle in one are likely to perform similarly in the others. 
- Accounting for these correlations is therefore critical in optimizing the selection of assessment modules to enhance training efficiency and safety \citep{Duruaku2024}. 
+Suppose there is a pool of $M$ different training modules from which $m$ are selected in one training session due to cost restriction. Ideally, these $m$ subjects should collectively cover a diverse range of skills to efficiently identify a pilot’s weaknesses. Unlike conventional approaches, our strategy incorporates the correlations and variability in pilot performance across these modules, driven by individual differences in skills such as hand-eye coordination, spatial awareness, and stress resilience. For instance, pilots with strong coordination skills often excel in subjects like ``Precision Approach'' and ``Instrument Flying,'' as both require similar competencies, including accurate interpretation of flight instruments, stable aircraft control, and anticipation of spatial positioning \citep{Damos2003}. As a result, high performance in one module frequently predicts success in the other due to shared skill requirements. Conversely, pilots with superior stress management capabilities may outperform in complex emergency scenarios such as ``Multi-Engine Failure'', but struggle in subjects like ``Crosswind Landing'' if their coordination is less developed \citep{Szczepanska2025}. These correlations arise from overlapping skill sets and selecting multiple highly correlated subjects may lead to redundant testing. %, as pilots who excel or struggle in one are likely to perform similarly in the others. 
+Accounting for these correlations is therefore critical in optimizing the selection of assessment modules to enhance training efficiency and safety \citep{Duruaku2024}. 
 
-We illustrate this with a simple example, where we need to select two subjects out of three for a pilot's assessment. From an aviation safety perspective, we aim to select the two subjects that best identify the subject with the lowest score, and thus the assessment metric is the minimum score of the two selected subjects. From an optimization perspective, the following objective function is considered:
+We illustrate this with a simple example, where we need to select two subjects out of three for a pilot's assessment. From an aviation safety perspective, we aim to select the two subjects that best identify the subject with the lowest score, and thus the assessment metric is the minimum score of the two selected subjects. As an optimization problem, the following objective function is considered:
 \begin{equation}
-	\min_{x_1,x_2} \mathbb{E}[\min\{Y(x_1),...,Y(x_2) \} ], 
+	\min_{x_1, \ x_2} \mathbb{E}[\min\{Y(x_1), \ Y(x_2) \} ], 
 	\label{example}
 \end{equation}
 where $x_1,x_2$ are two selected subjects from the subjects pool $\{A,B,C\}$ and $Y(x_i)$ is the score on $x_i$. The scores of each pilot on these three subjects follow a discrete distribution with three scenarios (shown in Table \ref{tab:example}), each with probability 1/3.
@@ -131,9 +131,9 @@ From the table, we can observe that the correlation between scores for subjects 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Addressing this problem presents multiple challenges. First, in practical applications, the expected values of these distributions are likely unknown. While we can infer correlations between scores based on the skill requirements of different subjects, estimating the mean scores of pilots across these subjects is considerably more difficult. Second, even when the parameters of the score distributions are fully known, computing the expected minimum value of several correlated distributions is inherently complex, particularly when selecting an optimal subset of mm modules from a larger set to minimize this value. This combinatorial optimization problem is computationally challenging and generally does not admit an exact solution, necessitating the use of approximation algorithms. Hence, an approach that simultaneously learns from data of previous test results and optimizes the selection process is necessary.
+Addressing this problem presents multiple challenges. First, in practical applications, the expected performances of pilots on these subjects are likely unknown. While we can infer correlations between scores based on the skill requirements of different subjects, estimating the mean scores of pilots across these subjects is considerably more difficult. Second, even when the parameters of the score distributions are fully known, computing the expected minimum value of several correlated distributions is inherently complex, particularly when selecting an optimal subset of mm modules from a larger set to minimize this value. This combinatorial optimization problem is computationally challenging and generally does not admit an exact solution, necessitating the use of approximation algorithms. Hence, an approach that simultaneously learns from data of previous test results and optimizes the selection process is necessary.
 
-To address the first challenge of estimating score means, we develop a combinatorial multi-armed bandit (CMAB) algorithm based on a Bayesian framework that assigns a prior distribution to the score means and continuously updates it through iterative testing. This learning framework, however, critically relies on an $\alpha$-approximation oracle to select near-optimal module combinations at each iteration based on the current estimates, which directly confronts the second computational challenge. To tackle the computational complexity challenge, we exploit the submodular structure of our objective function. This key property allows us to develop efficient greedy-style algorithms that serve as effective $\alpha$-approximation oracles for module selection. By combining these two components—the Bayesian learning framework and $\alpha$-approximation oracles for combinatorial selection—we create an integrated solution that simultaneously learns from evaluation data and optimizes the selection process. 
+To address the first challenge of estimating score means, we develop a combinatorial multi-armed bandit (CMAB) algorithm based on a Bayesian framework that assigns a prior distribution to the score means and continuously updates it through iterative testing. This learning framework, however, critically relies on an computational oracle to select near-optimal module combinations at each iteration based on current estimates for the score distributions, which directly confronts the second computational challenge. To tackle the computational complexity challenge, we exploit the submodular structure of our objective function. This key property allows us to develop efficient greedy-style algorithms that serve as effective approximation oracles for module selection. By combining these two components—the Bayesian learning framework and the approximation oracles for combinatorial selection—we create an integrated solution that simultaneously learns from evaluation data and optimizes the selection process. 
 
 This paper addresses a problem of significant practical relevance, representing an innovative effort to apply optimization and operations research algorithms to real-world challenges. Previously, the design of pilot training modules has relied heavily on intuition and experience. Beyond its practical significance, the optimization problem explored here also carries substantial theoretical value, presenting multiple challenges as outlined earlier. Moreover, while related to existing research domains, it exhibits notable distinctions. Our work primarily aligns with two categories of optimization studies. The first is simulation-based optimization \citep{Fu2015}, which employs simulation models to support decision-making in real-world systems (FFS is a highly precise simulation tool). Certain simulation optimization studies account for correlations in experimental results when selecting multiple design alternatives \citep{xie2016bayesian}. These correlations primarily arise from the use of common random numbers in computer simulations. However, no prior work in this field has targeted the same objective function as ours, as most focus on evaluating a single design’s performance without an internal minimization operation. The second category is combinatorial multi-armed bandit research \citep{Chen2013}, where some studies select multiple alternatives and use the best as the evaluation metric, akin to our objective function \eqref{example}. Yet, to the best of our knowledge, none have addressed the complex reward structure in \eqref{example} while simultaneously accounting for correlations among alternatives. Although correlations in CMAB settings have been studied in prior works, these typically focus on simpler reward functions that depend only on marginal statistics rather than the full joint distribution of the selected arms. 
 
@@ -143,9 +143,14 @@ The remainder of the paper is organized as follows. Section \ref{related works} 
 \label{related works}
 We review relevant works in three aspects: existing approaches for pilot training modules design, simulation-based optimization, and combinatorial MAB.
 
-\textbf{Combinatorial MAB} Our module selection problem naturally fits into the combinatorial multi-armed bandit (CMAB) framework with semi-bandit feedback, where an agent sequentially selects a subset of base arms (super arm) and observes outcomes from all selected arms \citep{pmlr-v28-chen13a}. The CMAB literature predominantly makes two simplifying assumptions: either base arms are \emph{mutually independent} \citep{10.5555/3737916.3740755, Combes2015CombinatorialBR, 10.1145/3410220.3453926}, or the reward function is \emph{linear} in base arm outcomes or depends only on \emph{marginal means} \citep{Demirel2021CombinatorialGP, Kveton2015CombinatorialCB}. In contrast, our problem requires accounting for the full joint distribution's influence on the non-linear minimum-based reward function. Our work is most closely related to \citep{Chen2016CombinatorialMB}, who also consider the expected maximum of selected arms as the reward function but do not incorporate correlations between base arms. \citep{Wang2023CombinatorialBF} also examines a similar maximum reward function but under a more restrictive full-bandit feedback setting with discrete outcomes, whereas we consider continuous distributions with semi-bandit feedback. In an orthogonal direction, \citep{Degenne2016CombinatorialSW} considers correlated base arms with a known covariance matrix under a sub-Gaussian assumption, which aligns with our setting in terms of correlation structure, but focuses on linear reward functions, which fundamentally differ from our minimum-based reward structure that requires complete joint distribution information.
+\subsection{Simulation-based optimization}
+Simulation-based optimization is a powerful approach for decision-making in complex real-world systems. When direct experimentation is impractical due to cost, feasibility, or other constraints, decision-makers can employ simulation models to evaluate various decision alternatives and identify the optimal solution. Decision-making based on FFS, which provides a high-fidelity simulation of an aircraft, can thus be framed as a simulation optimization problem. Our study aligns with existing research in two key aspects. First, the experimental outcomes of different decision alternatives in our problem exhibit correlations. In simulation optimization, such correlations typically arise from the use of common random numbers (CRN), where experiments across different decisions share identical or related random number streams \citep{fu2004optimal,nelson1995using,nakayama2000multiple,kim2005comparison,xie2016bayesian}. The adoption of CRN enhances the ability to discern differences between decision outcomes. However, unlike traditional studies that focus on selecting a single optimal decision, our problem requires identifying a set of decisions and evaluating them based on their minimum performance metric. The second related aspect pertains to sequential optimization, where multiple decisions are evaluated in each iteration. Existing research in this domain primarily leverages parallel computing resources to accelerate the optimization process, yet the objective remains the selection of a single best decision \citep{wu2016parallel,daulton2021parallel}. Although these approaches differ from our objective function, they utilize similar selection criteria, such as the multi-point Expected Improvement (qEI) metric \citep{ginsbourger2008multi}, to determine the set of decisions tested in each parallel experiment. The qEI metric quantifies the expected improvement of the best-performing decision within a set of parallel evaluations relative to previously tested decisions. Notably, \cite{chevalier2013fast} proposed an exact formulation for computing qEI, which necessitates multiple evaluations of the cumulative distribution function of high-dimensional normal distributions. \cite{wang2020parallel} introduced an approximate gradient-based method to optimize qEI, improving computational efficiency. Recently, \cite{men2023simulation} investigated a problem where the goal is to select a single decision, with the performance evaluated as the minimum value of multiple independent outputs associated with that decision. While these studies are relevant to our work, they primarily address optimization in continuous spaces, and and as noted above, their overarching optimization objectives differ from that considered in our research.
 
-\section{problem formulation}
+
+\subsection{Combinatorial MAB} 
+Our module selection problem naturally fits into the combinatorial multi-armed bandit (CMAB) framework with semi-bandit feedback, where an agent sequentially selects a subset of base arms (super arm) and observes outcomes from all selected arms \citep{pmlr-v28-chen13a}. The CMAB literature predominantly makes two simplifying assumptions: either base arms are \emph{mutually independent} \citep{10.5555/3737916.3740755, Combes2015CombinatorialBR, 10.1145/3410220.3453926}, or the reward function is \emph{linear} in base arm outcomes or depends only on \emph{marginal means} \citep{Demirel2021CombinatorialGP, Kveton2015CombinatorialCB}. In contrast, our problem requires accounting for the full joint distribution's influence on the non-linear minimum-based reward function. Our work is most closely related to \citep{Chen2016CombinatorialMB}, who also consider the expected maximum of selected arms as the reward function but do not incorporate correlations between base arms. \citep{Wang2023CombinatorialBF} also examines a similar maximum reward function but under a more restrictive full-bandit feedback setting with discrete outcomes, whereas we consider continuous distributions with semi-bandit feedback. In an orthogonal direction, \citep{Degenne2016CombinatorialSW} considers correlated base arms with a known covariance matrix under a sub-Gaussian assumption, which aligns with our setting in terms of correlation structure, but focuses on linear reward functions, which fundamentally differ from our minimum-based reward structure that requires complete joint distribution information.
+
+\section{Problem formulation}
 \label{problem formulation}
 Our goal is to efficiently identify pilots’ deficiencies through rational module design, with these deficiencies measured by their scores during the module evaluation process. Suppose there are $M$ different training modules from which $m$ are selected in one training session due to the time and cost restriction. Then, we select $m$ modules to maximally expose a pilot’s deficiencies, such that the minimum score across these $m$ modules is as low as possible. The optimization problem can be formulated as follows:
 \begin{equation}
@@ -228,9 +233,9 @@ $$
 
 \begin{lemma}
 \label{lemma:lipschitz}
-If $|\mu_1(i) - \mu_2(i)| \leq \Lambda_i$ for all modules $i \in \mathcal{X}$, then for any super arm $S$, the difference in rewards is bounded by:
+If $|\mu_1(i) - \mu_2(i)| \leq \gamma_i$ for all modules $i \in \mathcal{X}$, then for any super arm $S$, the difference in rewards is bounded by:
 $$
-|R_{\mathcal{N}_1}(S) - R_{\mathcal{N}_2}(S)| \leq \max_{i \in S} \Lambda_i.
+|R_{\mathcal{N}_1}(S) - R_{\mathcal{N}_2}(S)| \leq \max_{i \in S} \gamma_i.
 $$
 \end{lemma}
 The lemmas characterize fundamental properties of the reward function. Lemma \ref{lemma:monotonicity} demonstrates its monotonicity with respect to the component-wise ordering of the mean vectors. Lemma \ref{lemma:lipschitz} establishes a bounded difference property, showing that the change in reward is constrained by the maximum change in any constituent module's mean.
@@ -283,10 +288,95 @@ The $\alpha$-approximation regret of Algorithm \ref{alg:bcucb_algorithm} over $T
 \section{Design of $\alpha$-Approximation Oracles}
 \label{oracle}
 
-This section details the design of the $\alpha$-approximation oracle $\mathcal{O}$ used in the BCUCB algorithm. The oracle's purpose is to efficiently select a set of $m$ modules that (approximately) minimizes the expected minimum score given current parameter estimates. Our approach leverages the submodular structure of the objective function to develop oracles with theoretical guarantees.
+This section details the design of the $\alpha$-approximation oracle $\mathcal{O}$ used in the BCUCB algorithm given current parameter estimates. That is, we aim to select a limited number of dimensions from a completely known multivariate normal distribution such that the expected value of the minimum score across these dimensions is minimized. It should be noted that, in general, this objective function cannot be simplified into a more computationally convenient form. Existing studies provide closed-form solutions for the expected minimum of two normal distributions \citep{nadarajah2008exact}. However, for more than two normal distributions, prior research remains limited. \cite{clark1961greatest} relied on numerical approximation, that recursively applies a three-variate formula, to compute the expected value of their minimum and has analyzed the accuracy of these approximations through numerical validation. Such computational methods are time-consuming, particularly in our optimization scenario, where we need to repeatedly select $m$ modules and compute the expected value of their minimum scores. Therefore, we aim to derive managerial insights from simple, analytically tractable examples and leverage these insights to develop efficient heuristic methods. This section is divided into two parts: in Section \ref{insights}, we use two simplified examples to obtain some insights; in Section \ref{submodular}, we demonstrate that the objective function is submodular, enabling the use of a greedy algorithm to achieve an efficient and theoretically guaranteed approximation; in Section \ref{heuristic}, we utilize these insights to develop an efficient heuristic method based on greedy approach.
+
+\subsection{Insights from two simple examples}
+\label{insights}
+This subsection examines two simplified examples to investigate how parameters in a multivariate normal distribution—specifically the mean, correlation, and variance—affect the expected minimum value. The examples include a bivariate normal distribution (Section \ref{bivariate normal}) and a multi-variate scenario with same means, variances, and correlations (Section \ref{multi-variate}). Despite their simplicity, the conclusions and insights from these examples align with intuition and are corroborated by subsequent numerical experiments.
+
+\subsubsection{Bivariate normal example}
+\label{bivariate normal}
+
+%We need to compare Eξ1,ξ2[min\text{E}_{\xi_1, \xi_2}[\min \{\mu_1+A\xi_1, \mu_2+B_1\xi_1+B_2\xi_2 \}] and \text{E}_{\xi_1, \xi_2}[\min \{\mu_1+A\xi_1, \mu_2+B\xi_2 \}]\text{E}_{\xi_1, \xi_2}[\min \{\mu_1+A\xi_1, \mu_2+B\xi_2 \}], where \xi_1, \xi_2\xi_1, \xi_2 are independent standard normal random variable. All the coefficients are positive and that B_1^2+B_2^2=B^2B_1^2+B_2^2=B^2.
+
+For any two Gaussian random number $X_1\sim N(\mu_1,\sigma^2_1)$, $X_2\sim N(\mu_2,\sigma^2_2)$ with correlation $\rho$, the expectation $\text{E}[\min\{X_1, X_2\}]$ takes the following form \citep{clark1961greatest}:
+$$
+\text{E}[\min\{X_1, X_2\}] = \mu_1\Phi(\frac{\mu_2-\mu_1}{\theta}) + \mu_2\Phi(\frac{\mu_1-\mu_2}{\theta}) - \theta \phi(\frac{\mu_2-\mu_1}{\theta} ),
+$$
+where $\phi$, $\Phi$ are cdf and pdf for standard normal distribution, respectively, and $\theta = \sqrt{\sigma^2_1+\sigma^2_2-2\rho \sigma_1\sigma_2} = \sqrt{\text{var}(X_1-X_2)}$.
+
+Denote $f=\text{E}[\min\{X_1, X_2\}] $. We have:
+\begin{equation}
+	\frac{\partial f}{\partial \theta} = -\phi(\frac{\mu_2-\mu_1}{\theta})<0,
+\end{equation}
+\begin{equation}
+	\label{rho}
+	\frac{\partial f}{\partial \rho} = \frac{\partial f}{\partial \theta} \frac{\partial \theta}{\partial \rho} =  \frac{\sigma_1\sigma_2}{\theta}\phi(\frac{\mu_2-\mu_1}{\theta})>0,
+\end{equation}
+\begin{equation}
+	\label{sigma}
+	\frac{\partial f}{\partial \sigma_1} = \frac{\partial f}{\partial \theta} \frac{\partial \theta}{\partial \sigma_1} = -\frac{\sigma_1-\rho\sigma_2}{\theta} \phi(\frac{\mu_2-\mu_1}{\theta}),
+\end{equation}
+\begin{equation}
+	\label{mu}
+	\frac{\partial f}{\partial \mu_1} = \Phi( \frac{\mu_2-\mu_1}{\theta})>0.
+\end{equation}
+
+We summarize the conclusions is the following lemma:
+\begin{lemma}
+	In the bivariate normal example, the expectation of the minimum value is smaller when the two variables have smaller expectations and correlations.
+\end{lemma}
+
+The relation between $f$ and the variance for each individual variable is not monotone. We can, however, derive some special cases:
+	\begin{enumerate}
+		\item When $\rho<\frac{\sigma_1}{\sigma_2}$ (specifically when $\rho<0$), a larger value of $\sigma_1$ is preferred.
+		\item When $\rho>\frac{\sigma_1}{\sigma_2}$, smaller value of $\sigma_1$ is preferred. This result may appear counter-intuitive. To gain insight, consider a special case where $\rho = 1$ and $\sigma_1<\sigma_2$. In this scenario, $X_1$ and $X_2$ are positively linear dependent, with $ X_1 = \frac{\sigma_1}{\sigma_2} X_2$. Consequently, $X_1$ and $X_2$ always share the same sign. When $X_1, X_2 > 0$, the minimum is $\min\{X_1, X_2\} = X_1 > 0$, which increases with $\sigma_1$. When $X_1, X_2 < 0$, the minimum is $\min\{X_1, X_2\} = X_2 < 0$, which is independent of $\sigma_1$. Thus, a larger $\sigma_1$ increases the objective function value in this case. Although a larger $\sigma_1$ reduces $X_1$ when negative, these negative values do not contribute to the objective function as long as $\sigma_1 < \sigma_2$. This effect diminishes slightly as $\rho$ deviates from 1, but negative values of $X_1$ remain less likely to influence the objective function until $\rho < \frac{\sigma_1}{\sigma_2}$.
+	\end{enumerate}
+
+
+\subsubsection{Multi-variate normal example}
+\label{multi-variate}
+
+We consider the following scenario: $m$ normal random numbers $X_1,...,X_m$ with equal mean $\mu$ and equal variance $\sigma^2$. The correlation between each pair of variables is $\rho\geq 0$. We would like to explore the relationship between the objective function  $f = \text{E}[\min\{X_1,...,X_m\}]$ and $\rho$, $\mu$, and $\sigma$.
+
+In this case, each random variable can be represented as $X_i = \mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_i )$, where $W$ and $N_1,...,N_m$ are i.i.d. standard normal random variables. Then,
+$$f = \text{E}[\min\{X_1,...,X_m\}] =  \text{E}[\min\{\mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_1 ),...,\mu + \sigma(\sqrt{\rho}W + \sqrt{1-\rho} N_m )\}] $$
+$$=\mu+ \sigma\text{E}[\min\{\sqrt{\rho}W + \sqrt{1-\rho} N_1 ,...,\sqrt{\rho}W + \sqrt{1-\rho} N_m \}]  $$
+$$=\mu + \sigma\text{E}[\sqrt{\rho}W+ \sqrt{1-\rho} \min\{N_1,...,N_m\} ] =\mu + \sigma\sqrt{1-\rho} \text{E}[\min\{N_1,...,N_m\} ]. $$
+%This had no analytical solution. Some special cases:
+%\begin{enumerate}
+%	\item When \rho =1\rho =1, f=\muf=\mu.
+%	\item When \rho =0\rho =0, f = \mu+ \sigma\text{E}[\min\{N_1 ,...,N_m \}]f = \mu+ \sigma\text{E}[\min\{N_1 ,...,N_m \}]. 
+%\end{enumerate}
+Noted that $\text{E}[\min\{N_1 ,...,N_m \}]$ is a constant for a given $m$. It is negative and can be approximated as 
+$$-\sqrt{2 \ln m} + \frac{\ln \ln m + \ln 4\pi}{ 2 \sqrt{2 \ln m}}. $$
+Hence, $f\approx \mu - \sigma\sqrt{1-\rho}\sqrt{2 \ln m}$. 
+
+We summarize the insights from this example in the following lemma.
+
+\begin{lemma}
+	In the simple multi-variate normal example, the expectation of the minimum value is smaller with smaller $\mu$, larger $\sigma$ or smaller $\rho$.
+\end{lemma}
+
+For a general multi-variate normal distribution, analyzing the impact of the covariance matrix on the objective function $   f   $ using simple algebra is challenging. However, we can derive the following lemma regarding the influence of the means.
+\begin{lemma}
+\label{lemma_mean}
+	In a general multi-variate normal distribution, if the covariance matrix is fixed, the value of $f$ reduces if the mean vector gets smaller pointwisely.
+\end{lemma}
+
+We summarize the managerial insights derived from these examples for decision-making as follows. To achieve a smaller value for the objective function, we should generally select: 
+\begin{enumerate}
+	\item $m$ Gaussian variables with smaller means;
+	\item variables with lower correlations;
+	\item variables with larger variances.
+\end{enumerate}
+According to Lemma \ref{lemma_mean}, when other factors remain constant, a smaller mean vector directly reduces the expected minimum value. Furthermore, regarding the other two points, the lower the correlations and the larger the variances of the $m$ variables, the more independently each variable can take potentially smaller values, thereby reducing the minimum value.
+
+
+
 
 \subsection{Submodularity and Greedy Approximation}
-
+\label{submodular}
 We first recall the definition of submodularity. For a finite set $\mathcal{V}$ (the set of all training modules $\mathcal{X}$ in our context), a set function $F: 2^{\mathcal{V}} \to \mathbb{R}$ is \textbf{submodular} if it satisfies the diminishing returns property: for any subsets $S \subseteq T \subseteq \mathcal{V}$ and any element $x \in \mathcal{V} \setminus T$,
 $$
 F(S \cup \{x\}) - F(S) \geq F(T \cup \{x\}) - F(T).
@@ -324,7 +414,7 @@ $$
 This theoretical guarantee allows us to use the greedy algorithm as an $\alpha$-approximation oracle with $\alpha = (1 - 1/e)$. However, a direct implementation requires computing the expected minimum value, which remains computationally challenging. While Sample Average Approximation (SAA) can be employed, it requires extensive Monte Carlo simulations and becomes prohibitive for large-scale problems.
 
 \subsection{Efficient Heuristic Oracles}
-
+\label{heuristic}
 To address the computational challenge, we derive inspiration from the analytical solution for the bivariate case:
 
 \begin{lemma}[\cite{clark1961greatest}]
@@ -514,7 +604,7 @@ In practical applications, the true means of module scores are typically unknown
 
 \subsubsection{Learning Framework and Algorithms}
 
-We employ a Gaussian Process Upper Confidence Bound (GP-UCB) approach to address the unknown means scenario. The algorithmic framework, outlined in Algorithm \ref{alg:gp_ucb_algorithm_adaptive}, maintains Gaussian posterior distributions for the mean scores of all modules. The algorithm proceeds in two phases: an efficient initialization phase that ensures each module is observed at least once using the minimal number of super arms, followed by a main optimization phase that balances exploration and exploitation.
+We employ a Gaussian Process Upper Confidence Bound (GP-UCB) approach to address the unknown means scenario. The algorithmic framework, outlined in Algorithm \ref{alg:bcucb_algorithm}, maintains Gaussian posterior distributions for the mean scores of all modules. The algorithm proceeds in two phases: an efficient initialization phase that ensures each module is observed at least once using the minimal number of super arms, followed by a main optimization phase that balances exploration and exploitation.
 
 Three algorithms are compared within this framework:
 
@@ -585,6 +675,28 @@ We employ the following two complementary metrics:
     \end{minipage}
 \end{figure}
 
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/best_200_10.png}
+        %\caption{}
+        \label{}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/worst_200_10.png}
+        %\caption{}
+        \label{}
+    \end{minipage}
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/random_200_10.png}
+        %\caption{}
+        \label{}
+    \end{minipage}
+\end{figure}
 
 %--------------------------------------------------------------------------------------
 
@@ -642,7 +754,7 @@ Considering that adding other observation points will not increase the uncertain
 $$\textnormal{Pr}\left\{|\mu_{t-1}(i)-\mu(i)|>\lambda_i \frac{\sigma(i)}{\sqrt{n}}\right\}\leq\textnormal{Pr}\{|\mu_{t-1}(i)-\mu(i)|>\lambda_i \sigma_{t-1}(i)\}\leq e^{-\lambda_i/2}$$
 Denote $\epsilon_i = \lambda_i \frac{\sigma(i)}{\sqrt{n}}$, then we have $\textnormal{Pr}[|\mu_{t-1}(i)-\mu(i)|\geq \epsilon_i]\leq \exp(-\frac{n\epsilon_i^2}{2\sigma^2(i)})$  \hfill $\blacksquare$
 
-\section{Prrof of lemma \ref{lemma:lipschitz}}
+\section{Proof of lemma \ref{lemma:lipschitz}}
 \textit{Proof.} For any super arm $S = \{i_1,...,i_n\}$, denote the corresponding mean vectors in distributions $P_1$ and $P_2$ as $\boldsymbol{\mu}_{1,S} = [\mu_1(i_1),...,\mu_1(i_n)]^T$, $\boldsymbol{\mu}_{2,S} = [\mu_1(i_2),...,\mu_2(i_n)]^T$. Note that $P_1$ and $P_2$ are both multivariate normal distributions, and have same covariance matrices $\Sigma_S$.
 
 Now, let $\mathbf{z} = [z_1,...,z_n]^T \sim N(0,\Sigma_S)$. We have:
@@ -653,27 +765,28 @@ $$
 R_{P_2}(S) = \idotsint_\mathbf{z} \min \{\mu_2(i_1)+z_1,\mu_2(i_2)+z_2, \dots ,\mu_2(i_n)+z_n\} \,dz_1 \dots dz_k
 $$
 
-Denote $f(\boldsymbol{\mu}_{1,S}+\mathbf{z}) = \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\}$ and $f(\boldsymbol{\mu}_{2,S}+\mathbf{z}) = \min \{\mu_2(i_1)+z_1,\mu_2(i_2)+z_2, \dots ,\mu_2(i_n)+z_n\}$. We want to show that $f(\mu_{1,S}+\mathbf{z})-f(\mu_{2,S}+\mathbf{z})\leq \Lambda_S$.
+Denote $f(\boldsymbol{\mu}_{1,S}+\mathbf{z}) = \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\}$ and $f(\boldsymbol{\mu}_{2,S}+\mathbf{z}) = \min \{\mu_2(i_1)+z_1,\mu_2(i_2)+z_2, \dots ,\mu_2(i_n)+z_n\}$. We want to show that $f(\mu_{1,S}+\mathbf{z})-f(\mu_{2,S}+\mathbf{z})\leq \Gamma_S$.
 
-If there exists $i,j\in S=\{i_1,...,i_n\}$ s.t. $\mu_1(i)+z_i = f(\mu_{1,S}+\mathbf{z})$, $\mu_2(j)+z_j = f(\mu_{2,S}+\mathbf{z})$, $f(\mu_{1,S}+\mathbf{z})-f(\mu_{2,S}+\mathbf{z})>\Lambda_S$. Since $\mu_1(i)+z_i = f(\mu_{1,S}+\mathbf{z}) = \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\}$, we have: $\mu_1(j)+z_j> \mu_1(i)+z_i$.
+If there exists $i,j\in S=\{i_1,...,i_n\}$ s.t. $\mu_1(i)+z_i = f(\mu_{1,S}+\mathbf{z})$, $\mu_2(j)+z_j = f(\mu_{2,S}+\mathbf{z})$, $f(\mu_{1,S}+\mathbf{z})-f(\mu_{2,S}+\mathbf{z})>\Gamma_S$. Since $\mu_1(i)+z_i = f(\mu_{1,S}+\mathbf{z}) = \min \{\mu_1(i_1)+z_1,\mu_1(i_2)+z_2, \dots ,\mu_1(i_n)+z_n\}$, we have: $\mu_1(j)+z_j> \mu_1(i)+z_i$.
 
-Thus $\mu_1(j)-\mu_2(j) = \mu_1(j)+z_j-(\mu_2(j)+z_j)>\mu_1(i)+z_i-(\mu_2(j)+z_j)>\Lambda_S$, which is contradict with $\boldsymbol{\mu}_1 \geq \boldsymbol{\mu}_2$.
+Thus $\mu_1(j)-\mu_2(j) = \mu_1(j)+z_j-(\mu_2(j)+z_j)>\mu_1(i)+z_i-(\mu_2(j)+z_j)>\Gamma_S$, which is contradict with $\boldsymbol{\mu}_1 \geq \boldsymbol{\mu}_2$.
 
 Therefore
 
 $$
 \begin{aligned}
 R_{P_1}(S)-R_{P_2}(S) &= \idotsint_\mathbf{z} f(\boldsymbol{\mu}_{1,S}+\mathbf{z})-f(\boldsymbol{\mu}_{2,S}+\mathbf{z}) \,dz_1 \dots dz_k\\
-&\leq \idotsint_\mathbf{z} \Lambda_S \,dz_1 \dots dz_k = \Lambda_S 
+&\leq \idotsint_\mathbf{z} \Gamma_S \,dz_1 \dots dz_k = \Gamma_S 
 \end{aligned}
 $$
 \hfill $\blacksquare$
 
-\section{Proof of Lemma \ref{lemma:decomposition}}
+\section{Proof of lemma \ref{lemma:decomposition}}
 \textit{Proof.} 
 We bound the $\alpha$-approximation regret as:
 
 \begin{equation}
+    \label{eq:0}
 	\begin{aligned}
 		  \text{Reg}_{P,\alpha}(T) &= \sum_{t=1}^{T}\mathbb{E}\big[\alpha R_P(S^*) - R_P(S_t)\big]\\
 		  &\leq \sum_{t=1}^{T}\mathbb{E}[\Delta_{S_t}]\\
@@ -684,92 +797,98 @@ We bound the $\alpha$-approximation regret as:
 
 (a) the first term 
 
-Let $M  = 100$, The first term can be trivially bounded as:
+Recall that $y_{\text{max}}$ is the maximum score a pilot could achieve on any module. The first term can be trivially bounded as:
 \begin{equation}
-	\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}] \leq \sum_{t=1}^{m}\alpha \cdot R_P(S^*) \leq m \cdot \alpha M
+	\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}] \leq \sum_{t=1}^{m}\alpha \cdot R_P(S^*) \leq \alpha m y_{\text{max}}
 \end{equation}
 
 (b) the second term 
 
-By Lemma 1 we know that for any $i \in [m],t\geq m+1$, denote $c_i = \sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}$, we have:
+By Lemma 1 we know that for any $i \in [m],t\geq m+1$, denote $\gamma_i = \sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}$, we have:
 $$
-	\text{Pr}[|\hat{\mu}_{t-1}(i)-\mu(i)|\geq c_i] \leq \exp(-\frac{nc_i^2}{2\sigma^2(i)}) = t^{-3}
+	\text{Pr}[|\hat{\mu}_{t-1}(i)-\mu(i)|\geq \gamma_i] \leq \exp(-\frac{T_{i,t-1}\gamma_i^2}{2\sigma^2(i)}) = t^{-3}
 $$
 
 Therefore
-\begin{equation}
+\begin{equation*}
 	\begin{aligned}
 		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}]
-		% &\leq \sum_{t=m+1}^{T} \sum_{i=1}^{m} \sum_{l=1}^{t-1}\text{Pr}[|\hat{\mu}_{t-1}(i)-\mu(i)|\geq c_i] \\
+		% &\leq \sum_{t=m+1}^{T} \sum_{i=1}^{m} \sum_{l=1}^{t-1}\text{Pr}[|\hat{\mu}_{t-1}(i)-\mu(i)|\geq \gamma_i] \\
 		&\leq \sum_{t=m+1}^{T} \sum_{i=1}^{m} \sum_{l=1}^{t-1}t^{-3} \\
 		&\leq m \sum_{t=m+1}^{T}t^{-2} \\
 		&\leq \frac{\pi^2}{6}m
 	\end{aligned}
-\end{equation}
+\end{equation*}
 
 and then the second term in (6) can be bounded as
 \begin{equation}
 	\begin{aligned}
 		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]&\leq \frac{\pi^2}{6}m \cdot (\alpha \cdot R_P(S^*))\\
-        &\leq \frac{\pi^2}{6}\alpha M m
-	\end{aligned}
+        &\leq \frac{\pi^2}{6}\alpha m y_{\text{max}}
+ 	\end{aligned}
 \end{equation}
 
 (c) the third term 
 
-We fix $t>m$ and first asuume $\lnot \varepsilon_t$ happens. For each $i \in [m]$, since $\lnot \varepsilon_t$ happens, we have:
-\begin{equation}
-	|\hat{\mu}_{T_{i,t-1}}(i)-\mu(i)| < c_i ~~~ \forall i \in [m]
+We fix $t>m$ and first asuume $\lnot \varepsilon_t$ happens. Let $\gamma_i = \sigma(i)\sqrt{\frac{6\ln t}{T_{i,t-1}}}$. For each $i \in [m]$, since $\lnot \varepsilon_t$ happens, we have:
+\begin{equation} 
+    \label{eq:1}
+	|\hat{\mu}_{T_{i,t-1}}(i)-\mu(i)| < \gamma_i ~~~ \forall i \in [m]
 \end{equation}
 
-Recall that in round $t$, the input to the oracle is $\underline{P} = \mathcal{N}(\underline{\boldsymbol{\mu}},\Sigma)$, where the mean vector of $\underline{P}$ is:
+Recall that in round $t$, the input distribution to the oracle is $P_{ucb} = \mathcal{N}(\boldsymbol{\mu}_{ucb},\Sigma)$, where the mean vector of $P_{ucb}$ satisfies:
 \begin{equation}
-	\underline{\mu}(i) = \hat{\mu}(i)-c_i ~~~ \forall i \in [m]
+    \label{eq:2}
+	\mu_{ucb} = \hat{\mu}(i)-\gamma_i ~~~ \forall i \in [m]
 \end{equation}
 
-From (10) and (11) we  konw that $\mu(i)>\underline{\mu}(i)>\mu(i)-2c_i$ for all $i \in [m]$. Thus, from Lemma 2 we have:
+From \ref{eq:1} and \ref{eq:2} we  konw that $\mu(i)>\mu_{ucb}>\mu(i)-2\gamma_i$ for all $i \in [m]$. Thus, from Lemma \ref{lemma:monotonicity} we have:
 \begin{equation}
-	r_{\underline{P}}(S)\leq R_P(S) ~~~ \forall S \in \mathcal{F}.
+    \label{eq:3}
+	R_{P_{ucb}}(S)\leq R_P(S) ~~~ \forall S \in \mathcal{F}.
 \end{equation}
 
-and from Lemma 3 we have:
+and from Lemma \ref{lemma:lipschitz} we have:
 \begin{equation}
-	r_{\underline{P}}(S)\geq R_P(S)-2\Lambda_S ~~~ \forall S \in \mathcal{F}.
+    \label{eq:4}
+	R_{P_{ucb}}(S)\geq R_P(S)-2\Gamma_S ~~~ \forall S \in \mathcal{F}.
 \end{equation}
-where $\Lambda = \mathop{\max}\limits_{i}c_i$
+where $\Gamma_S = \mathop{\max}\limits_{i\in S}\gamma_i$
 
 Also, from the fact that the algorithm chooses $S_t$ in the t-th round, we have:
 \begin{equation}
-	r_{\underline{P}}(S_t)\leq \alpha \cdot \mathop{\min}\limits_{S \in \mathcal{F}}r_{\underline{P}}(S) \leq \alpha \cdot r_{\underline{P}}(S^*).
+    \label{eq:5}
+	R_{P_{ucb}}(S_t)\leq \alpha \cdot \mathop{\min}\limits_{S \in \mathcal{F}}R_{P_{ucb}}(S) \leq \alpha \cdot R_{P_{ucb}}(S^*).
 \end{equation}
-From (12),(13) and (14) we have:
-\begin{equation}
-	R_P(S)-2\Lambda_S \leq r_{\underline{P}}(S_t) \leq \alpha \cdot r_{\underline{P}}(S^*) \leq \alpha \cdot R_P(S^*)
-\end{equation}
-
+From \ref{eq:3}, \ref{eq:4} and \ref{eq:5} we have:
+\begin{equation*}
+    \begin{aligned}
+	R_P(S)-2\Gamma_S &\leq R_{P_{ucb}}(S_t) \leq \alpha \cdot R_{P_{ucb}}(S^*)\\
+    &\leq \alpha \cdot R_P(S^*)
+    \end{aligned}
+\end{equation*}
 which implies:
 $$
-	\Delta_{S_t} \leq 2\Lambda_S
+	\Delta_{S_t} \leq 2\Gamma_S
 $$
-
-Therefore, when $\lnot \varepsilon_t$ happens, we always have $\Delta_{S_t}\leq 2\mathop{\max}\limits_{i\in S_t}c_i$.
-
+Therefore, when $\lnot \varepsilon_t$ happens, we always have $\Delta_{S_t}\leq 2\mathop{\max}\limits_{i\in S_t}\gamma_i$.
 This implies:
 $$
-	\{\lnot \varepsilon_t, \Delta_{S_t}>0\}\Longrightarrow \{0<\Delta_{S_t}\leq 2\mathop{\max}\limits_{i\in S_t}c_i\}=\mathcal{H}_t.
+	\{\lnot \varepsilon_t, \Delta_{S_t}>0\}\Longrightarrow \{0<\Delta_{S_t}\leq 2\mathop{\max}\limits_{i\in S_t}\gamma_i\}=\mathcal{H}_t.
 $$
 
 Hence, the third term in (6) can be bounded as:
 \begin{equation}
+    \label{eq:6}
 	\begin{aligned}
 		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}] &= \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t. \Delta_{S_t}>0\}\Delta_{S_t}]\\
 		&\leq \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}]
 	\end{aligned}
 \end{equation}
 
-Finally, by combining (6),(7),(9),(16) we have:
+Finally, by combining \ref{eq:0}, \ref{eq:1}, \ref{eq:2} and \ref{eq:6}  we have:
 $$
-	\text{Reg}_{P,\alpha}(T) \leq \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}] + (\frac{\pi^2}{6}+1)\alpha M m
+	\text{Reg}_{P,\alpha}(T) \leq \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}] + (\frac{\pi^2}{6}+1)\alpha m y_{\text{max}}
 $$
 \hfill $\blacksquare$
 
@@ -821,7 +940,7 @@ $$\begin{aligned}
 
 Note that we asuume $\mathcal{H}_t$ happens. Denote $\sigma = \mathop{\max}\limits_{i\in S_t}\sigma(i)$, then we have: 
 $$\begin{aligned}
-\Delta_{S_t} & \leq 2\Lambda_S=2\mathop{\max}\limits_{i\in S_t}\sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}\\
+\Delta_{S_t} & \leq 2\Gamma_S=2\mathop{\max}\limits_{i\in S_t}\sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}\\
 &\leq 2\sigma \cdot \sqrt{6\ln(T)}\cdot \mathop{\max}\limits_{i\in S_t}\frac{1}{\sqrt{T_{i,t-1}}}\\
 &\leq 2\sigma \cdot \sqrt{6\ln(T)}\cdot \sum_{i\in S_t}\frac{1}{\sqrt{T_{i,t-1}}}\\
 &<2\sigma \cdot \sqrt{6\ln(T)}\cdot \sum_{k=1}^\infty\frac{(\beta_{k-1}-\beta_k)K}{\sqrt{m_{k,t}}}\\
