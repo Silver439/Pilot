@@ -186,17 +186,23 @@ To address the challenge of unknown score means, we propose a Bayesian Combinato
 
 The algorithm operates in two phases: an initial exploration phase that ensures each module is evaluated at least once, followed by the main optimization phase. At each iteration $t$, the algorithm constructs a lower confidence bound (LCB) estimate $\boldsymbol{\tilde{\mu}}_t = \boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$ based on the current posterior distribution. This LCB vector is then passed to an $\alpha$-approximation oracle $\mathcal{O}$ that selects a module set $S_t$ aiming to minimize the expected minimum score. The specific design and implementation of this oracle will be detailed in the next section. After evaluating the selected modules on a new pilot, the posterior distribution is updated with the observed scores. The complete procedure is summarized in Algorithm \ref{alg:bcucb_algorithm}.
 
+We define the culmulative regret of BCUCB as:
+$$
+    \text{Reg}_{\alpha}(T) = \sum_{t=1}^{N}\mathbb{E}\big[\alpha R(S^*) - R(S_t)\big]
+$$
+where $S^*$ is the ture optimal.
+
 \begin{algorithm}
 \caption{Bayesian Combinatorial Upper Confidence Bound (BCUCB)}
 \label{alg:bcucb_algorithm}
 \begin{algorithmic}[1]
-\Require{Module set $\mathcal{X}$; Covariance matrix $\boldsymbol{\Lambda}$; Prior parameters $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$; Oracle $\mathcal{O}$; Iterations $N_0,N$}
+\Require{Module set $\mathcal{X}$; Covariance matrix $\boldsymbol{\Lambda}$; Prior parameters $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$; Oracle $\mathcal{O}$; Iterations $t_0,T$}
 \State Initialize $\boldsymbol{\mu}_0$, $\boldsymbol{\Sigma}_0$ and count vector $\mathbf{T}_0 \gets \mathbf{0}$ 
-\For{$i = 1$ to $N_0$} \Comment{Initial exploration phase}
+\For{$i = 1$ to $t_0$} \Comment{Initial exploration phase}
 	\State Play a super arm $S_i$ that contains module $i$
 	\State Observe $\mathbf{y}_i$,Update $(\boldsymbol{\mu}, \boldsymbol{\Sigma},\mathbf{T}_i)$,Calculate $R(S_i)$ \Comment Same as steps 11, 12, and 13
 \EndFor
-\For{$t = N_0+1$ to $N$} \Comment{Main optimization phase}
+\For{$t = t_0+1$ to $T$} \Comment{Main optimization phase}
     \State $\boldsymbol{\sigma}_{t-1} \gets \sqrt{\text{diag}(\boldsymbol{\Sigma}_{t-1})}$ \Comment{Compute posterior standard deviations}
     \State $\boldsymbol{\beta}_t[x] \gets \sqrt{6 \ln t / \mathbf{T}_{t-1}[x]}$ for each $x \in \mathcal{X}$ \Comment $\mathbf{T}_{t-1}[x]$ represents the number of times module $x$ was observed before round $t-1$
     \State $\boldsymbol{\tilde{\mu}}_t \gets \boldsymbol{\mu}_{t-1} - \boldsymbol{\beta}_t \circ \boldsymbol{\sigma}_{t-1}$ \Comment{Construct LCB-based mean estimate}
@@ -205,11 +211,12 @@ The algorithm operates in two phases: an initial exploration phase that ensures 
     \State Update $(\boldsymbol{\mu}_t, \boldsymbol{\Sigma}_t)$ with $(\mathbf{y}_t, S_t)$; Update $\mathbf{T}_t[x] \gets \mathbf{T}_t[x] + 1$ for each $x \in S_t$
     \State Calculate $R(S_t) = \mathbb{E}[\min\,\{Y(x) : x \in S_t\}]$, track minimal $R(S_t)$ and corresponding $S_t$ 
 \EndFor
-\State \Return $S^*$ with minimal $R(S^*)$
+\State \Return $S_t$ with the minimal $R(S_t)$
 \end{algorithmic}
 \end{algorithm}
 
 \subsection{Regret analysis}
+
 In this section we bound the regret of Algorithm \ref{alg:bcucb_algorithm}.
 First, we derive a concentration inequality that characterizes the uncertainty reduction through Bayesian inference. Let $T_{i,t-1}$ be the number of times module $i$ has been observed before round $t$.
 \begin{lemma}
@@ -240,7 +247,14 @@ $$
 \end{lemma}
 The lemmas characterize fundamental properties of the reward function. Lemma \ref{lemma:monotonicity} demonstrates its monotonicity with respect to the component-wise ordering of the mean vectors. Lemma \ref{lemma:lipschitz} establishes a bounded difference property, showing that the change in reward is constrained by the maximum change in any constituent module's mean.
 
-Next we define two pivotal events for rounds \(m+1 \leq t \leq T\):
+Third, let's proceed with our regret function. We call a super arm $S$ \textit{bad} if $R(S)<\alpha\cdot R(S^*)$. For each super arm $S$, we define:
+$$
+\Delta_S =\max\{\alpha\cdot R(S^*)-R(S),0\}.
+$$
+And let $\mathcal{F} _{\mathcal{B} }= \{ S\in \mathcal{F} \mid \Delta _S> 0\}$, which is the set of all $\textit{bad}$ super arms.  Let $E_{\mathcal{B} }\subseteq [m]$ be the set of arms that are contained in at least one $\textit{bad}$ super arm. For each $i\in E_{\mathrm{B}}$,we define
+$$\Delta_{i,\min}=\min\{\Delta_S\mid S\in\mathcal{F}_\text{B},i\in S\}.$$
+
+Next we define two pivotal events for rounds \(t_0+1 \leq t \leq T\):
 $$
 \varepsilon_t = \left\{\exists\, i \in [m] \text{ such that } \left|\hat{\mu}_{T_{i,t-1}}^i - \mu^i\right| \geq \sigma(i)\sqrt{\frac{6\ln t}{T_{i,t-1}}} \right\}
 $$
@@ -248,25 +262,23 @@ $$
 \mathcal{H}_t = \left\{0 < \Delta_{S_t} \leq 2 \max_{i \in S_t} \sigma(i)\sqrt{\frac{6\ln t}{T_{i,t-1}}} \right\}
 $$
 
-Then we can get the following lemma:
-
 \begin{lemma}
 \label{lemma:decomposition}
 The \(\alpha\)-approximation regret over \(T\) rounds satisfies:
 $$
-\text{Reg}_{P,\alpha}(T) \leq \mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\mathcal{H}_t\} \Delta_{S_t}\right] + \left(\frac{\pi^2}{6} + 1\right) \alpha M m.
+\text{Reg}_{\alpha}(T) \leq \mathbb{E}\left[\sum_{t=t_0+1}^{T} \mathbb{I}\{\mathcal{H}_t\} \Delta_{S_t}\right] + \left(\frac{\pi^2}{6} + 1\right) \alpha M m.
 $$
 \end{lemma}
 
 This result is derived from a regret decomposition based on the event \(\varepsilon_t\):
 $
-\text{Reg}_{P,\alpha}(T) \leq \mathbb{E}\left[\sum_{t=1}^{m} \Delta_{S_t}\right] + \mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\varepsilon_t\} \Delta_{S_t}\right] + \mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\neg \varepsilon_t\} \Delta_{S_t}\right]
+\text{Reg}_{\alpha}(T) \leq \mathbb{E}\left[\sum_{t=1}^{t_0} \Delta_{S_t}\right] + \mathbb{E}\left[\sum_{t=t_0+1}^{T} \mathbb{I}\{\varepsilon_t\} \Delta_{S_t}\right] + \mathbb{E}\left[\sum_{t=t_0+1}^{T} \mathbb{I}\{\neg \varepsilon_t\} \Delta_{S_t}\right]
 $. The first term corresponds to the initialization phase and can be trivially bounded. The second term is controlled using the concentration inequality from Lemma 1. For the third term, we can employ the properties established in Lemmas 2 and 3 to show that:
 $
-\mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\neg \varepsilon_t\} \Delta_{S_t}\right] \leq \mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\mathcal{H}_t\} \Delta_{S_t}\right].
+\mathbb{E}\left[\sum_{t=t_0+1}^{T} \mathbb{I}\{\neg \varepsilon_t\} \Delta_{S_t}\right] \leq \mathbb{E}\left[\sum_{t=t_0+1}^{T} \mathbb{I}\{\mathcal{H}_t\} \Delta_{S_t}\right].
 $ 
 
-Now, the remaining task reduces to bounding the key quantity \(\mathbb{E}\left[\sum_{t=m+1}^{T} \mathbb{I}\{\mathcal{H}_t\} \Delta_{S_t}\right]\). To bound this term, we proceed with the following strategy. We first demonstrate that whenever event \(\mathcal{H}_t\) occurs, at least one event from a specific collection of events must happen. We then establish an upper bound on the expected number of occurrences for each event in this collection. By combining these individual bounds, we ultimately derive an upper bound for the target term. Finally, we can get the following result:
+Now, the remaining task reduces to bounding the key quantity \(\mathbb{E}\left[\sum_{t=t_0+1}^{T} \mathbb{I}\{\mathcal{H}_t\} \Delta_{S_t}\right]\). To bound this term, we proceed with the following strategy. We first demonstrate that whenever event \(\mathcal{H}_t\) occurs, at least one event from a specific collection of events must happen. We then establish an upper bound on the expected number of occurrences for each event in this collection. By combining these individual bounds, we ultimately derive an upper bound for the target term. Finally, we can get the following result:
 
 \begin{theorem}
 \label{thm:regret_bound}
@@ -279,7 +291,7 @@ The $\alpha$-approximation regret of Algorithm \ref{alg:bcucb_algorithm} over $T
     
     \item \textbf{Distribution-independent bound:}
     $$
-    93\sigma \sqrt{M m T \ln T} + \left(\frac{\pi^2}{6} + 1\right) \alpha y_{\text{max}} M.
+    93\sigma \sqrt{m M T \ln T} + \left(\frac{\pi^2}{6} + 1\right) \alpha y_{\text{max}} M.
     $$
 \end{enumerate}
 \end{theorem}
@@ -618,7 +630,7 @@ Three algorithms are compared within this framework:
 
 \subsubsection{Experimental Configuration}
 
-The experimental setup mirrors that of the known-means scenario in terms of problem scales and correlation structures (Section \ref{sec:exp_setup}). All algorithms share the same Gaussian prior initialization $\mathcal{N}(\mathbf{70}, \mathbf{\Sigma}_0)$ and update their posterior distributions identically upon receiving new observations. Each algorithm executes for a total of $N = 150$ iterations, with the initial phase using the minimal number of super arms required to cover all modules ($N_0 = \lceil M/m \rceil$).
+The experimental setup mirrors that of the known-means scenario in terms of problem scales and correlation structures (Section \ref{sec:exp_setup}). All algorithms share the same Gaussian prior initialization $\mathcal{N}(\mathbf{70}, \mathbf{\Sigma}_0)$ and update their posterior distributions identically upon receiving new observations. Each algorithm executes for a total of $N = 150$ iterations, with the initial phase using the minimal number of super arms required to cover all modules ($t_0 = \lceil M/m \rceil$).
 All results are averaged over \textbf{30} independent runs with different random seeds.
 
 \subsubsection{Performance Metrics}
@@ -788,10 +800,10 @@ We bound the $\alpha$-approximation regret as:
 \begin{equation}
     \label{eq:0}
 	\begin{aligned}
-		  \text{Reg}_{P,\alpha}(T) &= \sum_{t=1}^{T}\mathbb{E}\big[\alpha R_P(S^*) - R_P(S_t)\big]\\
-		  &\leq \sum_{t=1}^{T}\mathbb{E}[\Delta_{S_t}]\\
-		  &=\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}]+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]\\
-		  &+\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}]
+		  \text{Reg}_{\alpha}(T) &= \sum_{t=1}^{N}\mathbb{E}\big[\alpha R_P(S^*) - R_P(S_t)\big]\\
+		  &\leq \sum_{t=1}^{N}\mathbb{E}[\Delta_{S_t}]\\
+		  &=\mathbb{E}[\sum_{t=1}^{t_0}\Delta_{S_t}]+\mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]\\
+		  &+\mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}]
 	\end{aligned}
 \end{equation}
 
@@ -799,23 +811,23 @@ We bound the $\alpha$-approximation regret as:
 
 Recall that $y_{\text{max}}$ is the maximum score a pilot could achieve on any module. The first term can be trivially bounded as:
 \begin{equation}
-	\mathbb{E}[\sum_{t=1}^{m}\Delta_{S_t}] \leq \sum_{t=1}^{m}\alpha \cdot R_P(S^*) \leq \alpha m y_{\text{max}}
+	\mathbb{E}[\sum_{t=1}^{t_0}\Delta_{S_t}] \leq \sum_{t=1}^{t_0}\alpha \cdot R_P(S^*) \leq \alpha t_0 y_{\text{max}}
 \end{equation}
 
 (b) the second term 
 
-By Lemma 1 we know that for any $i \in [m],t\geq m+1$, denote $\gamma_i = \sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}$, we have:
+By Lemma 1 we know that for any $i \in [m],t\geq t_0+1$ and $l\geq 1$, denote $\gamma_i = \sigma(i)\sqrt{\frac{6\ln(t)}{T_{i,t-1}}}$, we have:
 $$
-	\text{Pr}[|\hat{\mu}_{t-1}(i)-\mu(i)|\geq \gamma_i] \leq \exp(-\frac{T_{i,t-1}\gamma_i^2}{2\sigma^2(i)}) = t^{-3}
+	\text{Pr}[|\hat{\mu}_{l}(i)-\mu(i)|\geq \gamma_i] \leq \exp(-\frac{T_{i,l}\gamma_i^2}{2\sigma^2(i)}) = t^{-3}
 $$
 
 Therefore
 \begin{equation*}
 	\begin{aligned}
-		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}]
-		% &\leq \sum_{t=m+1}^{T} \sum_{i=1}^{m} \sum_{l=1}^{t-1}\text{Pr}[|\hat{\mu}_{t-1}(i)-\mu(i)|\geq \gamma_i] \\
-		&\leq \sum_{t=m+1}^{T} \sum_{i=1}^{m} \sum_{l=1}^{t-1}t^{-3} \\
-		&\leq m \sum_{t=m+1}^{T}t^{-2} \\
+		\mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\varepsilon_t\}]
+		% &\leq \sum_{t=t_0+1}^{T} \sum_{i=1}^{m} \sum_{l=1}^{t-1}\text{Pr}[|\hat{\mu}_{t-1}(i)-\mu(i)|\geq \gamma_i] \\
+		&\leq \sum_{t=t_0+1}^{T} \sum_{i=1}^{m} \sum_{l=1}^{t-1}t^{-3} \\
+		&\leq m \sum_{t=t_0+1}^{T}t^{-2} \\
 		&\leq \frac{\pi^2}{6}m
 	\end{aligned}
 \end{equation*}
@@ -823,7 +835,7 @@ Therefore
 and then the second term in (6) can be bounded as
 \begin{equation}
 	\begin{aligned}
-		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]&\leq \frac{\pi^2}{6}m \cdot (\alpha \cdot R_P(S^*))\\
+		\mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\varepsilon_t\}\Delta_{S_t}]&\leq \frac{\pi^2}{6}m \cdot (\alpha \cdot R_P(S^*))\\
         &\leq \frac{\pi^2}{6}\alpha m y_{\text{max}}
  	\end{aligned}
 \end{equation}
@@ -877,59 +889,54 @@ $$
 	\{\lnot \varepsilon_t, \Delta_{S_t}>0\}\Longrightarrow \{0<\Delta_{S_t}\leq 2\mathop{\max}\limits_{i\in S_t}\gamma_i\}=\mathcal{H}_t.
 $$
 
-Hence, the third term in (6) can be bounded as:
+Since $\mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}] = \mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\lnot \varepsilon_t, \Delta_{S_t}>0\}\Delta_{S_t}]$, the third term in \ref{eq:0} can be bounded as:
 \begin{equation}
     \label{eq:6}
 	\begin{aligned}
-		\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}] &= \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\lnot \varepsilon_t. \Delta_{S_t}>0\}\Delta_{S_t}]\\
-		&\leq \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}]
+		\mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\lnot \varepsilon_t\}\Delta_{S_t}]\leq \mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}]
 	\end{aligned}
 \end{equation}
 
 Finally, by combining \ref{eq:0}, \ref{eq:1}, \ref{eq:2} and \ref{eq:6}  we have:
-$$
-	\text{Reg}_{P,\alpha}(T) \leq \mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}] + (\frac{\pi^2}{6}+1)\alpha m y_{\text{max}}
-$$
+\begin{equation}
+    \label{eq:7}
+	\text{Reg}_{\alpha}(T) \leq \mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}] + (\frac{\pi^2}{6}+1)\alpha m y_{\text{max}}
+\end{equation}
 \hfill $\blacksquare$
 
 \section{Proof of theorem \ref{thm:regret_bound}}
-According to Lemma \ref{lemma:decomposition}, now it remains to bound $\mathbb{E}[\sum_{t=m+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}]$.
+According to \ref{eq:7}, now it remains to bound $\mathbb{E}[\sum_{t=t_0+1}^{T}\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}]$. As mentioned in seection 5 of \cite{Kveton2014TightRB}, the key idea is to define a cascade of infinitely-many events and then bound the number of times that these events happen when a suboptimal solution is chosen. The events are parametrized by two decreasing sequences of constants:
 
-Define two decreasing sequences of positive contants:
 $$\begin{aligned}
 1 & =\beta_0>\beta_1>\beta_2>\ldots \\
- & \alpha_1>\alpha_2>\ldots
+ & \alpha_1>\alpha_2>\alpha_3>\ldots
 \end{aligned}$$
-such that $\lim_{k \to \infty}\alpha_k = \lim_{k \to \infty}\beta_k=0$. We choose $\{\alpha_k\}$ and $\{\beta_k\}$ as in Theorem 4 of \citep{Kveton2014TightRB}, which satisfy:
-
+such that $\lim_{k \to \infty}\alpha_k = \lim_{k \to \infty}\beta_k=0$. In addition, let $\{\alpha_k\}$ and $\{\beta_k\}$ satisfy:
 \begin{equation}\sqrt{6}\sum_{k=1}^\infty\frac{\beta_{k-1}-\beta_k}{\sqrt{\alpha_k}}\leq1\end{equation}
-
 and
+\begin{equation}
+    \label{eq:8}
+    \sum_{k=1}^\infty\frac{\alpha_k}{\beta_k}<267.
+\end{equation}
 
-\begin{equation}\sum_{k=1}^\infty\frac{\alpha_k}{\beta_k}<267.\end{equation}
+For $t \in \{m+1,...,T\}$ and $k \in \mathbb{Z}_+$, define: 
+$$
+    m_{k,t} = \alpha_k\left(\frac{2\sigma m}{\Delta_{S_t}}\right)^2\cdot \ln(T)
+$$
+and assume that $m_{k,t} = \infty$ if $\Delta_{S_t}=0$.
 
-For $t \in \{m+1,...,T\}$ and $k \in \mathbb{Z}_+$, let
-$$m_{k,t}=
-\begin{cases}
-\alpha_k\left(\frac{2\sigma K}{\Delta_{S_t}}\right)^2\cdot \ln(T) & \Delta_{S_t}>0, \\
-+\infty & \Delta_{S_t}=0,
-\end{cases}$$
-
-and 
-$$ A_{k,t} = \{i \in S_t|T_{i,t-1}\leq m_{k,t}\}.$$
-
-Then we define an event:
-$$\mathcal{G}_{k,t}=\{|A_{k,t}|\geq\beta_kK\},$$
-
-which means “in the $t-th$ round, at least $\beta_{k}K$ arms in $S_{t}$ had been observed at most $m_{k,t}$ times."
+Then let $A_{k,t} = \{i \in S_t|T_{i,t-1}\leq m_{k,t}\}$, we define a cascade of events:
+$$\mathcal{G}_{k,t}=\{|A_{k,t}|\geq\beta_k m\}$$
+which means “in the $t-th$ round, at least $\beta_{k}m$ arms in $S_{t}$ had been observed at most $m_{k,t}$ times."
 
 \begin{lemma}
-In the $t-th$ round, at least $\beta_{k}K$ arms in $S_t$ had been observed at most $m_{k,t}$ times.
+    \label{lemma:EC1}
+For $t_0<t\leq T$, let event $\mathcal{H}_t$ happen. Then event $\mathcal{G}_{k,t}$ happens for some k.
 \end{lemma}
 
-\textit{Proof.} Assume that $\mathcal{H}_t$ happens and that none of $\mathcal{G}_{1,t},\mathcal{G}_{2,t},...$ happens. Then $|A_{k,t}|<\beta_{k}K$ for all $k\in \mathbb{Z}_+$.
+\textit{Proof.} Assume that $\mathcal{H}_t$ happens and that none of $\mathcal{G}_{1,t},\mathcal{G}_{2,t},...$ happens. Then $|A_{k,t}|<\beta_{k}m$ for all $k\in \mathbb{Z}_+$.
 
-Let $A_{0,t} = S_t$ and $\bar{A}_{k,t}=S_t\setminus A_{k,t}$ for $k\in \mathbb{Z}_+\cup \{0\}$. It is easy to see $\bar{A}_{k-1,t}\subseteq\bar{A}_{k,t}$ for all $k\in \mathbb{Z}_+$. Note that $\lim_{k \to \infty}m_{k,t}=0$. Thus there exists $N\in \mathbb{Z}_+$ such that $\bar{A}_{k,t}=S_t$ for all $k\geq N$, and then we have $S_t=\bigcup_{k=1}^\infty\left(\bar{A}_{k,t}\setminus\bar{A}_{k-1,t}\right)$. Finally, note that for all $i\in \bar{A}_{k,t}$, we have $T_{i,t-1}>m_{k,t}$. Therefore
+Let $A_{0,t} = S_t$ and $\bar{A}_{k,t}=S_t\setminus A_{k,t}$ for $k\in \mathbb{Z}_+\cup \{0\}$. It is easy to see $\bar{A}_{k-1,t}\subseteq\bar{A}_{k,t}$ for all $k\in \mathbb{Z}_+$. Note that $\lim_{k \to \infty}m_{k,t}=0$. Thus there exists $Z\in \mathbb{Z}_+$ such that $\bar{A}_{k,t}=S_t$ for all $k\geq Z$, and then we have $S_t=\bigcup_{k=1}^\infty\left(\bar{A}_{k,t}\setminus\bar{A}_{k-1,t}\right)$. Finally, note that for all $i\in \bar{A}_{k,t}$, we have $T_{i,t-1}>m_{k,t}$. Therefore
 $$\begin{aligned}
 \sum_{i\in S_t}\frac{1}{\sqrt{T_{i,t-1}}} & =\sum_{k=1}^\infty\sum_{i\in\bar{A}_{k,t}\setminus\bar{A}_{k-1,t}}\frac{1}{\sqrt{T_{i,t-1}}}\leq\sum_{k=1}^\infty\sum_{i\in\bar{A}_{k,t}\setminus\bar{A}_{k-1,t}}\frac{1}{\sqrt{m_{k,t}}} \\
  & =\sum_{k=1}^\infty\frac{\left|\bar{A}_{k,t}\setminus\bar{A}_{k-1,t}\right|}{\sqrt{m_{k,t}}}=\sum_{k=1}^\infty\frac{\left|A_{k-1,t}\setminus A_{k,t}\right|}{\sqrt{m_{k,t}}}=\sum_{k=1}^\infty\frac{\left|A_{k-1,t}\right|-\left|A_{k,t}\right|}{\sqrt{m_{k,t}}} \\
@@ -946,41 +953,54 @@ $$\begin{aligned}
 &<2\sigma \cdot \sqrt{6\ln(T)}\cdot \sum_{k=1}^\infty\frac{(\beta_{k-1}-\beta_k)K}{\sqrt{m_{k,t}}}\\
 &=\sqrt{6}\sum_{k=1}^\infty\frac{\beta_{k-1}-\beta_k}{\sqrt{\alpha_k}}\cdot \Delta_{S_t}\leq\Delta_{S_t},
 \end{aligned}$$
-
-We reach a contradiction here. The proof of lemma 5 is completed.
+We reach a contradiction here. The proof of lemma \ref{lemma:EC1} is completed.
 \hfill $\blacksquare$
 
-By Lemma 5 we have
-$$\sum_{t=m+1}^T\mathbb{I} \{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\Delta_{S_t}.$$
+By Lemma \ref{lemma:EC1} we have
+$$\sum_{t=t_0+1}^T\mathbb{I} \{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{k=1}^\infty\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\Delta_{S_t}.$$
 
 For $i\in [m], k\in \mathbb{Z}_+, t\in \{m+1,...,T\}$, define an event $\mathcal{G}_{i,k,t}=\mathcal{G}_{k,t}\wedge\{i\in S_t,T_{i,t-1}\leq m_{k,t}\}.$
-
 Then by the definitions of $\mathcal{G}_{k,t}$ and $\mathcal{G}_{i,k,t}$ we have
 $$\mathbb{I}\{\mathcal{G}_{k,t},\Delta_{S_t}>0\}\leq\frac{1}{\beta_kK}\sum_{i\in E_\mathrm{B}}\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}.$$
 
 Therefore
-$$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}\frac{\Delta_{S_t}}{\beta_kK}.$$
+$$\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_{S_t}>0\}\frac{\Delta_{S_t}}{\beta_kK}.$$
 
-For each arm $i\in E_B$, suppose $i$ is contained in $N_i$ bad super arms $S_{i,1}^\mathrm{B},S_{i,2}^\mathrm{B},\ldots,S_{i,N_i}^\mathrm{B}$. Let $\Delta_{i,l} = \Delta_{S_{i,l}^\mathrm{B}}(l\in[N_i])$. Without loss of generality, we assume $\Delta_{i,1}\geq\Delta_{i,2}\geq\ldots\geq\Delta_{i,N_i}$. Note that $\Delta_{i,N_i}=\Delta_{i,\min}$. For convenience, we also define $\Delta_{i,0}=+\infty,\mathrm{~i.e.,~}\alpha_k\left(\frac{2\sigma K}{\Delta_{i,0}}\right)^2=0$. Then we have
+For each arm $i\in E_B$, suppose $i$ is contained in $N_i$ bad super arms and $\Delta_{i,1}\geq\Delta_{i,2}\geq\ldots\geq\Delta_{i,N_i}$. Note that $\Delta_{i,N_i}=\Delta_{i,\min}$. For convenience, we also define $\Delta_{i,0}=+\infty,\mathrm{~i.e.,~}\alpha_k\left(\frac{2\sigma m}{\Delta_{i,0}}\right)^2=0$. 
+
+\begin{lemma}
+    \label{lemma:EC2}
+For any $i\in E_\mathrm{B}$, we have the following inequation:
+$$\sum_{t=t_0+1}^T\sum_{l=1}^{N_i}\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_t=\Delta_{i,l}\}\Delta_{S_t}\leq 4\alpha_k \sigma^2 m^2\ln T\sum_{j=1}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,j}$$
+\end{lemma}
+\textit{Proof.} 
+
 $$\begin{aligned}
- & \sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t} \\
- & \leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\sum_{l=1}^{N_i}\mathbb{I}\{\mathcal{G}_{i,k,t},S_t=S_{i,l}^\mathrm{B}\}\frac{\Delta_{S_t}}{\beta_kK} \\
- & \leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\sum_{l=1}^{N_i}\mathbb{I}\{T_{i,t-1}\leq m_{k,t},S_t=S_{i,l}^\mathrm{B}\}\frac{\Delta_{i,l}}{\beta_kK} \\
- & =\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\sum_{l=1}^{N_i}\mathbb{I}\left\{T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,l}}\right)^2\ln T,S_t=S_{i,l}^\mathrm{B}\right\}\frac{\Delta_{i,l}}{\beta_kK} \\
- & =\sum_{i\in E_{\mathrm{B}}}\sum_{k=1}^{\infty}\sum_{t=m+1}^{T}\sum_{l=1}^{N_{i}}\sum_{j=1}^{l}\mathbb{I}\left\{\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^{2}\ln T<T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^{2}\ln T,S_{t}=S_{i,l}^{\mathrm{B}}\right\}\frac{\Delta_{i,l}}{\beta_{k}K} \\
- &\leq\sum_{i\in E_{\mathrm{B}}}\sum_{k=1}^{\infty}\sum_{t=m+1}^{T}\sum_{l=1}^{N_{i}}\sum_{j=1}^{l}\mathbb{I}\left\{\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^{2}\ln T<T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^{2}\ln T,S_{t}=S_{i,l}^{\mathrm{B}}\right\}\frac{\Delta_{i,j}}{\beta_{k}K}\\
- &\leq\sum_{i\in E_{\mathrm{B}}}\sum_{k=1}^{\infty}\sum_{t=m+1}^{T}\sum_{l=1}^{N_{i}}\sum_{j=1}^{N_{i}}\mathbb{I}\left\{\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^{2}\ln T<T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^{2}\ln T,S_{t}=S_{i,l}^{\mathrm{B}}\right\}\frac{\Delta_{i,j}}{\beta_{k}K}\\
- & \leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=m+1}^T\sum_{j=1}^{N_i}\mathbb{I}\left\{\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^2\ln T<T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^2\ln T\right\}\frac{\Delta_{i,j}}{\beta_kK}\\
- \end{aligned}$$
-$$
- \hspace{-11em}
- \begin{aligned}
- & \leq\sum_{i\in E_{\mathrm{B}}}\sum_{k=1}^{\infty}\sum_{j=1}^{N_{i}}\left(\alpha_{k}\left(\frac{2\sigma K}{\Delta_{i,j}}\right)^{2}\ln T-\alpha_{k}\left(\frac{2\sigma K}{\Delta_{i,j-1}}\right)^{2}\ln T\right)\frac{\Delta_{i,j}}{\beta_{k}K} \\
- & =4\sigma^2K\left(\sum_{k=1}^\infty\frac{\alpha_k}{\beta_k}\right)\ln T\cdot\sum_{i\in E_{\mathrm{B}}}\sum_{j=1}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,j} \\
- & \leq1068\sigma^2K\ln T\cdot\sum_{i\in E_{\mathrm{B}}}\sum_{j=1}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,j},
-\end{aligned}
-$$
-where the last inequality is due to (18).
+    \sum_{t=t_0+1}^T\sum_{l=1}^{N_i}\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_t=\Delta_{i,l}\}\Delta_{S_t}&=\sum_{t=t_0+1}^T\sum_{l=1}^{N_i}\mathbb{I}\{T_{i,t-1}\leq m_{k,t},\Delta_t=\Delta_{i,l}\}\Delta_{i,l}\\
+    &=\sum_{t=t_0+1}^T\sum_{l=1}^{N_i}\mathbb{I}\left\{T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma m}{\Delta_{i,l}}\right)^2\ln T,\Delta_t=\Delta_{i,l}\right\}\Delta_{i,l}
+\end{aligned}$$
+
+For the above equation, with base arm $i$ fixed, when $l = 1$, during the time period $t_0<t\leq T$, event $T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma m}{\Delta_{i,1}}\right)^2\ln T$ can hapeen at most $\alpha_k\left(\frac{2\sigma m}{\Delta_{i,1}}\right)^2\ln T$ times. Because each time after the event happens, the observation counters of arm $i$ increase by one. Therefore, after the event happens $\alpha_k\left(\frac{2\sigma m}{\Delta_{i,1}}\right)^2\ln T$ times, arm $i$ is guaranteed to be observed at least $\alpha_k\left(\frac{2\sigma m}{\Delta_{i,1}}\right)^2\ln T$ times and this event cannot happen anymore.
+
+When $l = 2$, based on the same idea, event $T_{i,t-1}\leq\alpha_k\left(\frac{2\sigma m}{\Delta_{i,2}}\right)^2\ln T$ occurs at most $\alpha_k\left(\frac{2\sigma m}{\Delta_{i,2}}\right)^2\ln T$ times during the time period $t_0<t\leq T$. Considering that arm $i$ has been observed at most $\alpha_k\left(\frac{2\sigma m}{\Delta_{i,1}}\right)^2\ln T$ times when $l=1$, the number of increases is $\alpha_k\left(\frac{2\sigma m}{\Delta_{i,2}}\right)^2\ln T - \alpha_k\left(\frac{2\sigma m}{\Delta_{i,1}}\right)^2\ln T$ times.
+
+Continuing this analysis we can get the following results:
+$$\begin{aligned}
+    &\sum_{t=t_0+1}^T\sum_{l=1}^{N_i}\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_t=\Delta_{i,l}\}\Delta_{S_t}\\
+    &\leq \left[\alpha_k\left(\frac{2\sigma m}{\Delta_{i,1}}\right)^2\ln T + \sum_{j=2}^{N_i} \left(\alpha_k\left(\frac{2\sigma m}{\Delta_{i,j}}\right)^2\ln T - \alpha_k\left(\frac{2\sigma m}{\Delta_{i,j-1}}\right)^2\ln T\right)\right]\Delta_{i,l}\\
+    &=4\alpha_k \sigma^2 m^2\ln T\left[\frac{1}{\Delta_{i,1}^2}\Delta_{i,1} + \sum_{j=2}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,l}\right]\\
+    &=4\alpha_k \sigma^2 m^2\ln T\sum_{j=1}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,j}
+\end{aligned}$$
+The last equation holds true because we assume $\Delta_{i,0}=+\infty$.
+\hfill $\blacksquare$
+
+By lemma \ref{lemma:EC2} we have:
+$$\begin{aligned}
+ \sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}&\leq\sum_{i\in E_\mathrm{B}}\sum_{k=1}^\infty\sum_{t=t_0+1}^T\sum_{l=1}^{N_i}\mathbb{I}\{\mathcal{G}_{i,k,t},\Delta_t=\Delta_{i,l}\}\frac{\Delta_{S_t}}{\beta_kK} \\
+ & \leq 4\sigma^2m\left(\sum_{k=1}^\infty\frac{\alpha_k}{\beta_k}\right)\ln T\cdot\sum_{i\in E_{\mathrm{B}}}\sum_{j=1}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,j}\\
+ & \leq1068\sigma^2m\ln T\cdot\sum_{i\in E_{\mathrm{B}}}\sum_{j=1}^{N_i}\left(\frac{1}{\Delta_{i,j}^2}-\frac{1}{\Delta_{i,j-1}^2}\right)\Delta_{i,j},
+\end{aligned}$$
+where the last inequality is due to \ref{eq:8}.
 
 Finally, for each $i\in E_B$ we have 
 $$\begin{aligned}
@@ -993,33 +1013,33 @@ $$\begin{aligned}
 It follows that 
 \begin{equation}
 	\begin{aligned}
-	\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}&\leq1068\sigma^2K\ln T\cdot\sum_{i\in E_\mathrm{B}}\frac{2}{\Delta_{i,\min}}\\
-	&=\sigma^2K\sum_{i\in E_\mathrm{B}}\frac{2136}{\Delta_{i,\min}}\ln T.
+	\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}&\leq1068\sigma^2m\ln T\cdot\sum_{i\in E_\mathrm{B}}\frac{2}{\Delta_{i,\min}}\\
+	&=\sigma^2m\sum_{i\in E_\mathrm{B}}\frac{2136}{\Delta_{i,\min}}\ln T.
 	\end{aligned}
 \end{equation}
 Combining (19) with Lemma 4, the distribution-dependent regret bound in Theorem 1 is proved.
 
-To prove the distribution-independent bound, we decompose $\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}$ into two parts:
+To prove the distribution-independent bound, we decompose $\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}$ into two parts:
 \begin{equation}\begin{aligned}
-\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}&=\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}\leq\epsilon\}\Delta_{S_t}\\
-&+\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t}\\
-&\leq\epsilon T+\sum_{t=m+1}^T1\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t},
+\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}&=\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}\leq\epsilon\}\Delta_{S_t}\\
+&+\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t}\\
+&\leq\epsilon T+\sum_{t=t_0+1}^T1\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t},
 \end{aligned}\end{equation}
 
 where $\epsilon>0$ is a constant to be determined. The second term can be bounded in the same way as in the proof of the distribution-dependent regret bound, except that we only consider the case $\Delta_{S_t}>\epsilon$. Thus we can replace (19) by
 \begin{equation}
 	\begin{aligned}
-		&\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t}\\
-		&\leq \sigma^2K\sum_{i\in E_\mathrm{B},\Delta_{i,\min}>\epsilon}\frac{2136}{\Delta_{i,\min}}\ln T\\
-		&\leq \sigma^2Km\frac{2136}{\epsilon}\ln T.
+		&\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t}\\
+		&\leq \sigma^2m\sum_{i\in E_\mathrm{B},\Delta_{i,\min}>\epsilon}\frac{2136}{\Delta_{i,\min}}\ln T\\
+		&\leq \sigma^2mM\frac{2136}{\epsilon}\ln T.
 	\end{aligned}
 \end{equation}
 
 It follows that
-$$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\epsilon T+\sigma^2Km\frac{2136}{\epsilon}\ln T.$$
+$$\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\epsilon T+\sigma^2mM\frac{2136}{\epsilon}\ln T.$$
 
-Finally, letting $\epsilon=\sqrt{\frac{2136\sigma^2Km\ln T}{T}}$, we get 
-$$\sum_{t=m+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq2\sqrt{2136\sigma^2KmT\ln T}<93\sigma\sqrt{mKT\ln T}.$$
+Finally, letting $\epsilon=\sqrt{\frac{2136\sigma^2mM\ln T}{T}}$, we get 
+$$\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq2\sqrt{2136\sigma^2mMT\ln T}<93\sigma\sqrt{mMT\ln T}.$$
 
 Combining this with Lemma 4, we conclude the proof of the distribution-independent regret bound in Theorem 1.\hfill $\blacksquare$
 %\end{appendices}

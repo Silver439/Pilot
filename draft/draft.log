@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  21 SEP 2025 11:18
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.5.4)  21 SEP 2025 21:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1208,37 +1208,6 @@ Underfull \hbox (badness 1028) in paragraph at lines 134--135
 
 [4]
 
-Package natbib Warning: Citation `fu2004optimal' on page 5 undefined on input line 147.
-
-
-Package natbib Warning: Citation `nelson1995using' on page 5 undefined on input line 147.
-
-
-Package natbib Warning: Citation `nakayama2000multiple' on page 5 undefined on input line 147.
-
-
-Package natbib Warning: Citation `kim2005comparison' on page 5 undefined on input line 147.
-
-
-Package natbib Warning: Citation `wu2016parallel' on page 5 undefined on input line 147.
-
-
-Package natbib Warning: Citation `daulton2021parallel' on page 5 undefined on input line 147.
-
-
-Package natbib Warning: Citation `ginsbourger2008multi' on page 5 undefined on input line 147.
-
-
-Package natbib Warning: Citation `chevalier2013fast' on page 5 undefined on input line 147.
-
-
-Package natbib Warning: Citation `wang2020parallel' on page 5 undefined on input line 147.
-
-
-Package natbib Warning: Citation `men2023simulation' on page 5 undefined on input line 147.
-
-
-
 [5]
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/it' will be
 (Font)              scaled to size 12.0pt on input line 151.
@@ -1247,147 +1216,142 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/it' will be
 [6]
 
 [7]
-LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 12.0pt on input line 193.
-LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 8.8pt on input line 193.
-LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
-(Font)              scaled to size 6.6pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 12.0pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 8.8pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
-(Font)              scaled to size 6.6pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 12.0pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 8.8pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
-(Font)              scaled to size 6.6pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 12.0pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 8.8pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
-(Font)              scaled to size 6.6pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 12.0pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 8.8pt on input line 193.
-LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
-(Font)              scaled to size 6.6pt on input line 193.
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/n' will be
-(Font)              scaled to size 8.8pt on input line 200.
+(Font)              scaled to size 8.8pt on input line 191.
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/n' will be
-(Font)              scaled to size 6.6pt on input line 200.
-
-
-LaTeX Font Warning: Font shape `TU/lmss/m/sc' in size <12> not available
-(Font)              Font shape `TU/lmr/m/sc' tried instead on input line 216.
-
+(Font)              scaled to size 6.6pt on input line 191.
+LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
+(Font)              scaled to size 12.0pt on input line 199.
+LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
+(Font)              scaled to size 8.8pt on input line 199.
+LaTeX Font Info:    Font shape `LMX/ntxexx/b/n' will be
+(Font)              scaled to size 6.6pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
+(Font)              scaled to size 12.0pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
+(Font)              scaled to size 8.8pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxmia/b/it' will be
+(Font)              scaled to size 6.6pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
+(Font)              scaled to size 12.0pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
+(Font)              scaled to size 8.8pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxsym/b/n' will be
+(Font)              scaled to size 6.6pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
+(Font)              scaled to size 12.0pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
+(Font)              scaled to size 8.8pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxsyc/b/n' will be
+(Font)              scaled to size 6.6pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
+(Font)              scaled to size 12.0pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
+(Font)              scaled to size 8.8pt on input line 199.
+LaTeX Font Info:    Font shape `U/ntxexa/b/n' will be
+(Font)              scaled to size 6.6pt on input line 199.
 
 
 [8]
 
-[9]
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/it' will be
-(Font)              scaled to size 8.8pt on input line 257.
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/it' will be
-(Font)              scaled to size 6.6pt on input line 257.
+LaTeX Font Warning: Font shape `TU/lmss/m/sc' in size <12> not available
+(Font)              Font shape `TU/lmr/m/sc' tried instead on input line 223.
 
-Underfull \hbox (badness 1147) in paragraph at lines 261--268
+
+
+[9]
+Underfull \hbox (badness 1852) in paragraph at lines 273--280
 []\TU/TeXGyreTermesX(0)/m/n/12 This result is derived from a regret decomposition based on the event $\OML/ntxmi/m/it/12 "[]$\TU/TeXGyreTermesX(0)/m/n/12 : $[][]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 T\LMS/ntxsy/m/n/12 º ^^T
  []
 
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/it' will be
-(Font)              scaled to size 12.0pt on input line 275.
 
 
 [10]
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/it' will be
+(Font)              scaled to size 12.0pt on input line 287.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <13> not available
-(Font)              size <12> substituted on input line 288.
+(Font)              size <12> substituted on input line 300.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/b/it' in size <13> not available
-(Font)              size <12> substituted on input line 288.
+(Font)              size <12> substituted on input line 300.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/b/n' in size <13> not available
-(Font)              size <12> substituted on input line 288.
+(Font)              size <12> substituted on input line 300.
 
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `OT1/minntx/b/n' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `OML/ntxmi/b/it' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 13.0pt on input line 288.
+(Font)              scaled to size 13.0pt on input line 300.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 9.0pt on input line 288.
+(Font)              scaled to size 9.0pt on input line 300.
 LaTeX Font Info:    Font shape `LMS/ntxsy/b/n' will be
-(Font)              scaled to size 7.0pt on input line 288.
+(Font)              scaled to size 7.0pt on input line 300.
 
 
 [11]
-Underfull \hbox (badness 5504) in paragraph at lines 305--307
+Underfull \hbox (badness 5504) in paragraph at lines 317--319
 \TU/TeXGyreTermesX(0)/m/n/12 where $\OML/ntxmi/m/it/12 ^^^$\TU/TeXGyreTermesX(0)/m/n/12 , $\U/ntxmia/m/it/12 ^^H$ \TU/TeXGyreTermesX(0)/m/n/12 are cdf and pdf for standard normal distribution, respectively, and $\OML/ntxmi/m/it/12 ^^R \U/ntxmia/m/it/12 =
  []
 
@@ -1396,13 +1360,13 @@ Underfull \hbox (badness 5504) in paragraph at lines 305--307
 [12]
 
 [13]
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/sc' will be
-(Font)              scaled to size 12.0pt on input line 405.
-LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/sc' will be
-(Font)              scaled to size 12.0pt on input line 405.
-
 
 [14]
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/sc' will be
+(Font)              scaled to size 12.0pt on input line 417.
+LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/sc' will be
+(Font)              scaled to size 12.0pt on input line 417.
+
 
 [15]
 
@@ -1415,6 +1379,8 @@ LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/sc' will be
 [19]
 
 [20]
+
+[21]
 File: figures/best_50_8.png Graphic file (type bmp)
 <figures/best_50_8.png>
 File: figures/best_50_16.png Graphic file (type bmp)
@@ -1458,35 +1424,35 @@ Underfull \hbox (badness 7540) in paragraph at lines 10--11
 
 
 
-[21]
-
 [22]
 
 [23]
-Underfull \hbox (badness 2875) in paragraph at lines 43--44
+Underfull \hbox (badness 2875) in paragraph at lines 46--47
 []\TU/TeXGyreTermesX(0)/m/n/10 Damos DL (2003) Pilot abilities and performance URL $[][][][][] [] [] [] [][][] [] [][][][][][][][][][][][] [] [][][] [] [][][][][][][][][][][] []
  []
 
 
-Underfull \hbox (badness 1953) in paragraph at lines 76--77
+
+[24]
+Underfull \hbox (badness 1953) in paragraph at lines 100--101
 []\TU/TeXGyreTermesX(0)/m/n/10 Nemhauser GL, Wolsey LA, Fisher ML (1978) An analysis of approximations for maximizing submodular
  []
 
 
 
-[24])
+[25])
 
-[25]
+[26]
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/m/n' will be
-(Font)              scaled to size 15.0pt on input line 708.
+(Font)              scaled to size 15.0pt on input line 720.
 LaTeX Font Info:    Font shape `TU/TeXGyreTermesX(0)/b/n' will be
-(Font)              scaled to size 15.0pt on input line 708.
+(Font)              scaled to size 15.0pt on input line 720.
 
 
 [1
 
 ]
-Underfull \hbox (badness 1242) in paragraph at lines 768--769
+Underfull \hbox (badness 1242) in paragraph at lines 780--781
 []\TU/TeXGyreTermesX(0)/m/n/12 Denote $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 = []\LMS/ntxsy/m/n/12 f\OML/ntxmi/m/it/12 ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]; [] ; ^^V[]\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/m/it/12 i[]\LMS/ntxsy/m/n/12 º Ï \OML/ntxmi/m/it/12 z[]\LMS/ntxsy/m/n/12 g$ \TU/TeXGyreTermesX(0)/m/n/12 and $\OML/ntxmi/m/it/12 f\LMS/ntxsy/m/n/12 ¹\OML/ntxmi/b/it/12 ^^V[] \LMS/ntxsy/m/n/12 Ï \OT1/minntx/b/n/12 z\LMS/ntxsy/m/n/12 º \U/ntxmia/m/it/12 =
  []
 
@@ -1499,12 +1465,9 @@ Underfull \hbox (badness 1242) in paragraph at lines 768--769
 [4]
 
 [5]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 
 [6]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 4505) has occurred while \output is active []
 
 
 
@@ -1512,10 +1475,6 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 [8]
 \openout4 = `draft.ent'.
-
-
-
-Package natbib Warning: There were undefined citations.
 
 
 
@@ -1537,12 +1496,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 28343 strings out of 473832
- 606551 string characters out of 5733159
+ 28375 strings out of 473832
+ 607275 string characters out of 5733159
  1065348 words of memory out of 5000000
- 50835 multiletter control sequences out of 15000+600000
+ 50867 multiletter control sequences out of 15000+600000
  627754 words of font info for 230 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 113i,15n,119p,2790b,517s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 113i,15n,119p,2785b,529s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on draft.pdf (34 pages).
+Output written on draft.pdf (35 pages).

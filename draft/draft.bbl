@@ -1,4 +1,4 @@
-\begin{thebibliography}{28}
+\begin{thebibliography}{38}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\urlprefix}{URL }
@@ -30,6 +30,9 @@ Chen W, Wang Y, Yuan Y (2013{\natexlab{a}}) Combinatorial multi-armed bandit: Ge
 \bibitem[{Chen et~al.(2013{\natexlab{b}})Chen, Wang, \protect\BIBand{} Yuan}]{pmlr-v28-chen13a}
 Chen W, Wang Y, Yuan Y (2013{\natexlab{b}}) Combinatorial multi-armed bandit: General framework and applications. Dasgupta S, McAllester D, eds., \emph{Proceedings of the 30th International Conference on Machine Learning}, volume~28 of \emph{Proceedings of Machine Learning Research}, 151--159 (Atlanta, Georgia, USA: PMLR), \urlprefix\url{https://proceedings.mlr.press/v28/chen13a.html}.
 
+\bibitem[{Chevalier \protect\BIBand{} Ginsbourger(2013)}]{chevalier2013fast}
+Chevalier C, Ginsbourger D (2013) Fast computation of the multi-points expected improvement with applications in batch selection. \emph{International conference on learning and intelligent optimization}, 59--69 (Springer).
+
 \bibitem[{Clark(1961)}]{clark1961greatest}
 Clark CE (1961) The greatest of a finite set of random variables. \emph{Operations Research} 9(2):145--162.
 
@@ -41,6 +44,9 @@ Cuvelier T, Combes R, Gourdin E (2021) Statistically efficient, polynomial-time 
 
 \bibitem[{Damos(2003)}]{Damos2003}
 Damos DL (2003) Pilot abilities and performance \urlprefix\url{https://www.researchgate.net/publication/252442125_PILOT_ABILITIES_AND_PERFORMANCE}.
+
+\bibitem[{Daulton et~al.(2021)Daulton, Balandat, \protect\BIBand{} Bakshy}]{daulton2021parallel}
+Daulton S, Balandat M, Bakshy E (2021) Parallel bayesian optimization of multiple noisy objectives with expected hypervolume improvement. \emph{Advances in neural information processing systems} 34:2187--2200.
 
 \bibitem[{Degenne \protect\BIBand{} Perchet(2016)}]{Degenne2016CombinatorialSW}
 Degenne R, Perchet V (2016) Combinatorial semi-bandit with known covariance. \emph{Neural Information Processing Systems}, \urlprefix\url{https://api.semanticscholar.org/CorpusID:2716853}.
@@ -60,17 +66,35 @@ Duruaku F, Nguyen B, Sonnenfeld NA, Jentsch F (2024) Unveiling virtual reality o
 \bibitem[{Fu(2015)}]{Fu2015}
 Fu MC (2015) \emph{Handbook of Simulation Optimization} (New York, NY: Springer), \urlprefix\url{https://link.springer.com/book/10.1007/978-1-4939-1384-8}.
 
+\bibitem[{Fu et~al.(2004)Fu, Hu, Chen, \protect\BIBand{} Xiong}]{fu2004optimal}
+Fu MC, Hu JQ, Chen CH, Xiong X (2004) Optimal computing budget allocation under correlated sampling. \emph{Proceedings of the 2004 Winter Simulation Conference, 2004.}, volume~1 (IEEE).
+
+\bibitem[{Ginsbourger et~al.(2008)Ginsbourger, Le~Riche, \protect\BIBand{} Carraro}]{ginsbourger2008multi}
+Ginsbourger D, Le~Riche R, Carraro L (2008) A multi-points criterion for deterministic parallel global optimization based on gaussian processes .
+
+\bibitem[{Kim(2005)}]{kim2005comparison}
+Kim SH (2005) Comparison with a standard via fully sequential procedures. \emph{ACM Transactions on Modeling and Computer Simulation (TOMACS)} 15(2):155--174.
+
 \bibitem[{Kveton et~al.(2014)Kveton, Wen, Ashkan, \protect\BIBand{} Szepesvari}]{Kveton2014TightRB}
 Kveton B, Wen Z, Ashkan A, Szepesvari C (2014) Tight regret bounds for stochastic combinatorial semi-bandits. \emph{ArXiv} abs/1410.0949, \urlprefix\url{https://api.semanticscholar.org/CorpusID:6152788}.
 
 \bibitem[{Kveton et~al.(2015)Kveton, Wen, Ashkan, \protect\BIBand{} Szepesvari}]{Kveton2015CombinatorialCB}
 Kveton B, Wen Z, Ashkan A, Szepesvari C (2015) Combinatorial cascading bandits. \emph{ArXiv} abs/1507.04208, \urlprefix\url{https://api.semanticscholar.org/CorpusID:1083153}.
 
+\bibitem[{Men et~al.(2023)Men, Liu, Wang, \protect\BIBand{} Wang}]{men2023simulation}
+Men J, Liu Z, Wang S, Wang H (2023) Simulation optimization with multiple attempts. \emph{2023 Winter Simulation Conference (WSC)}, 3472--3483 (IEEE).
+
 \bibitem[{Nadarajah \protect\BIBand{} Kotz(2008)}]{nadarajah2008exact}
 Nadarajah S, Kotz S (2008) Exact distribution of the max/min of two gaussian random variables. \emph{IEEE Transactions on very large scale integration (VLSI) systems} 16(2):210--212.
 
+\bibitem[{Nakayama(2000)}]{nakayama2000multiple}
+Nakayama MK (2000) Multiple comparisons with the best using common random numbers for steady-state simulations. \emph{Journal of Statistical Planning and Inference} 85(1-2):37--48.
+
 \bibitem[{{National Transportation Safety Board}(2012)}]{NTSB2012}
 {National Transportation Safety Board} (2012) Review of u.s. civil aviation accidents, calendar year 2010. Technical report, NTSB, Washington, D.C., \urlprefix\url{https://www.ntsb.gov/safety/safety-studies/Documents/ARA1201.pdf}.
+
+\bibitem[{Nelson \protect\BIBand{} Matejcik(1995)}]{nelson1995using}
+Nelson BL, Matejcik FJ (1995) Using common random numbers for indifference-zone selection and multiple comparisons in simulation. \emph{Management Science} 41(12):1935--1945.
 
 \bibitem[{Nemhauser et~al.(1978)Nemhauser, Wolsey, \protect\BIBand{} Fisher}]{nemhauser1978analysis}
 Nemhauser GL, Wolsey LA, Fisher ML (1978) An analysis of approximations for maximizing submodular set functions--i. \emph{Math. Program.} 14(1):265–294, ISSN 0025-5610, \urlprefix\url{http://dx.doi.org/10.1007/BF01588971}.
@@ -78,8 +102,14 @@ Nemhauser GL, Wolsey LA, Fisher ML (1978) An analysis of approximations for maxi
 \bibitem[{Szczepanska et~al.(2025)}]{Szczepanska2025}
 Szczepanska A, et~al. (2025) The role of temperament and personality traits in assessing reaction efficiency in pilot candidates. \emph{Personality and Individual Differences} \urlprefix\url{https://www.sciencedirect.com/science/article/abs/pii/S0191886925000431}.
 
+\bibitem[{Wang et~al.(2020)Wang, Clark, Liu, \protect\BIBand{} Frazier}]{wang2020parallel}
+Wang J, Clark SC, Liu E, Frazier PI (2020) Parallel bayesian global optimization of expensive functions. \emph{Operations Research} 68(6):1850--1865.
+
 \bibitem[{Wang et~al.(2023)Wang, Chen, \protect\BIBand{} Vojnovi'c}]{Wang2023CombinatorialBF}
 Wang Y, Chen W, Vojnovi'c M (2023) Combinatorial bandits for maximum value reward function under max value-index feedback. \emph{ArXiv} abs/2305.16074, \urlprefix\url{https://api.semanticscholar.org/CorpusID:258887807}.
+
+\bibitem[{Wu \protect\BIBand{} Frazier(2016)}]{wu2016parallel}
+Wu J, Frazier P (2016) The parallel knowledge gradient method for batch bayesian optimization. \emph{Advances in neural information processing systems} 29.
 
 \bibitem[{Xie et~al.(2016)Xie, Frazier, \protect\BIBand{} Chick}]{xie2016bayesian}
 Xie J, Frazier PI, Chick SE (2016) Bayesian optimization via simulation with pairwise sampling and correlated prior beliefs. \emph{Operations Research} 64(2):542--559.
