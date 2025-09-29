@@ -135,13 +135,16 @@ Addressing this problem presents multiple challenges. First, in practical applic
 
 To address the first challenge of estimating score means, we develop a combinatorial multi-armed bandit (CMAB) algorithm based on a Bayesian framework that assigns a prior distribution to the score means and continuously updates it through iterative testing. This learning framework, however, critically relies on an computational oracle to select near-optimal module combinations at each iteration based on current estimates for the score distributions, which directly confronts the second computational challenge. To tackle the computational complexity challenge, we exploit the submodular structure of our objective function. This key property allows us to develop efficient greedy-style algorithms that serve as effective approximation oracles for module selection. By combining these two components—the Bayesian learning framework and the approximation oracles for combinatorial selection—we create an integrated solution that simultaneously learns from evaluation data and optimizes the selection process. 
 
-This paper addresses a problem of significant practical relevance, representing an innovative effort to apply optimization and operations research algorithms to real-world challenges. Previously, the design of pilot training modules has relied heavily on intuition and experience. Beyond its practical significance, the optimization problem explored here also carries substantial theoretical value, presenting multiple challenges as outlined earlier. Moreover, while related to existing research domains, it exhibits notable distinctions. Our work primarily aligns with two categories of optimization studies. The first is simulation-based optimization \citep{Fu2015}, which employs simulation models to support decision-making in real-world systems (FFS is a highly precise simulation tool). Certain simulation optimization studies account for correlations in experimental results when selecting multiple design alternatives \citep{xie2016bayesian}. These correlations primarily arise from the use of common random numbers in computer simulations. However, no prior work in this field has targeted the same objective function as ours, as most focus on evaluating a single design’s performance without an internal minimization operation. The second category is combinatorial multi-armed bandit research \citep{Chen2013}, where some studies select multiple alternatives and use the best as the evaluation metric, akin to our objective function \eqref{example}. Yet, to the best of our knowledge, none have addressed the complex reward structure in \eqref{example} while simultaneously accounting for correlations among alternatives. Although correlations in CMAB settings have been studied in prior works, these typically focus on simpler reward functions that depend only on marginal statistics rather than the full joint distribution of the selected arms. 
+This paper addresses a problem of significant practical relevance, representing an innovative effort to apply optimization and operations research algorithms to real-world challenges. Previously, the design of pilot training modules has relied heavily on intuition and experience. Beyond its practical significance, the optimization problem explored here also carries substantial theoretical value, presenting multiple challenges as outlined earlier. Moreover, while related to existing research domains, it exhibits notable distinctions. Our work primarily aligns with two categories of optimization studies. The first is simulation-based optimization \citep{Fu2015}, which employs simulation models to support decision-making in real-world systems (FFS is a highly precise simulation tool). Certain simulation optimization studies account for correlations in experimental results when selecting multiple design alternatives \citep{xie2016bayesian}. These correlations primarily arise from the use of common random numbers in computer simulations. However, no prior work in this field has targeted the same objective function as ours, as most focus on evaluating a single design’s performance without an internal minimization operation. The second category is combinatorial multi-armed bandit research \citep{Chen2013}, where some studies select multiple alternatives and use the best as the evaluation metric, akin to our objective function (???)\eqref{example}. Yet, to the best of our knowledge, none have addressed the complex reward structure in (???)\eqref{example} while simultaneously accounting for correlations among alternatives. Although correlations in CMAB settings have been studied in prior works, these typically focus on simpler reward functions that depend only on marginal statistics rather than the full joint distribution of the selected arms. 
 
-The remainder of the paper is organized as follows. Section \ref{related works} reviews the related works. Section\ref{problem formulation} formulates the objective function. Section \ref{BCUCB} presents our Bayesian Combinatorial Upper Confidence Bound (BCUCB) framework and its regret bound. Section \ref{oracle} develops $\alpha$-approximation oracles to tackle the computational challenge within the BCUCB framework. Section 6 reports numerical experiments. Finally, Section 7 concludes the paper.
+The remainder of the paper is organized as follows. Section ???\ref{related works} reviews the related works. Section ???\ref{problem formulation} formulates the objective function. Section ???\ref{BCUCB} presents our Bayesian Combinatorial Upper Confidence Bound (BCUCB) framework and its regret bound. Section ???\ref{oracle} develops α\alpha-approximation oracles to tackle the computational challenge within the BCUCB framework. Section 6 reports numerical experiments. Finally, Section 7 concludes the paper.
 
 \section{Related works}
 \label{related works}
 We review relevant works in three aspects: existing approaches for pilot training modules design, simulation-based optimization, and combinatorial MAB.
+
+\subsection{Pilot training modules design}
+Conventional approaches to pilot training module design have been largely guided by regulatory requirements and instructor expertise, with limited integration of data-driven methodologies. However, a growing body of research, as identified in a recent systematic literature review by \citet{Shaker2023CyMaEn}, explores the application of Big Data and Artificial Intelligence (AI) to enhance training efficacy. This review highlights that while emerging studies have begun to leverage data from sources such as flight simulators and operational monitoring systems, the focus has primarily been on specific aspects like predicting pilot training success using machine learning models \citep{Jenkins2022} or automating the assessment of particular flight maneuvers \citep{Guevarra2022}. Other studies have investigated the use of physiological data, such as electroencephalographic (EEG) signals, to monitor cognitive states and performance \citep{Binias2018}, or developed intelligent tutoring systems to provide real-time feedback in simulated environments \citep{Yang2021}. Despite these advancements, the review concludes that there is a notable absence of a systematic framework for designing training modules that fully leverages data analytics across the entire training cycle. Specifically, it identifies a critical gap in the development of \emph{Micro-Adaptive Learning} approaches capable of dynamically tailoring recurrent training content to the individual proficiency levels and learning styles of commercial pilots \citep{Shaker2023CyMaEn}. Furthermore, the application of such advanced analytics remains largely confined to predictive modeling or post-hoc analysis, rather than being integrated into a combinatorial optimization framework for the strategic selection of module sets under operational constraints. Therefore, our work directly addresses this gap by introducing a formal optimization model that systematically designs module combinations to proactively identify skill deficiencies, an approach that is currently missing from the data-driven pilot training literature.
 
 \subsection{Simulation-based optimization}
 Simulation-based optimization is a powerful approach for decision-making in complex real-world systems. When direct experimentation is impractical due to cost, feasibility, or other constraints, decision-makers can employ simulation models to evaluate various decision alternatives and identify the optimal solution. Decision-making based on FFS, which provides a high-fidelity simulation of an aircraft, can thus be framed as a simulation optimization problem. Our study aligns with existing research in two key aspects. First, the experimental outcomes of different decision alternatives in our problem exhibit correlations. In simulation optimization, such correlations typically arise from the use of common random numbers (CRN), where experiments across different decisions share identical or related random number streams \citep{fu2004optimal,nelson1995using,nakayama2000multiple,kim2005comparison,xie2016bayesian}. The adoption of CRN enhances the ability to discern differences between decision outcomes. However, unlike traditional studies that focus on selecting a single optimal decision, our problem requires identifying a set of decisions and evaluating them based on their minimum performance metric. The second related aspect pertains to sequential optimization, where multiple decisions are evaluated in each iteration. Existing research in this domain primarily leverages parallel computing resources to accelerate the optimization process, yet the objective remains the selection of a single best decision \citep{wu2016parallel,daulton2021parallel}. Although these approaches differ from our objective function, they utilize similar selection criteria, such as the multi-point Expected Improvement (qEI) metric \citep{ginsbourger2008multi}, to determine the set of decisions tested in each parallel experiment. The qEI metric quantifies the expected improvement of the best-performing decision within a set of parallel evaluations relative to previously tested decisions. Notably, \cite{chevalier2013fast} proposed an exact formulation for computing qEI, which necessitates multiple evaluations of the cumulative distribution function of high-dimensional normal distributions. \cite{wang2020parallel} introduced an approximate gradient-based method to optimize qEI, improving computational efficiency. Recently, \cite{men2023simulation} investigated a problem where the goal is to select a single decision, with the performance evaluated as the minimum value of multiple independent outputs associated with that decision. While these studies are relevant to our work, they primarily address optimization in continuous spaces, and and as noted above, their overarching optimization objectives differ from that considered in our research.
@@ -293,7 +296,7 @@ The $\alpha$-approximation regret of Algorithm \ref{alg:bcucb_algorithm} over $T
     $$
     93\sigma \sqrt{m M T \ln T} + \left(\frac{\pi^2}{6} + 1\right) \alpha y_{\text{max}} M.
     $$
-\end{enumerate}  
+\end{enumerate}
 \end{theorem}
 
 
@@ -1012,28 +1015,29 @@ $$\begin{aligned}
 
 It follows that 
 \begin{equation}
+    \label{eq:9}
 	\begin{aligned}
 	\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}&\leq1068\sigma^2m\ln T\cdot\sum_{i\in E_\mathrm{B}}\frac{2}{\Delta_{i,\min}}\\
 	&=\sigma^2m\sum_{i\in E_\mathrm{B}}\frac{2136}{\Delta_{i,\min}}\ln T.
 	\end{aligned}
 \end{equation}
-Combining (19) with Lemma 4, the distribution-dependent regret bound in Theorem 1 is proved.
+Combining \ref{eq:9} with Lemma \ref{lemma:decomposition}, the distribution-dependent regret bound in Theorem \ref{thm:regret_bound} is proved.
 
 To prove the distribution-independent bound, we decompose $\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}$ into two parts:
-\begin{equation}\begin{aligned}
+\begin{equation*}\begin{aligned}
 \sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}&=\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}\leq\epsilon\}\Delta_{S_t}\\
 &+\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t}\\
 &\leq\epsilon T+\sum_{t=t_0+1}^T1\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t},
-\end{aligned}\end{equation}
+\end{aligned}\end{equation*}
 
 where $\epsilon>0$ is a constant to be determined. The second term can be bounded in the same way as in the proof of the distribution-dependent regret bound, except that we only consider the case $\Delta_{S_t}>\epsilon$. Thus we can replace (19) by
-\begin{equation}
+\begin{equation*}
 	\begin{aligned}
 		&\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t,\Delta_{S_t}>\epsilon\}\Delta_{S_t}\\
 		&\leq \sigma^2m\sum_{i\in E_\mathrm{B},\Delta_{i,\min}>\epsilon}\frac{2136}{\Delta_{i,\min}}\ln T\\
 		&\leq \sigma^2mM\frac{2136}{\epsilon}\ln T.
 	\end{aligned}
-\end{equation}
+\end{equation*}
 
 It follows that
 $$\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\epsilon T+\sigma^2mM\frac{2136}{\epsilon}\ln T.$$
@@ -1041,7 +1045,7 @@ $$\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq\epsilon T+\sigma^2
 Finally, letting $\epsilon=\sqrt{\frac{2136\sigma^2mM\ln T}{T}}$, we get 
 $$\sum_{t=t_0+1}^T\mathbb{I}\{\mathcal{H}_t\}\Delta_{S_t}\leq2\sqrt{2136\sigma^2mMT\ln T}<93\sigma\sqrt{mMT\ln T}.$$
 
-Combining this with Lemma 4, we conclude the proof of the distribution-independent regret bound in Theorem 1.\hfill $\blacksquare$
+Combining this with Lemma \ref{lemma:decomposition}, we conclude the proof of the distribution-independent regret bound in Theorem \ref{thm:regret_bound}.\hfill $\blacksquare$
 %\end{appendices}
 
 \section{Proof of Theorem \ref{thm:submodular}}
