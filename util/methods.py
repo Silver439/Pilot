@@ -2,6 +2,7 @@ import numpy as np
 import copy
 from util.data_generate import Emin2
 from scipy.cluster import hierarchy
+import random
 
 def improvement(p,m,mu,std,R,Sigma,J=10000):
     choosen_index = [] #选定科目
@@ -489,3 +490,20 @@ def cyclic(p,m,mu,std,R,Sigma,J=10000):
     sub_Sigma = Sigma[np.ix_(choosen_index, choosen_index)]
     B = np.linalg.cholesky(sub_Sigma) #对协方差矩阵进行cholesky分解
     return B,choosen_index
+
+def cyclic_multstart(p,m,mu,std,R,Sigma,J=10000,mult=10):
+    best_lst = []
+    bestvalue = np.inf
+    best_B = np.zeros([m,m])
+    z_samples = np.random.randn(J*10, m)
+    lists = [random.sample(range(p), m) for _ in range(mult)]
+    for ids in lists:
+        choosen_index = cyclic_optimization_persistent(mu, Sigma, ids, list(range(p)))
+        sub_Sigma = Sigma[np.ix_(choosen_index, choosen_index)]
+        B = np.linalg.cholesky(sub_Sigma) #对协方差矩阵进行cholesky分解
+        value = np.mean(np.min(mu[choosen_index] + (B @ z_samples.T).T, axis=1))
+        if value < bestvalue:
+            best_lst = copy.deepcopy(choosen_index)
+            best_B = B.copy()
+            bestvalue = value
+    return best_B,best_lst
